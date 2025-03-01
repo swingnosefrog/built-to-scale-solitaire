@@ -1,0 +1,83 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.gradleup.shadow:shadow-gradle-plugin:8.3.5"
+    }
+}
+
+allprojects {
+    apply plugin: "eclipse"
+    apply plugin: "idea"
+    apply plugin: "java"
+    apply plugin: "kotlin"
+
+    version = "0.1.0"
+    ext {
+        appName = "built-to-scale-solitaire"
+        
+        useLocalPaintbox = true
+    }
+    
+    java {
+        toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+        withSourcesJar()
+        withJavadocJar()
+    }
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://clojars.org/repo/" }
+        maven { url "https://jitpack.io/" }
+        maven { url "https://repo.eclipse.org/content/groups/releases/" }
+    }
+    
+    dependencies {
+    }
+
+    tasks.withType(KotlinCompilationTask).configureEach {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_21)
+        }
+    }
+}
+
+project(":core") {
+    dependencies {
+        if (useLocalPaintbox) {
+            implementation "com.github.chrislo27:paintbox-core:${paintbox_version}"
+            implementation "com.github.chrislo27:paintbox-ui:${paintbox_version}"
+        } else {
+            implementation "com.github.chrislo27.paintbox:paintbox-core:${paintbox_version}"
+            implementation "com.github.chrislo27.paintbox:paintbox-ui:${paintbox_version}"
+        }
+
+        implementation "net.beadsproject:beads:3.2"
+        implementation "com.badlogicgames.jlayer:jlayer:1.0.1-gdx"
+        implementation "com.eclipsesource.minimal-json:minimal-json:0.9.5"
+        implementation "space.earlygrey:shapedrawer:v2.6.0"
+        implementation "com.code-disaster.steamworks4j:steamworks4j:1.9.0"
+    }
+}
+
+project(":desktop") {
+    dependencies {
+        implementation project(":core")
+
+        if (useLocalPaintbox) {
+            implementation "com.github.chrislo27:paintbox-desktop:${paintbox_version}"
+        } else {
+            implementation "com.github.chrislo27.paintbox:paintbox-desktop:${paintbox_version}"
+        }
+    }
+}

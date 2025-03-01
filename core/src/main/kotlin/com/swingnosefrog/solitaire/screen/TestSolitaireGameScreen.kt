@@ -1,0 +1,64 @@
+package com.swingnosefrog.solitaire.screen
+
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
+import com.badlogic.gdx.InputProcessor
+import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.swingnosefrog.solitaire.AbstractGameScreen
+import com.swingnosefrog.solitaire.SolitaireGame
+import com.swingnosefrog.solitaire.game.logic.GameInput
+import com.swingnosefrog.solitaire.game.logic.GameInputProcessor
+import com.swingnosefrog.solitaire.game.logic.GameLogic
+import com.swingnosefrog.solitaire.game.rendering.GameRenderer
+import paintbox.util.viewport.NoOpViewport
+
+
+class TestSolitaireGameScreen(main: SolitaireGame) : AbstractGameScreen(main) {
+
+    val batch: SpriteBatch = main.batch
+    
+    val gameLogic: GameLogic = GameLogic()
+    val gameInput: GameInput get() = gameLogic.gameInput
+    val gameRenderer: GameRenderer = GameRenderer(gameLogic, batch)
+    val inputProcessor: InputProcessor = GameInputProcessor(gameInput, NoOpViewport(gameRenderer.camera))
+    
+    override fun render(delta: Float) {
+        Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+
+        super.render(delta)
+
+        gameRenderer.render(delta)
+    }
+
+    override fun renderUpdate() {
+        super.renderUpdate()
+        
+        gameLogic.renderUpdate(Gdx.graphics.deltaTime)
+        
+        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+            main.screen = TestSolitaireGameScreen(main)
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            gameLogic.animationContainer.renderUpdate(10f)
+            gameLogic.checkTableauAfterActivity()
+        }
+    }
+
+    override fun resize(width: Int, height: Int) {
+        super.resize(width, height)
+    }
+
+    override fun show() {
+        super.show()
+        main.inputMultiplexer.addProcessor(inputProcessor)
+    }
+
+    override fun hide() {
+        super.hide()
+        main.inputMultiplexer.removeProcessor(inputProcessor)
+    }
+
+    override fun dispose() {
+    }
+}

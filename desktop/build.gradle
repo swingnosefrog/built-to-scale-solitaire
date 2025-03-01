@@ -1,0 +1,47 @@
+apply plugin: "java"
+apply plugin: 'kotlin'
+apply plugin: 'com.gradleup.shadow'
+
+sourceSets.main.java.srcDirs = [ "src/main/kotlin/" ]
+
+project.ext.mainClassName = "com.swingnosefrog.solitaire.desktop.DesktopLauncher"
+project.ext.assetsDir = new File("../core/assets")
+
+
+task run(dependsOn: classes, type: JavaExec) {
+    mainClass = project.mainClassName
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+    workingDir = project.assetsDir
+    ignoreExitValue(true)
+}
+
+task debug(dependsOn: classes, type: JavaExec) {
+    mainClass = project.mainClassName
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+    workingDir = project.assetsDir
+    ignoreExitValue(true)
+    debug = true
+}
+
+shadowJar {
+    archiveBaseName = "BuiltToScaleSolitaire"
+    archiveClassifier = "distribution"
+    archiveVersion = this.version.toString()
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    
+    manifest {
+        attributes "Main-Class": project.mainClassName
+    }
+
+    from {
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
+
