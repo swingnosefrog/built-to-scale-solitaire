@@ -18,7 +18,7 @@ class CardZones(
 
     init {
         val zoneSpacingX = 0.5f
-        val zoneSpacingY = (1f / 3f) * 1.25f
+        val zoneSpacingY = (1f / 3f) * (GameLogic.CARD_HEIGHT * 1.5f)
 
         freeCellZones = listOf(
             CardZone("free 0", (1 + zoneSpacingX) * 0, 0f, 1, true),

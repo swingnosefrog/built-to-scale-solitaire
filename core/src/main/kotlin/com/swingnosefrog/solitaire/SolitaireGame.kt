@@ -3,6 +3,8 @@ package com.swingnosefrog.solitaire
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics
 import com.swingnosefrog.solitaire.init.AssetRegistryLoadingScreen
+import com.swingnosefrog.solitaire.game.assets.GameAssetLoader
+import com.swingnosefrog.solitaire.game.assets.GameAssets
 import com.swingnosefrog.solitaire.init.InitialAssetLoader
 import com.swingnosefrog.solitaire.screen.TestSolitaireGameScreen
 import com.swingnosefrog.solitaire.steamworks.Steamworks
@@ -51,12 +53,13 @@ class SolitaireGame(paintboxSettings: PaintboxSettings) : PaintboxGame(paintboxS
         (Gdx.graphics as Lwjgl3Graphics).window.setVisible(true)
 
         AssetRegistry.addAssetLoader(InitialAssetLoader())
+        GameAssets.addAssetLoader(GameAssetLoader(GameAssets))
 
         Steamworks.init()
 
         fun initializeScreens() {
         }
-        setScreen(AssetRegistryLoadingScreen(this, AssetRegistry).apply {
+        setScreen(AssetRegistryLoadingScreen(this, AssetRegistry, GameAssets).apply {
             onStart = {}
             onAssetLoadingComplete = {
                 initializeScreens()

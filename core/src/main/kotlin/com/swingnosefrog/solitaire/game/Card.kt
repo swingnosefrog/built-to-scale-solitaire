@@ -1,5 +1,7 @@
 package com.swingnosefrog.solitaire.game
 
+import com.swingnosefrog.solitaire.game.assets.CardAssetKey
+
 
 data class Card(
     val suit: CardSuit,
@@ -21,6 +23,8 @@ data class Card(
             }
         }
     }
+    
+    val cardAssetKey: CardAssetKey = CardAssetKey.Front(suit, symbol)
 
     override fun toString(): String {
         return "${suit} ${symbol}"

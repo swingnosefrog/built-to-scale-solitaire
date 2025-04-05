@@ -14,7 +14,7 @@ class GameLogic(val randomSeed: Long = System.currentTimeMillis()) {
     companion object {
 
         const val CARD_WIDTH: Float = 1f
-        const val CARD_HEIGHT: Float = 1.25f
+        const val CARD_HEIGHT: Float = 1.5f
     }
 
     val viewportWidth: Float = 20f

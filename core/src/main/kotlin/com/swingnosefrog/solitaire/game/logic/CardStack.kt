@@ -21,5 +21,5 @@ class CardStack(
 
 enum class StackDirection(val yOffset: Float) {
     UP(-1 / 160f),
-    DOWN(0.25f)
+    DOWN(0.5f)
 }
