@@ -13,9 +13,13 @@ import paintbox.PaintboxSettings
 import paintbox.ResizeAction
 import paintbox.debug.IDebugKeysInputProcessor
 import paintbox.debug.ToggleableDebugKeysInputProcessor
+import paintbox.input.DefaultFullscreenWindowedInputProcessor
+import paintbox.input.IFullscreenWindowedInputProcessor
 import paintbox.logging.Logger
 import paintbox.registry.AssetRegistry
 import java.io.File
+
+typealias GdxPreferences = com.badlogic.gdx.Preferences
 
 
 class SolitaireGame(paintboxSettings: PaintboxSettings) : PaintboxGame(paintboxSettings) {
@@ -32,7 +36,12 @@ class SolitaireGame(paintboxSettings: PaintboxSettings) : PaintboxGame(paintboxS
                 ResizeAction.ANY_SIZE, Solitaire.MINIMUM_SIZE
             )
     }
+    
+    private lateinit var gdxPrefs: GdxPreferences
+    lateinit var settings: SolitaireSettings
+        private set
 
+    private lateinit var fullscreenWindowedInputProcessor: IFullscreenWindowedInputProcessor
     private var toggleableDebugKeysInputProcessor: ToggleableDebugKeysInputProcessor? = null
 
     override fun createDebugKeysInputProcessor(): IDebugKeysInputProcessor {
@@ -49,11 +58,25 @@ class SolitaireGame(paintboxSettings: PaintboxSettings) : PaintboxGame(paintboxS
     override fun create() {
         super.create()
         instance = this
-
-        (Gdx.graphics as Lwjgl3Graphics).window.setVisible(true)
-
+        
         AssetRegistry.addAssetLoader(InitialAssetLoader())
         GameAssets.addAssetLoader(GameAssetLoader(GameAssets))
+        
+        gdxPrefs = Gdx.app.getPreferences("com.swingnosefrog.solitaire")
+        settings = SolitaireSettings(this, gdxPrefs).apply {
+            load()
+            setStartupSettings()
+        }
+        fullscreenWindowedInputProcessor =
+            DefaultFullscreenWindowedInputProcessor(
+                Solitaire.DEFAULT_SIZE,
+                { this.settings },
+                { it.fullscreenMonitor },
+                { it.windowedResolution }
+            )
+        this.inputMultiplexer.addProcessor(fullscreenWindowedInputProcessor)
+        
+        (Gdx.graphics as Lwjgl3Graphics).window.setVisible(true)
 
         Steamworks.init()
 
@@ -68,7 +91,6 @@ class SolitaireGame(paintboxSettings: PaintboxSettings) : PaintboxGame(paintboxS
                 TestSolitaireGameScreen(this@SolitaireGame)
             }
         })
-
     }
 
     override fun postRender() {
@@ -79,6 +101,8 @@ class SolitaireGame(paintboxSettings: PaintboxSettings) : PaintboxGame(paintboxS
 
     override fun dispose() {
         super.dispose()
+        settings.persist()
         Steamworks.shutdown()
     }
+    
 }
