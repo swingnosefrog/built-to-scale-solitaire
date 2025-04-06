@@ -67,6 +67,7 @@ class SolitaireGame(paintboxSettings: PaintboxSettings) : PaintboxGame(paintboxS
             load()
             setStartupSettings()
         }
+        
         fullscreenWindowedInputProcessor =
             DefaultFullscreenWindowedInputProcessor(
                 Solitaire.DEFAULT_SIZE,
@@ -96,7 +97,8 @@ class SolitaireGame(paintboxSettings: PaintboxSettings) : PaintboxGame(paintboxS
     override fun postRender() {
         super.postRender()
 
-        Steamworks.frameUpdate(Gdx.graphics.deltaTime)
+        val deltaSec = Gdx.graphics.deltaTime
+        Steamworks.frameUpdate(deltaSec)
     }
 
     override fun dispose() {
