@@ -19,11 +19,9 @@ object Solitaire {
     val DEFAULT_SIZE: WindowSize = WindowSize(1280, 720)
     val MINIMUM_SIZE: WindowSize = WindowSize(1152, 648)
 
-    var portableMode: Boolean = false
-
     const val DOT_DIRECTORY_NAME: String = ".built-to-scale-solitaire"
     val DOT_DIRECTORY: File by lazy {
-        (if (portableMode) File("${DOT_DIRECTORY_NAME}/") else File(System.getProperty("user.home") + "/${DOT_DIRECTORY_NAME}/")).apply {
+        File(System.getProperty("user.home") + "/${DOT_DIRECTORY_NAME}/").apply {
             mkdirs()
         }
     }
