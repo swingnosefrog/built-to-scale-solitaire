@@ -1,5 +1,4 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget 
 
 buildscript {
     repositories {
@@ -27,7 +26,6 @@ allprojects {
     }
     
     java {
-        toolchain.languageVersion.set(JavaLanguageVersion.of(21))
         withSourcesJar()
         withJavadocJar()
     }
@@ -44,11 +42,17 @@ allprojects {
     
     dependencies {
     }
+}
 
-    tasks.withType(KotlinCompilationTask).configureEach {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_21)
-        }
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_21
     }
 }
 
