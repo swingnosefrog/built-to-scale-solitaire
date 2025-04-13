@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Disposable
 import com.swingnosefrog.solitaire.AbstractGameScreen
 import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.game.Card
+import com.swingnosefrog.solitaire.game.CardSymbol
 import com.swingnosefrog.solitaire.game.assets.GameAssets
 import com.swingnosefrog.solitaire.game.logic.CardStack
 import com.swingnosefrog.solitaire.game.logic.CardZone
@@ -81,6 +82,12 @@ class TestSolitaireGameScreen(main: SolitaireGame) : AbstractGameScreen(main) {
     
     private class TestSoundGameEventListener : GameEventListener, Disposable {
         
+        companion object {
+            
+            private const val MOVEMENT_SOUND_VOLUME = 0.5f
+            private const val FOUNDATION_SOUND_VOLUME = 0.5f
+        }
+        
         private val dealing: Sound get() = GameAssets.get<Sound>("sfx_game_dealing_loop")
         
         private var dealingLoopSoundId: Long = -1
@@ -90,7 +97,7 @@ class TestSolitaireGameScreen(main: SolitaireGame) : AbstractGameScreen(main) {
         }
 
         override fun onDealingStart(gameLogic: GameLogic) {
-            dealingLoopSoundId = dealing.play()
+            dealingLoopSoundId = dealing.loop(MOVEMENT_SOUND_VOLUME)
         }
 
         override fun onDealingEnd(gameLogic: GameLogic) {
@@ -104,14 +111,14 @@ class TestSolitaireGameScreen(main: SolitaireGame) : AbstractGameScreen(main) {
             fromZone: CardZone,
         ) {
             if (cardStack.cardList.size >= 3) {
-                GameAssets.get<Sound>("sfx_game_pickup_stack").play()
+                GameAssets.get<Sound>("sfx_game_pickup_stack").play(MOVEMENT_SOUND_VOLUME)
             } else {
-                GameAssets.get<Sound>("sfx_game_pickup${MathUtils.random(1, 3)}").play()
+                GameAssets.get<Sound>("sfx_game_pickup${MathUtils.random(1, 3)}").play(MOVEMENT_SOUND_VOLUME)
             }
         }
         
         private fun playPlaceSound() {
-            GameAssets.get<Sound>("sfx_game_place").play()
+            GameAssets.get<Sound>("sfx_game_place").play(MOVEMENT_SOUND_VOLUME)
         }
 
         override fun onCardStackPickupCancelled(
@@ -127,6 +134,10 @@ class TestSolitaireGameScreen(main: SolitaireGame) : AbstractGameScreen(main) {
             cardStack: CardStack,
             toZone: CardZone,
         ) {
+            if (cardStack.isWidgetSet() && toZone in gameLogic.zones.freeCellZones) {
+                return
+            }
+            
             playPlaceSound()
         }
 
@@ -135,21 +146,27 @@ class TestSolitaireGameScreen(main: SolitaireGame) : AbstractGameScreen(main) {
             card: Card,
             foundationZone: CardZone,
         ) {
+            if (card.symbol in CardSymbol.SCALE_CARDS) {
+                GameAssets.get<Sound>("sfx_game_foundation_scale_${card.symbol.scaleOrder}").play(FOUNDATION_SOUND_VOLUME)
+            }
         }
 
         override fun onWidgetSetCompleted(
             gameLogic: GameLogic,
             freeCellZone: CardZone,
         ) {
+            GameAssets.get<Sound>("sfx_game_foundation_widget").play(0.2f)
         }
 
         override fun onFoundationZoneCompleted(
             gameLogic: GameLogic,
             foundationZone: CardZone,
         ) {
+            GameAssets.get<Sound>("sfx_game_foundation_scale_7").play(FOUNDATION_SOUND_VOLUME)
         }
 
         override fun onGameWon(gameLogic: GameLogic) {
+            GameAssets.get<Sound>("sfx_game_won").play(0.5f)
         }
 
     }

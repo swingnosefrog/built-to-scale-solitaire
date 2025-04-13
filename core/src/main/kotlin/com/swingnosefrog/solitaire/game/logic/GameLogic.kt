@@ -28,6 +28,8 @@ class GameLogic(val randomSeed: Long = System.currentTimeMillis()) {
     val animationContainer: AnimationContainer = AnimationContainer()
 
     val eventDispatcher: GameEventDispatcher = DispatcherImpl()
+    
+    private var gameWon: Boolean = false
 
     init {
         Paintbox.LOGGER.debug("GameLogic: Random seed: $randomSeed")
@@ -78,13 +80,14 @@ class GameLogic(val randomSeed: Long = System.currentTimeMillis()) {
             checkTableauAfterActivity()
         }
 
-        gameInput.inputsDisabled.set(animationContainer.getPlayingAnimations().isNotEmpty())
+        var shouldInputsBeDisabled = gameWon || animationContainer.getPlayingAnimations().isNotEmpty()
+        gameInput.inputsDisabled.set(shouldInputsBeDisabled)
     }
 
     fun checkTableauAfterActivity() {
-//        if (gameWon) { // TODO
-//            return
-//        }
+        if (gameWon) {
+            return
+        }
 
         // Flip over completed widgets in free cells
         for (freeCellZone in zones.freeCellZones) {
@@ -101,32 +104,13 @@ class GameLogic(val randomSeed: Long = System.currentTimeMillis()) {
         }
 
         // Game complete check
-//        if ((freeCells + foundationZones).all { z -> z.stack.flippedOver.get() }) {
-//            gameWon = true
-//            inputsEnabled.set(false)
-//            playSound("sfx_win", vol = 0.75f)
-//            gameListeners.forEach { it.onWin() }
-////            GlobalStats.solitaireGamesWon.increment()
-//            // Falldown animation
-//            maxConcurrentAnimations = Int.MAX_VALUE
-//            val affectedZones = freeCells + foundationZones + playerZones
-//            affectedZones.forEach { zone ->
-//                val invisibleZone =
-//                    CardZone(zone.x.get(), zone.y.get() + 6f * cardHeight, 999, false, showOutline = false)
-//                val delayPer = 0.175f
-//                zone.stack.cardList.asReversed().forEachIndexed { index, card ->
-//                    enqueueAnimation(
-//                        card,
-//                        zone,
-//                        invisibleZone,
-//                        duration = 0.75f,
-//                        delay = delayPer * index,
-//                        isUnder = true
-//                    )
-//                }
-//            }
-//            return
-//        }
+        if ((zones.freeCellZones + zones.foundationZones).all { z -> z.isFlippedOver }) {
+            gameWon = true
+            eventDispatcher.onGameWon(this)
+            
+            // TODO animation on win
+            return
+        }
 
         // Possible animations for auto-placing into the foundation pile
         val autoPlaceZones = zones.playerZones + zones.freeCellZones
@@ -213,7 +197,7 @@ class GameLogic(val randomSeed: Long = System.currentTimeMillis()) {
     }
     
     private fun enqueueSlightDelayAnimation(durationSec: Float? = null) {
-        animationContainer.enqueueAnimation(GameAnimation(durationSec = 0.2f, 0f))
+        animationContainer.enqueueAnimation(GameAnimation(durationSec = durationSec ?: 0.15f, 0f))
     }
 
     fun getSelectedZoneCoordinates(worldX: Float, worldY: Float): ZoneCoordinates? {

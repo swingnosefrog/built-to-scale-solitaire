@@ -20,6 +20,17 @@ class GameAssetLoader(private val assetRegistryInstance: AssetRegistryInstance) 
         registry.loadAsset<Sound>("sfx_game_pickup3", "sounds/game/pickup3.wav")
         registry.loadAsset<Sound>("sfx_game_pickup_stack", "sounds/game/pickup_stack.wav")
         registry.loadAsset<Sound>("sfx_game_place", "sounds/game/place.wav")
+        registry.loadAsset<Sound>("sfx_game_won", "sounds/game/win.ogg")
+        
+        registry.loadAsset<Sound>("sfx_game_foundation_widget", "sounds/game/flick.ogg")
+        registry.loadAsset<Sound>("sfx_game_foundation_scale_0", "sounds/game/note_C3.ogg")
+        registry.loadAsset<Sound>("sfx_game_foundation_scale_1", "sounds/game/note_D3.ogg")
+        registry.loadAsset<Sound>("sfx_game_foundation_scale_2", "sounds/game/note_E3.ogg")
+        registry.loadAsset<Sound>("sfx_game_foundation_scale_3", "sounds/game/note_F3.ogg")
+        registry.loadAsset<Sound>("sfx_game_foundation_scale_4", "sounds/game/note_G3.ogg")
+        registry.loadAsset<Sound>("sfx_game_foundation_scale_5", "sounds/game/note_A3.ogg")
+        registry.loadAsset<Sound>("sfx_game_foundation_scale_6", "sounds/game/note_B3.ogg")
+        registry.loadAsset<Sound>("sfx_game_foundation_scale_7", "sounds/game/note_C4.ogg")
     }
 
     override fun addUnmanagedAssets(assets: MutableMap<String, Any>) {
