@@ -1,4 +1,4 @@
-package com.swingnosefrog.solitaire.init
+package com.swingnosefrog.solitaire.assets
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen

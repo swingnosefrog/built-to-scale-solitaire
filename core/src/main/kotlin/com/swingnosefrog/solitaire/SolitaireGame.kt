@@ -2,10 +2,10 @@ package com.swingnosefrog.solitaire
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics
-import com.swingnosefrog.solitaire.init.AssetRegistryLoadingScreen
+import com.swingnosefrog.solitaire.assets.AssetRegistryLoadingScreen
 import com.swingnosefrog.solitaire.game.assets.GameAssetLoader
 import com.swingnosefrog.solitaire.game.assets.GameAssets
-import com.swingnosefrog.solitaire.init.InitialAssetLoader
+import com.swingnosefrog.solitaire.assets.AssetRegistryAssetLoader
 import com.swingnosefrog.solitaire.screen.TestSolitaireGameScreen
 import com.swingnosefrog.solitaire.steamworks.Steamworks
 import paintbox.PaintboxGame
@@ -59,8 +59,8 @@ class SolitaireGame(paintboxSettings: PaintboxSettings) : PaintboxGame(paintboxS
         super.create()
         instance = this
         
-        AssetRegistry.addAssetLoader(InitialAssetLoader())
-        GameAssets.addAssetLoader(GameAssetLoader(GameAssets))
+        AssetRegistry.addAssetLoader(AssetRegistryAssetLoader())
+        GameAssets.addAssetLoader(GameAssetLoader())
         
         gdxPrefs = Gdx.app.getPreferences("com.swingnosefrog.solitaire")
         settings = SolitaireSettings(this, gdxPrefs).apply {

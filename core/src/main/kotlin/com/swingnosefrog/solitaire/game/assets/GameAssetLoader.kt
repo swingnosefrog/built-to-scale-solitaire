@@ -1,22 +1,15 @@
 package com.swingnosefrog.solitaire.game.assets
 
 import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver
 import com.badlogic.gdx.audio.Sound
+import com.swingnosefrog.solitaire.assets.AssetLoaderBase
 import com.swingnosefrog.solitaire.game.CardSuit
 import com.swingnosefrog.solitaire.game.CardSymbol
-import com.swingnosefrog.solitaire.soundsystem.beads.BeadsMusic
-import com.swingnosefrog.solitaire.soundsystem.beads.BeadsMusicLoader
-import com.swingnosefrog.solitaire.soundsystem.beads.BeadsSound
-import com.swingnosefrog.solitaire.soundsystem.beads.BeadsSoundLoader
-import paintbox.registry.AssetRegistryInstance
-import paintbox.registry.IAssetLoader
 
-class GameAssetLoader(private val assetRegistryInstance: AssetRegistryInstance) : IAssetLoader {
+class GameAssetLoader : AssetLoaderBase<GameAssets>(GameAssets) {
 
     override fun addManagedAssets(manager: AssetManager) {
-        manager.setLoader(BeadsSound::class.java, BeadsSoundLoader(InternalFileHandleResolver()))
-        manager.setLoader(BeadsMusic::class.java, BeadsMusicLoader(InternalFileHandleResolver()))
+        super.addManagedAssets(manager)
         
         val registry = assetRegistryInstance
         
@@ -41,9 +34,6 @@ class GameAssetLoader(private val assetRegistryInstance: AssetRegistryInstance) 
         registry.loadAsset<Sound>("sfx_game_foundation_scale_7", "sounds/game/note_C4.ogg")
     }
 
-    override fun addUnmanagedAssets(assets: MutableMap<String, Any>) {
-    }
-    
     private fun addCardTextures(subdir: String) {
         fun CardAssetKey.loadTexture() {
             val key = this.getAssetKey()
