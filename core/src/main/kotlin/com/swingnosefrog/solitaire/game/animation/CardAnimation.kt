@@ -1,6 +1,6 @@
 package com.swingnosefrog.solitaire.game.animation
 
-import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.math.Interpolation
 import com.swingnosefrog.solitaire.game.Card
 import com.swingnosefrog.solitaire.game.logic.CardZone
 
@@ -60,12 +60,21 @@ class CardPlayingAnimation(val cardAnimation: CardAnimation) : PlayingAnimation(
     init {
         setUpCoordinates()
     }
+    
+    private fun arcFunction(progress: Float): Float {
+        // y = -(2x - 1)^2 + 1
+        val x = (2 * progress - 1)
+        return -(x * x) + 1
+    }
 
     override fun onUpdate(progress: Float) {
         super.onUpdate(progress)
         
-        currentX = MathUtils.lerp(fromX, toX, progress)
-        currentY = MathUtils.lerp(fromY, toY, progress)
+        val interpolationX = Interpolation.linear
+        val interpolationY = Interpolation.linear
+        
+        currentX = interpolationX.apply(fromX, toX, progress)
+        currentY = interpolationY.apply(fromY, toY, progress) + arcFunction(progress) * -0.75f
     }
 
     override fun onStart() {
