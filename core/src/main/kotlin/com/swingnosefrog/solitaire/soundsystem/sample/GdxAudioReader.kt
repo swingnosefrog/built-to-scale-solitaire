@@ -3,12 +3,16 @@ package com.swingnosefrog.solitaire.soundsystem.sample
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.backends.lwjgl3.audio.OpenALMusic
 import com.badlogic.gdx.files.FileHandle
+import com.badlogic.gdx.utils.BufferUtils
+import com.badlogic.gdx.utils.GdxRuntimeException
 import com.badlogic.gdx.utils.StreamUtils
-import net.beadsproject.beads.core.AudioUtils
-import net.beadsproject.beads.data.Sample
 import com.swingnosefrog.solitaire.soundsystem.beads.BeadsMusic
 import com.swingnosefrog.solitaire.soundsystem.beads.BeadsSound
 import com.swingnosefrog.solitaire.util.TempFileUtils
+import net.beadsproject.beads.core.AudioUtils
+import net.beadsproject.beads.data.Sample
+import org.lwjgl.stb.STBVorbis
+import org.lwjgl.system.MemoryStack
 import java.io.*
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
@@ -122,8 +126,53 @@ object GdxAudioReader {
 
         return sample to handler
     }
+    
+    private fun decodeOgg(handle: FileHandle, listener: AudioLoadListener? = null): Sample {
+        val streamData: ByteArray = handle.readBytes()
+        val encodedData = BufferUtils.newByteBuffer(streamData.size)
+        encodedData.put(streamData)
+        encodedData.flip()
+
+        return MemoryStack.stackPush().use { stack ->
+            val channelsBuffer = stack.mallocInt(1)
+            val sampleRateBuffer = stack.mallocInt(1)
+
+            val decodedData = STBVorbis.stb_vorbis_decode_memory(encodedData, channelsBuffer, sampleRateBuffer)
+            if (decodedData == null) {
+                throw GdxRuntimeException("Error decoding OGG file: $handle")
+            }
+            val channels = channelsBuffer.get(0)
+            val sampleRate = sampleRateBuffer.get(0)
+            
+            val lengthInChannelSamples = decodedData.remaining()
+            val lengthInFrames = lengthInChannelSamples / channels
+            
+            val sample = Sample(0.0, channels, sampleRate.toFloat())
+            sample.resize(lengthInFrames.toLong())
+            
+            val channelSamplesShort = ShortArray(lengthInChannelSamples)
+            decodedData.get(channelSamplesShort)
+
+            val channelSamplesFloat = FloatArray(lengthInChannelSamples)
+            AudioUtils.shortToFloat(channelSamplesFloat, channelSamplesShort)
+            
+            val sampleData = Array(channels) { FloatArray(lengthInFrames) }
+            AudioUtils.deinterleave(channelSamplesFloat, channels, lengthInFrames, sampleData)
+            
+            sample.putFrames(0, sampleData)
+            
+            listener?.onFinished(lengthInChannelSamples * 2L)
+            
+            sample
+        }
+    }
 
     fun newSound(handle: FileHandle, listener: AudioLoadListener? = null): BeadsSound {
+        if (handle.extension().equals("ogg", ignoreCase = true)) {
+            val sample = decodeOgg(handle, listener)
+            return BeadsSound(sample)
+        }
+        
         val music = Gdx.audio.newMusic(handle) as OpenALMusic
         music.reset()
         val bufferSizeBytes = 4096 * 4
