@@ -15,7 +15,7 @@ object Solitaire {
     }
 
     const val TITLE: String = "Built to Scale Solitaire"
-    val VERSION: Version = Version(0, 1, 0, "dev_20250413a")
+    val VERSION: Version = Version(0, 1, 0, "dev_20250413b")
     val DEFAULT_SIZE: WindowSize = WindowSize(1280, 720)
     val MINIMUM_SIZE: WindowSize = WindowSize(1152, 648)
 

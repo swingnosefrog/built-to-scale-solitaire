@@ -50,6 +50,7 @@ class SoundSystem(
     private val activePlayers: MutableMap<Long, PlayerLike> = ConcurrentHashMap()
 
     init {
+        audioContext.out.gain = 0.5f
         setPaused(true)
     }
 
@@ -59,6 +60,7 @@ class SoundSystem(
 
     fun startRealtime() {
         audioContext.start()
+        setPaused(false)
     }
 
     fun stopRealtime() {
@@ -82,12 +84,17 @@ class SoundSystem(
     fun playAudio(beadsAudio: BeadsAudio, addInputTo: UGen? = null, callback: (player: PlayerLike) -> Unit = {}): Long {
         val id = obtainSoundID()
         val player = beadsAudio.createPlayer(audioContext)
+
         player.killListeners += {
             activePlayers.remove(id, it)
         }
-        callback.invoke(player)
         activePlayers[id] = player
-        (addInputTo ?: audioContext.out).addInput(player)
+
+        callback.invoke(player)
+
+        val ugenToAddTo = addInputTo ?: audioContext.out
+        ugenToAddTo.addInput(player)
+
         return id
     }
 

@@ -33,7 +33,7 @@ class GameLogic(randomSeed: Long? = null) {
     private var gameWon: Boolean = false
 
     init {
-        Paintbox.LOGGER.debug("GameLogic: Random seed: $randomSeed")
+        Paintbox.LOGGER.debug("GameLogic: Random seed: ${this.randomSeed}")
     }
 
     init {
