@@ -166,7 +166,7 @@ class TestSolitaireGameScreen(main: SolitaireGame) : AbstractGameScreen(main) {
         }
 
         override fun onGameWon(gameLogic: GameLogic) {
-            GameAssets.get<Sound>("sfx_game_won").play(0.5f)
+            GameAssets.get<Sound>("sfx_game_won").play(0.4f)
         }
 
     }
