@@ -20,14 +20,15 @@ import com.swingnosefrog.solitaire.game.logic.GameInput
 import com.swingnosefrog.solitaire.game.logic.GameInputProcessor
 import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.game.rendering.GameRenderer
+import paintbox.util.gdxutils.isShiftDown
 import paintbox.util.viewport.NoOpViewport
 
 
-class TestSolitaireGameScreen(main: SolitaireGame) : AbstractGameScreen(main) {
+class TestSolitaireGameScreen(main: SolitaireGame, randomSeed: Long? = null) : AbstractGameScreen(main) {
 
     val batch: SpriteBatch = main.batch
     
-    val gameLogic: GameLogic = GameLogic()
+    val gameLogic: GameLogic = GameLogic(randomSeed)
     val gameInput: GameInput get() = gameLogic.gameInput
     val gameRenderer: GameRenderer = GameRenderer(gameLogic, batch)
     val inputProcessor: InputProcessor = GameInputProcessor(gameInput, NoOpViewport(gameRenderer.camera))
@@ -52,7 +53,8 @@ class TestSolitaireGameScreen(main: SolitaireGame) : AbstractGameScreen(main) {
         gameLogic.renderUpdate(Gdx.graphics.deltaTime)
         
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
-            main.screen = TestSolitaireGameScreen(main)
+            val useOldRandomSeed = if (Gdx.input.isShiftDown()) this.gameLogic.randomSeed else null
+            main.screen = TestSolitaireGameScreen(main, useOldRandomSeed)
             Gdx.app.postRunnable { 
                 this.dispose()
             }
