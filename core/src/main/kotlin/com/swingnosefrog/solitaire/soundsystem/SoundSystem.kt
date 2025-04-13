@@ -1,11 +1,14 @@
 package com.swingnosefrog.solitaire.soundsystem
 
 import com.badlogic.gdx.utils.Disposable
+import com.swingnosefrog.solitaire.soundsystem.beads.BeadsAudio
 import net.beadsproject.beads.core.AudioContext
 import net.beadsproject.beads.core.IOAudioFormat
 import net.beadsproject.beads.core.UGen
 import com.swingnosefrog.solitaire.soundsystem.sample.PlayerLike
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicLong
 
 
 /**
@@ -21,6 +24,7 @@ class SoundSystem(
 
         val AUDIO_FORMAT_44100: IOAudioFormat = IOAudioFormat(44_100f, 16, 2, 2, true, true)
         val AUDIO_FORMAT_48000: IOAudioFormat = IOAudioFormat(48_000f, 16, 2, 2, true, true)
+
         val DEFAULT_AUDIO_FORMAT: IOAudioFormat = AUDIO_FORMAT_48000
 
         fun createDefaultSoundSystem(
@@ -29,29 +33,24 @@ class SoundSystem(
         ): SoundSystem {
             return SoundSystem(RealtimeOutput.OpenAL(AudioDeviceSettings.DEFAULT_SETTINGS), initCtxBufferSize, settings)
         }
-
     }
 
     data class SoundSystemSettings(val ioAudioFormat: IOAudioFormat = DEFAULT_AUDIO_FORMAT)
 
+
+    private val isDisposed: AtomicBoolean = AtomicBoolean(false)
+
     val audioContext: AudioContext =
         AudioContext(realtimeOutput.createAudioIO(), initCtxBufferSize, settings.ioAudioFormat)
-
-    @Volatile
-    private var currentlyRealTime: Boolean = true
-
-    @Volatile
-    private var currentSoundID: Long = 0L
-    private val activePlayers: MutableMap<Long, PlayerLike> = ConcurrentHashMap()
-
-    @Volatile
-    private var isDisposed: Boolean = false
 
     val isPaused: Boolean
         get() = audioContext.out.isPaused
 
+    private val currentSoundID: AtomicLong = AtomicLong(0L)
+    private val activePlayers: MutableMap<Long, PlayerLike> = ConcurrentHashMap()
+
     init {
-        audioContext.out.pause(true)
+        setPaused(true)
     }
 
     fun setPaused(paused: Boolean) {
@@ -59,30 +58,22 @@ class SoundSystem(
     }
 
     fun startRealtime() {
-        currentlyRealTime = true
         audioContext.start()
     }
 
     fun stopRealtime() {
         audioContext.stop()
-        currentlyRealTime = false
     }
-
-    fun startNonrealtimeTimed(msToRun: Double) {
-        currentlyRealTime = false
-        audioContext.runForNMillisecondsNonRealTime(msToRun)
-    }
-
-    fun isCurrentlyRealtime(): Boolean = currentlyRealTime
 
     override fun dispose() {
-        isDisposed = true
+        isDisposed.set(true)
         stopRealtime()
-        audioContext.out.clearInputConnections()
-        audioContext.out.clearDependents()
+        val out = audioContext.out
+        out.clearInputConnections()
+        out.clearDependents()
     }
 
-    private fun obtainSoundID(): Long = ++currentSoundID
+    private fun obtainSoundID(): Long = currentSoundID.incrementAndGet()
 
     /**
      * Plays audio and returns the sound ID.
@@ -100,6 +91,6 @@ class SoundSystem(
         return id
     }
 
-    fun getPlayer(id: Long): PlayerLike? = activePlayers[id]
+    fun getPlayerOrNull(id: Long): PlayerLike? = activePlayers[id]
 
 }

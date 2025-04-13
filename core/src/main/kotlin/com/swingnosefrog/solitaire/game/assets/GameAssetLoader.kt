@@ -1,15 +1,23 @@
 package com.swingnosefrog.solitaire.game.assets
 
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver
 import com.badlogic.gdx.audio.Sound
 import com.swingnosefrog.solitaire.game.CardSuit
 import com.swingnosefrog.solitaire.game.CardSymbol
+import com.swingnosefrog.solitaire.soundsystem.beads.BeadsMusic
+import com.swingnosefrog.solitaire.soundsystem.beads.BeadsMusicLoader
+import com.swingnosefrog.solitaire.soundsystem.beads.BeadsSound
+import com.swingnosefrog.solitaire.soundsystem.beads.BeadsSoundLoader
 import paintbox.registry.AssetRegistryInstance
 import paintbox.registry.IAssetLoader
 
 class GameAssetLoader(private val assetRegistryInstance: AssetRegistryInstance) : IAssetLoader {
 
     override fun addManagedAssets(manager: AssetManager) {
+        manager.setLoader(BeadsSound::class.java, BeadsSoundLoader(InternalFileHandleResolver()))
+        manager.setLoader(BeadsMusic::class.java, BeadsMusicLoader(InternalFileHandleResolver()))
+        
         val registry = assetRegistryInstance
         
         addCardTextures("modern")

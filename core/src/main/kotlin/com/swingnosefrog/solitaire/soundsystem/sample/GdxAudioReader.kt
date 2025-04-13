@@ -6,8 +6,8 @@ import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.utils.StreamUtils
 import net.beadsproject.beads.core.AudioUtils
 import net.beadsproject.beads.data.Sample
-import com.swingnosefrog.solitaire.soundsystem.BeadsMusic
-import com.swingnosefrog.solitaire.soundsystem.BeadsSound
+import com.swingnosefrog.solitaire.soundsystem.beads.BeadsMusic
+import com.swingnosefrog.solitaire.soundsystem.beads.BeadsSound
 import com.swingnosefrog.solitaire.util.TempFileUtils
 import java.io.*
 import java.nio.ByteBuffer

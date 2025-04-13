@@ -3,10 +3,10 @@ package com.swingnosefrog.solitaire.init
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver
 import com.badlogic.gdx.graphics.Texture
-import com.swingnosefrog.solitaire.soundsystem.BeadsMusic
-import com.swingnosefrog.solitaire.soundsystem.BeadsMusicLoader
-import com.swingnosefrog.solitaire.soundsystem.BeadsSound
-import com.swingnosefrog.solitaire.soundsystem.BeadsSoundLoader
+import com.swingnosefrog.solitaire.soundsystem.beads.BeadsMusic
+import com.swingnosefrog.solitaire.soundsystem.beads.BeadsMusicLoader
+import com.swingnosefrog.solitaire.soundsystem.beads.BeadsSound
+import com.swingnosefrog.solitaire.soundsystem.beads.BeadsSoundLoader
 import paintbox.registry.AssetRegistry
 import paintbox.registry.IAssetLoader
 

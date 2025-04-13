@@ -23,7 +23,6 @@ import kotlin.math.roundToInt
  *
  * Also note that [OpenALAudioDevice] has behaviour that doesn't follow the libGDX documentation for [AudioDevice]:
  *   - The buffer size is in *bytes* and not samples, with 4 bytes per sample
- *   - The return result of [AudioDevice.getLatency] is in *milliseconds* and not samples
  */
 class OpenALAudioIO(val audioDeviceSettings: AudioDeviceSettings) : AudioIO() {
 
