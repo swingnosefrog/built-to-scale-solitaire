@@ -11,7 +11,9 @@ class CardAnimation(
     val toZone: CardZone,
     durationSec: Float,
     delaySec: Float,
-    blockAnimationForSec: Float = delaySec + durationSec
+    blockAnimationForSec: Float = delaySec + durationSec,
+    val onStartAction: () -> Unit = {},
+    val onCompleteAction: () -> Unit = {},
 ) : GameAnimation(durationSec, delaySec, blockAnimationForSec) {
 
     override fun toPlayingAnimation(): CardPlayingAnimation {
@@ -26,12 +28,16 @@ class CardAnimation(
         if (index >= 0) {
             fromList.removeAt(index)
         }
+        
+        onStartAction()
     }
 
     override fun onComplete() {
         super.onComplete()
         
         toZone.cardStack.cardList.add(card)
+        
+        onCompleteAction()
     }
 }
 

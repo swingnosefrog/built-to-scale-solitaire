@@ -5,12 +5,13 @@ import com.swingnosefrog.solitaire.game.Card
 import com.swingnosefrog.solitaire.game.CardSymbol
 import com.swingnosefrog.solitaire.game.animation.AnimationContainer
 import com.swingnosefrog.solitaire.game.animation.CardAnimation
+import com.swingnosefrog.solitaire.game.animation.GameAnimation
 import paintbox.Paintbox
 import kotlin.math.floor
 import kotlin.random.Random
 
 class GameLogic(val randomSeed: Long = System.currentTimeMillis()) {
-    
+
     companion object {
 
         const val CARD_WIDTH: Float = 1f
@@ -19,37 +20,60 @@ class GameLogic(val randomSeed: Long = System.currentTimeMillis()) {
 
     val viewportWidth: Float = 20f
     val viewportHeight: Float = 11.25f
-    
+
     private val deck: List<Card> = Card.createStandardDeck().shuffled(Random(randomSeed))
-    
+
     val zones: CardZones = CardZones(this)
     val gameInput: GameInput by lazy { GameInput(this) }
     val animationContainer: AnimationContainer = AnimationContainer()
-    
+
+    val eventDispatcher: GameEventDispatcher = DispatcherImpl()
+
     init {
         Paintbox.LOGGER.debug("GameLogic: Random seed: $randomSeed")
     }
-    
+
     init {
-        zones.dealZone.cardStack.cardList.addAll(deck)
-        
+        val dealZoneCardList = zones.dealZone.cardStack.cardList
+        dealZoneCardList.addAll(deck)
+
         val numPlayerZones = zones.playerZones.size
         var playerZoneIndex = 0
-        for ((cardIndex, card) in zones.dealZone.cardStack.cardList.withIndex()) {
+        for ((cardIndex, card) in dealZoneCardList.withIndex()) {
             val newZone = if (card.symbol == CardSymbol.SPARE) {
                 zones.spareZone
             } else {
                 zones.playerZones[playerZoneIndex++ % numPlayerZones]
             }
-            
-            val delay = if (cardIndex == 0) 0.75f else 0f
-            animationContainer.enqueueAnimation(CardAnimation(card, zones.dealZone, newZone, 0.1f, delay))
+
+            val isFirst = cardIndex == 0
+            val isLast = cardIndex == dealZoneCardList.size - 1
+
+            var onStart: (() -> Unit)? = null
+            var onComplete: (() -> Unit)? = null
+
+            if (isFirst) {
+                onStart = { eventDispatcher.onDealingStart(this) }
+            }
+            if (isLast) {
+                onComplete = { eventDispatcher.onDealingEnd(this) }
+            }
+
+            val delay = if (isFirst) 0.75f else 0f
+            animationContainer.enqueueAnimation(
+                CardAnimation(
+                    card, zones.dealZone, newZone, 0.1f, delay,
+                    onStartAction = onStart ?: {}, onCompleteAction = onComplete ?: {}
+                )
+            )
         }
+        
+        enqueueSlightDelayAnimation()
     }
-    
+
     fun renderUpdate(deltaSec: Float) {
         val didAnimate = animationContainer.renderUpdate(deltaSec)
-        
+
         if (didAnimate && !animationContainer.anyAnimationsQueuedOrPlaying()) {
             checkTableauAfterActivity()
         }
@@ -63,14 +87,16 @@ class GameLogic(val randomSeed: Long = System.currentTimeMillis()) {
 //        }
 
         // Flip over completed widgets in free cells
-        for (freeCell in zones.freeCellZones) {
-            if (!freeCell.isFlippedOver && freeCell.cardStack.isWidgetSet()) {
-                freeCell.isFlippedOver = true
+        for (freeCellZone in zones.freeCellZones) {
+            if (!freeCellZone.isFlippedOver && freeCellZone.cardStack.isWidgetSet()) {
+                freeCellZone.isFlippedOver = true
+                eventDispatcher.onWidgetSetCompleted(this, freeCellZone)
             }
         }
-        for (foundation in zones.foundationZones) {
-            if (!foundation.isFlippedOver && foundation.cardStack.cardList.size >= foundation.maxStackSize) {
-                foundation.isFlippedOver = true
+        for (foundationZone in zones.foundationZones) {
+            if (!foundationZone.isFlippedOver && foundationZone.cardStack.cardList.size >= foundationZone.maxStackSize) {
+                foundationZone.isFlippedOver = true
+                eventDispatcher.onFoundationZoneCompleted(this, foundationZone)
             }
         }
 
@@ -120,7 +146,7 @@ class GameLogic(val randomSeed: Long = System.currentTimeMillis()) {
 
 
                 val targetFoundation = zones.foundationZones.firstOrNull { fz ->
-                    if (tail.symbol.scaleOrder == 0) { // 1
+                    if (tail.symbol == CardSymbol.NUM_1) {
                         fz.cardStack.cardList.isEmpty()
                     } else {
                         val lastInFoundation = fz.cardStack.cardList.lastOrNull()
@@ -166,9 +192,28 @@ class GameLogic(val randomSeed: Long = System.currentTimeMillis()) {
             }
         }
     }
+
+    private fun enqueueDefaultCardMoveAnimation(
+        card: Card,
+        fromZone: CardZone,
+        toZone: CardZone,
+        durationSec: Float? = null,
+    ) {
+        animationContainer.enqueueAnimation(
+            CardAnimation(
+                card,
+                fromZone,
+                toZone,
+                durationSec ?: 0.25f,
+                0f,
+                onCompleteAction = {
+                    eventDispatcher.onCardPlacedInFoundation(this, card, toZone)
+                })
+        )
+    }
     
-    private fun enqueueDefaultCardMoveAnimation(card: Card, fromZone: CardZone, toZone: CardZone, durationSec: Float? = null) {
-        animationContainer.enqueueAnimation(CardAnimation(card, fromZone, toZone, durationSec ?: 0.25f, 0f))
+    private fun enqueueSlightDelayAnimation(durationSec: Float? = null) {
+        animationContainer.enqueueAnimation(GameAnimation(durationSec = 0.2f, 0f))
     }
 
     fun getSelectedZoneCoordinates(worldX: Float, worldY: Float): ZoneCoordinates? {
@@ -218,7 +263,7 @@ class GameLogic(val randomSeed: Long = System.currentTimeMillis()) {
         }
         return true
     }
-    
+
     fun canPlaceStackOnZone(stack: CardStack, targetZone: CardZone): Boolean {
         // Can't place if flipped over
         if (targetZone.isFlippedOver) {
@@ -258,5 +303,82 @@ class GameLogic(val randomSeed: Long = System.currentTimeMillis()) {
 
         return isStackValidToMove(listOfNotNull(targetZone.cardStack.cardList.lastOrNull()) + dragStackList)
     }
-    
+
+
+    private class DispatcherImpl : GameEventDispatcher {
+
+        private var listeners: List<GameEventListener> = emptyList()
+
+        override fun addListener(listener: GameEventListener) {
+            listeners += listener
+        }
+
+        override fun removeListener(listener: GameEventListener) {
+            listeners -= listener
+        }
+
+
+        //#region GameEventListener delegates
+
+        override fun onDealingStart(gameLogic: GameLogic) {
+            listeners.forEach { it.onDealingStart(gameLogic) }
+        }
+
+        override fun onDealingEnd(gameLogic: GameLogic) {
+            listeners.forEach { it.onDealingEnd(gameLogic) }
+        }
+
+        override fun onCardStackPickedUp(
+            gameLogic: GameLogic,
+            cardStack: CardStack,
+            fromZone: CardZone,
+        ) {
+            listeners.forEach { it.onCardStackPickedUp(gameLogic, cardStack, fromZone) }
+        }
+
+        override fun onCardStackPickupCancelled(
+            gameLogic: GameLogic,
+            cardStack: CardStack,
+            originalZone: CardZone,
+        ) {
+            listeners.forEach { it.onCardStackPickupCancelled(gameLogic, cardStack, originalZone) }
+        }
+
+        override fun onCardStackPlacedDown(
+            gameLogic: GameLogic,
+            cardStack: CardStack,
+            toZone: CardZone,
+        ) {
+            listeners.forEach { it.onCardStackPlacedDown(gameLogic, cardStack, toZone) }
+        }
+
+        override fun onCardPlacedInFoundation(
+            gameLogic: GameLogic,
+            card: Card,
+            foundationZone: CardZone,
+        ) {
+            listeners.forEach { it.onCardPlacedInFoundation(gameLogic, card, foundationZone) }
+        }
+
+        override fun onWidgetSetCompleted(
+            gameLogic: GameLogic,
+            freeCellZone: CardZone,
+        ) {
+            listeners.forEach { it.onWidgetSetCompleted(gameLogic, freeCellZone) }
+        }
+
+        override fun onFoundationZoneCompleted(
+            gameLogic: GameLogic,
+            foundationZone: CardZone,
+        ) {
+            listeners.forEach { it.onFoundationZoneCompleted(gameLogic, foundationZone) }
+        }
+
+        override fun onGameWon(gameLogic: GameLogic) {
+            listeners.forEach { it.onGameWon(gameLogic) }
+        }
+
+        //#endregion
+    }
+
 }

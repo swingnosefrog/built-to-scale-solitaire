@@ -1,6 +1,7 @@
 package com.swingnosefrog.solitaire.game.assets
 
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.audio.Sound
 import com.swingnosefrog.solitaire.game.CardSuit
 import com.swingnosefrog.solitaire.game.CardSymbol
 import paintbox.registry.AssetRegistryInstance
@@ -9,7 +10,16 @@ import paintbox.registry.IAssetLoader
 class GameAssetLoader(private val assetRegistryInstance: AssetRegistryInstance) : IAssetLoader {
 
     override fun addManagedAssets(manager: AssetManager) {
+        val registry = assetRegistryInstance
+        
         addCardTextures("modern")
+        
+        registry.loadAsset<Sound>("sfx_game_dealing_loop", "sounds/game/dealing_loop.wav")
+        registry.loadAsset<Sound>("sfx_game_pickup1", "sounds/game/pickup1.wav")
+        registry.loadAsset<Sound>("sfx_game_pickup2", "sounds/game/pickup2.wav")
+        registry.loadAsset<Sound>("sfx_game_pickup3", "sounds/game/pickup3.wav")
+        registry.loadAsset<Sound>("sfx_game_pickup_stack", "sounds/game/pickup_stack.wav")
+        registry.loadAsset<Sound>("sfx_game_place", "sounds/game/place.wav")
     }
 
     override fun addUnmanagedAssets(assets: MutableMap<String, Any>) {

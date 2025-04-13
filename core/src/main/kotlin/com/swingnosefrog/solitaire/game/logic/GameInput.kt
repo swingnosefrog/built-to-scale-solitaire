@@ -24,7 +24,8 @@ class GameInput(val logic: GameLogic) {
         
         val myList = dragging.cardStack.cardList.toList()
         dragging.oldZone.cardStack.cardList.addAll(myList)
-        
+
+        logic.eventDispatcher.onCardStackPickupCancelled(logic, dragging.cardStack, dragging.oldZone)
         dragInfo.set(DragInfo.Nothing)
         logic.checkTableauAfterActivity()
     }
@@ -40,6 +41,7 @@ class GameInput(val logic: GameLogic) {
         val myList = dragging.cardStack.cardList.toList()
         newZone.cardStack.cardList += myList
 
+        logic.eventDispatcher.onCardStackPlacedDown(logic, dragging.cardStack, newZone)
         dragInfo.set(DragInfo.Nothing)
         logic.checkTableauAfterActivity()
 
@@ -65,6 +67,8 @@ class GameInput(val logic: GameLogic) {
             zoneCardList.removeAt(zoneCoords.index)
         }
         dragInfo.set(newDragging)
+        
+        logic.eventDispatcher.onCardStackPickedUp(logic, newDragging.cardStack, zoneCoords.zone)
     }
 
     fun updateDrag(worldX: Float, worldY: Float) {
