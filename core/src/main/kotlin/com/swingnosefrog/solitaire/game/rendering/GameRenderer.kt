@@ -4,21 +4,17 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.utils.Align
-import com.swingnosefrog.solitaire.SolitaireGame
+import com.badlogic.gdx.utils.viewport.FitViewport
+import com.badlogic.gdx.utils.viewport.Viewport
 import com.swingnosefrog.solitaire.game.Card
-import com.swingnosefrog.solitaire.game.CardSuit
-import com.swingnosefrog.solitaire.game.CardSymbol
 import com.swingnosefrog.solitaire.game.animation.CardPlayingAnimation
 import com.swingnosefrog.solitaire.game.assets.CardAssetKey
 import com.swingnosefrog.solitaire.game.assets.GameAssets
 import com.swingnosefrog.solitaire.game.logic.CardStack
 import com.swingnosefrog.solitaire.game.logic.GameLogic
-import com.swingnosefrog.solitaire.game.logic.GameLogic.Companion.CARD_WIDTH
 import com.swingnosefrog.solitaire.game.logic.GameLogic.Companion.CARD_HEIGHT
-import paintbox.util.gdxutils.drawRect
+import com.swingnosefrog.solitaire.game.logic.GameLogic.Companion.CARD_WIDTH
 import paintbox.util.gdxutils.fillRect
-import paintbox.util.gdxutils.scaleMul
 
 
 open class GameRenderer(
@@ -31,8 +27,11 @@ open class GameRenderer(
     val camera: OrthographicCamera = OrthographicCamera().apply {
         setToOrtho(false, logic.viewportWidth, logic.viewportHeight)
     }
+    val viewport: Viewport = FitViewport(camera.viewportWidth, camera.viewportHeight, camera)
 
     open fun render(deltaSec: Float) {
+        viewport.apply()
+        
         camera.update()
         batch.projectionMatrix = camera.combined
         batch.begin()
@@ -82,5 +81,9 @@ open class GameRenderer(
         val cardAssetKey: CardAssetKey = if (flippedOver) CardAssetKey.Back else this.cardAssetKey
         val tex = GameAssets.get<Texture>(cardAssetKey.getAssetKey())
         batch.draw(tex, x, camera.viewportHeight - (y + CARD_HEIGHT), CARD_WIDTH, CARD_HEIGHT)
+    }
+    
+    fun resize(width: Int, height: Int) {
+        viewport.update(width, height)
     }
 }

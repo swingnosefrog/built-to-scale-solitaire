@@ -15,7 +15,6 @@ import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.game.rendering.GameRenderer
 import com.swingnosefrog.solitaire.soundsystem.SoundSystem
 import paintbox.util.gdxutils.isShiftDown
-import paintbox.util.viewport.NoOpViewport
 
 
 class TestSolitaireGameScreen(main: SolitaireGame, randomSeed: Long? = null) : AbstractGameScreen(main) {
@@ -23,9 +22,9 @@ class TestSolitaireGameScreen(main: SolitaireGame, randomSeed: Long? = null) : A
     val batch: SpriteBatch = main.batch
     
     val gameLogic: GameLogic = GameLogic(randomSeed)
-    val gameInput: GameInput get() = gameLogic.gameInput
     val gameRenderer: GameRenderer = GameRenderer(gameLogic, batch)
-    val inputProcessor: InputProcessor = GameInputProcessor(gameInput, NoOpViewport(gameRenderer.camera))
+    val gameInput: GameInput get() = gameLogic.gameInput
+    val inputProcessor: InputProcessor = GameInputProcessor(gameInput, gameRenderer.viewport)
     val soundSystem = SoundSystem.createDefaultSoundSystem()
     val gameMusic: GameMusic = GameMusic(soundSystem)
     val gameAudio: GameAudio = GameAudio(gameLogic, soundSystem, music = gameMusic)
@@ -37,6 +36,8 @@ class TestSolitaireGameScreen(main: SolitaireGame, randomSeed: Long? = null) : A
         super.render(delta)
 
         gameRenderer.render(delta)
+        
+        main.resetViewportToScreen()
     }
 
     override fun renderUpdate() {
@@ -58,6 +59,7 @@ class TestSolitaireGameScreen(main: SolitaireGame, randomSeed: Long? = null) : A
 
     override fun resize(width: Int, height: Int) {
         super.resize(width, height)
+        gameRenderer.resize(width, height)
     }
 
     override fun show() {
