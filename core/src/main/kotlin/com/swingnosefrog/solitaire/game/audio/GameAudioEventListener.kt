@@ -1,7 +1,6 @@
 package com.swingnosefrog.solitaire.game.audio
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.Disposable
 import com.swingnosefrog.solitaire.game.Card

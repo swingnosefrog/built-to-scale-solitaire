@@ -3,24 +3,16 @@ package com.swingnosefrog.solitaire.screen
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputProcessor
-import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.math.MathUtils
-import com.badlogic.gdx.utils.Disposable
 import com.swingnosefrog.solitaire.AbstractGameScreen
 import com.swingnosefrog.solitaire.SolitaireGame
-import com.swingnosefrog.solitaire.game.Card
-import com.swingnosefrog.solitaire.game.CardSymbol
-import com.swingnosefrog.solitaire.game.assets.GameAssets
 import com.swingnosefrog.solitaire.game.audio.GameAudio
-import com.swingnosefrog.solitaire.game.logic.CardStack
-import com.swingnosefrog.solitaire.game.logic.CardZone
-import com.swingnosefrog.solitaire.game.logic.GameEventListener
 import com.swingnosefrog.solitaire.game.logic.GameInput
 import com.swingnosefrog.solitaire.game.logic.GameInputProcessor
 import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.game.rendering.GameRenderer
+import com.swingnosefrog.solitaire.soundsystem.SoundSystem
 import paintbox.util.gdxutils.isShiftDown
 import paintbox.util.viewport.NoOpViewport
 
@@ -33,7 +25,8 @@ class TestSolitaireGameScreen(main: SolitaireGame, randomSeed: Long? = null) : A
     val gameInput: GameInput get() = gameLogic.gameInput
     val gameRenderer: GameRenderer = GameRenderer(gameLogic, batch)
     val inputProcessor: InputProcessor = GameInputProcessor(gameInput, NoOpViewport(gameRenderer.camera))
-    val gameAudio: GameAudio = GameAudio(gameLogic)
+    val soundSystem = SoundSystem.createDefaultSoundSystem()
+    val gameAudio: GameAudio = GameAudio(gameLogic, soundSystem, ownsSoundSystem = false)
     
     override fun render(delta: Float) {
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
@@ -77,6 +70,7 @@ class TestSolitaireGameScreen(main: SolitaireGame, randomSeed: Long? = null) : A
 
     override fun dispose() {
         gameAudio.dispose()
+        soundSystem.dispose()
     }
     
 }
