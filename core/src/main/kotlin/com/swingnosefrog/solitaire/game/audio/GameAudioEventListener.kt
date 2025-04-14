@@ -24,9 +24,7 @@ class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disp
         private const val FOUNDATION_SOUND_VOLUME = 1f
     }
     
-    private val gameLogic: GameLogic = gameAudio.gameLogic
     private val soundSystem: SoundSystem = gameAudio.soundSystem
-
 
     private val dealing: BeadsSound get() = GameAssets.get("sfx_game_dealing_loop")
     private var dealingLoopSoundId: Long = -1
@@ -35,9 +33,13 @@ class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disp
         soundSystem.getPlayerOrNull(dealingLoopSoundId)?.kill()
         dealingLoopSoundId = -1
     }
+    
+    fun stopAllSounds() {
+        stopDealingLoop()
+    }
 
     override fun dispose() {
-        stopDealingLoop()
+        stopAllSounds()
     }
 
     override fun onDealingStart(gameLogic: GameLogic) {
@@ -126,22 +128,8 @@ class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disp
         soundSystem.playAudio(sound) { player ->
             player.gain = 0.75f
         }
-        
-        // Attenuate volume of music
-        val multiplier = gameAudio.music.musicGainMultiplier
-        val sfxDuration = 3f
-        val quietGain = 0.2f
-        val pauseTransitionSec = 0.125f
-        Gdx.app.postRunnable(GdxRunnableTransition(multiplier.get(), quietGain, pauseTransitionSec) { value, _ ->
-            multiplier.set(value)
-        })
 
-        val resumeTransitionSec = 1f
-        Gdx.app.postRunnable(GdxDelayedRunnable(sfxDuration) {
-            Gdx.app.postRunnable(GdxRunnableTransition(quietGain, 1f, resumeTransitionSec) { value, _ ->
-                multiplier.set(value)
-            })
-        })
+        gameAudio.music?.attenuateForGameWinSfx()
     }
 
 }

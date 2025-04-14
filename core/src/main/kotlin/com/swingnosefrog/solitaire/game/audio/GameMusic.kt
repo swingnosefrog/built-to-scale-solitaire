@@ -1,5 +1,6 @@
 package com.swingnosefrog.solitaire.game.audio
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.utils.Disposable
 import com.swingnosefrog.solitaire.game.assets.GameAssets
 import com.swingnosefrog.solitaire.soundsystem.SoundSystem
@@ -9,9 +10,11 @@ import net.beadsproject.beads.core.AudioContext
 import net.beadsproject.beads.ugens.Gain
 import net.beadsproject.beads.ugens.SamplePlayer
 import paintbox.binding.FloatVar
+import paintbox.util.gdxutils.GdxDelayedRunnable
+import paintbox.util.gdxutils.GdxRunnableTransition
 
 
-class GameMusic(val audio: GameAudio) : Disposable {
+class GameMusic(soundSystem: SoundSystem) : Disposable {
 
     private enum class StemType(val assetKey: String) {
         DRUMS("music_gameplay_stem_drums"),
@@ -24,7 +27,6 @@ class GameMusic(val audio: GameAudio) : Disposable {
         GameAssets.get<BeadsSound>(type.assetKey)
     }
 
-    private val soundSystem: SoundSystem = audio.soundSystem
     private val audioContext: AudioContext = soundSystem.audioContext
     val musicGainMultiplier: FloatVar = FloatVar(1f)
     private val commonUgen: Gain = Gain(audioContext, 2, musicGainMultiplier.get())
@@ -53,6 +55,25 @@ class GameMusic(val audio: GameAudio) : Disposable {
         }
 
         audioContext.out.addInput(commonUgen)
+    }
+
+    fun attenuateForGameWinSfx(
+        sfxDuration: Float = 3f,
+        softenedGain: Float = 0.2f,
+        attenuationTransitionSec: Float = 0.125f,
+        resumeTransitionSec: Float = 1f,
+    ) {
+        val multiplierVar = musicGainMultiplier
+        
+        Gdx.app.postRunnable(GdxRunnableTransition(multiplierVar.get(), softenedGain, attenuationTransitionSec) { v, _ ->
+            multiplierVar.set(v)
+        })
+
+        Gdx.app.postRunnable(GdxDelayedRunnable(sfxDuration) {
+            Gdx.app.postRunnable(GdxRunnableTransition(softenedGain, 1f, resumeTransitionSec) { v, _ ->
+                multiplierVar.set(v)
+            })
+        })
     }
 
     override fun dispose() {

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.swingnosefrog.solitaire.AbstractGameScreen
 import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.game.audio.GameAudio
+import com.swingnosefrog.solitaire.game.audio.GameMusic
 import com.swingnosefrog.solitaire.game.logic.GameInput
 import com.swingnosefrog.solitaire.game.logic.GameInputProcessor
 import com.swingnosefrog.solitaire.game.logic.GameLogic
@@ -26,7 +27,8 @@ class TestSolitaireGameScreen(main: SolitaireGame, randomSeed: Long? = null) : A
     val gameRenderer: GameRenderer = GameRenderer(gameLogic, batch)
     val inputProcessor: InputProcessor = GameInputProcessor(gameInput, NoOpViewport(gameRenderer.camera))
     val soundSystem = SoundSystem.createDefaultSoundSystem()
-    val gameAudio: GameAudio = GameAudio(gameLogic, soundSystem, ownsSoundSystem = false)
+    val gameMusic: GameMusic = GameMusic(soundSystem)
+    val gameAudio: GameAudio = GameAudio(gameLogic, soundSystem, music = gameMusic)
     
     override fun render(delta: Float) {
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)

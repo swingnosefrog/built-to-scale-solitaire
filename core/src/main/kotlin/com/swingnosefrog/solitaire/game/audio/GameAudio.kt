@@ -8,11 +8,8 @@ import com.swingnosefrog.solitaire.soundsystem.SoundSystem
 class GameAudio(
     val gameLogic: GameLogic,
     val soundSystem: SoundSystem,
-    private val ownsSoundSystem: Boolean,
+    val music: GameMusic?
 ) : Disposable {
-    
-    
-    val music: GameMusic = GameMusic(this)
     
     val eventListener: GameAudioEventListener = GameAudioEventListener(this)
     
@@ -25,9 +22,5 @@ class GameAudio(
     override fun dispose() {
         eventListener.dispose()
         gameLogic.eventDispatcher.removeListener(eventListener)
-        
-        music.dispose()
-        
-        if (ownsSoundSystem) soundSystem.dispose()
     }
 }
