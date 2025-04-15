@@ -1,8 +1,10 @@
 package com.swingnosefrog.solitaire.game.animation
 
 import com.badlogic.gdx.math.Interpolation
+import com.badlogic.gdx.math.MathUtils
 import com.swingnosefrog.solitaire.game.Card
 import com.swingnosefrog.solitaire.game.logic.CardZone
+import kotlin.math.sqrt
 
 
 class CardAnimation(
@@ -52,6 +54,8 @@ class CardPlayingAnimation(val cardAnimation: CardAnimation) : PlayingAnimation(
     var toY: Float = 0f
         private set
     
+    private var distance: Float = 0f
+    
     var currentX: Float = 0f
         private set
     var currentY: Float = 0f
@@ -73,8 +77,12 @@ class CardPlayingAnimation(val cardAnimation: CardAnimation) : PlayingAnimation(
         val interpolationX = Interpolation.linear
         val interpolationY = Interpolation.linear
         
+        val interpolationArc = Interpolation.linear
+        val normalizedDistance = MathUtils.norm(0.5f, 3f, distance).coerceIn(0f, 1f)
+        val arcStrength = interpolationArc.apply(0.1f, 1f, normalizedDistance)
+        
         currentX = interpolationX.apply(fromX, toX, progress)
-        currentY = interpolationY.apply(fromY, toY, progress) + arcFunction(progress) * -0.75f
+        currentY = interpolationY.apply(fromY, toY, progress) + arcFunction(progress) * (-0.75f * arcStrength)
     }
 
     override fun onStart() {
@@ -101,5 +109,9 @@ class CardPlayingAnimation(val cardAnimation: CardAnimation) : PlayingAnimation(
 
         currentX = fromX
         currentY = fromY
+        
+        val deltaX = toX - fromX
+        val deltaY = toY - fromY
+        distance = sqrt(deltaX * deltaX + deltaY * deltaY)
     }
 }
