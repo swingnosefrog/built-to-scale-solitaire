@@ -36,7 +36,7 @@ class CardZones(
         ).onEach { zone ->
             zone.cardStack.stackDirection = StackDirection.DOWN
         }
-        dealZone = CardZone("deal", (1 + zoneSpacingX) * 4.5f, 0f, 2, false, isFlippedOver = true)
+        dealZone = CardZone("deal", (1 + zoneSpacingX) * 4.5f, 0f, 2, false, isFlippedOver = true, isOutlineVisible = false)
         spareZone = CardZone("spare", (1 + zoneSpacingX) * 3.5f, 0f, 3, false, isFlippedOver = false).apply {
             this.cardStack.stackDirection = StackDirection.UP
         }

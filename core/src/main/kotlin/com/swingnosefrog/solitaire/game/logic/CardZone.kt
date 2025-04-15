@@ -9,6 +9,7 @@ class CardZone(
     val maxStackSize: Int = 999,
     val canDragFrom: Boolean = true,
     var isFlippedOver: Boolean = false,
+    val isOutlineVisible: Boolean = true,
 ) {
     
     val x: FloatVar = FloatVar(initX)

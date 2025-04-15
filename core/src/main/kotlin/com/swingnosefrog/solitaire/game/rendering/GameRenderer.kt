@@ -30,9 +30,9 @@ open class GameRenderer(
     val viewport: Viewport = FitViewport(camera.viewportWidth, camera.viewportHeight, camera)
 
     open fun render(deltaSec: Float) {
+        camera.update()
         viewport.apply()
         
-        camera.update()
         batch.projectionMatrix = camera.combined
         batch.begin()
 
@@ -41,7 +41,8 @@ open class GameRenderer(
 
         batch.setColor(1f, 1f, 1f, 0.25f)
         val slotCardTex = GameAssets.get<Texture>(CardAssetKey.Slot.getAssetKey())
-        logic.zones.allCardZones.forEach { zone ->
+        for (zone in logic.zones.allCardZones) {
+            if (!zone.isOutlineVisible) continue
             batch.draw(slotCardTex, zone.x.get(), camera.viewportHeight - (zone.y.get() + CARD_HEIGHT), CARD_WIDTH, CARD_HEIGHT)
         }
         batch.setColor(1f, 1f, 1f, 1f)
