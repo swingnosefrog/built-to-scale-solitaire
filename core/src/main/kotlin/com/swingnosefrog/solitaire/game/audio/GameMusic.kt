@@ -42,7 +42,7 @@ class GameMusic(soundSystem: SoundSystem) : Disposable {
             player.loopEndMs = sample.length.toFloat()
             player.loopType = SamplePlayer.LoopType.LOOP_FORWARDS
             
-            player.position = -100.0 // ms, avoids slight stutter when buffer is filling
+            player.position = -150.0 // ms, avoids slight stutter when buffer is filling
 
             commonUgen.addInput(player)
 
