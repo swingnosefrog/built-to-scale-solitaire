@@ -42,6 +42,9 @@ class GameInput(val logic: GameLogic) {
         newZone.cardStack.cardList += myList
 
         logic.eventDispatcher.onCardStackPlacedDown(logic, dragging.cardStack, newZone)
+        if (dragging.cardStack.cardList.size == 1 && newZone in logic.zones.foundationZones) {
+            logic.eventDispatcher.onCardPlacedInFoundation(logic, dragging.cardStack.cardList.first(), newZone)
+        }
         dragInfo.set(DragInfo.Nothing)
         logic.checkTableauAfterActivity()
 
