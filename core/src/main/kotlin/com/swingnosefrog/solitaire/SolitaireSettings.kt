@@ -3,7 +3,10 @@ package com.swingnosefrog.solitaire
 import com.badlogic.gdx.Preferences
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_FULLSCREEN
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_FULLSCREEN_MONITOR
+import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_MASTER_VOLUME
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_MAX_FPS
+import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_MUSIC_VOLUME
+import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_SFX_VOLUME
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_VSYNC
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_WINDOWED_RESOLUTION
 import paintbox.binding.BooleanVar
@@ -27,6 +30,10 @@ class SolitaireSettings(main: SolitaireGame, prefs: Preferences) : PaintboxPrefe
     val fullscreen: BooleanVar
     val fullscreenMonitor: Var<MonitorInfo?>
 
+    val masterVolume: IntVar
+    val musicVolume: IntVar
+    val sfxVolume: IntVar
+
     init {
         val initScope = InitScope()
         with(initScope) {
@@ -36,6 +43,10 @@ class SolitaireSettings(main: SolitaireGame, prefs: Preferences) : PaintboxPrefe
             windowedResolution = KeyValue.WindowSize(SETTINGS_WINDOWED_RESOLUTION, Solitaire.DEFAULT_SIZE).add().value
             fullscreen = KeyValue.Bool(SETTINGS_FULLSCREEN, true).add().value
             fullscreenMonitor = KeyValue.MonitorInfo(SETTINGS_FULLSCREEN_MONITOR, null).add().value
+
+            masterVolume = KeyValue.Int(SETTINGS_MASTER_VOLUME, 50, min = 0, max = 100).add().value
+            musicVolume = KeyValue.Int(SETTINGS_MUSIC_VOLUME, 100, min = 0, max = 100).add().value
+            sfxVolume = KeyValue.Int(SETTINGS_SFX_VOLUME, 100, min = 0, max = 100).add().value
         }
 
         allKeyValues = initScope.allKeyValues.toList()

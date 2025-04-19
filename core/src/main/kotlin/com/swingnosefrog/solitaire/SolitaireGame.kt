@@ -29,6 +29,7 @@ class SolitaireGame(paintboxSettings: PaintboxSettings) : PaintboxGame(paintboxS
         lateinit var instance: SolitaireGame
             private set
 
+        val globalVolumeGain: VolumeGain get() = instance.volumeGain
 
         fun createPaintboxSettings(launchArguments: List<String>, logger: Logger, logToFile: File?): PaintboxSettings =
             PaintboxSettings(
@@ -40,6 +41,7 @@ class SolitaireGame(paintboxSettings: PaintboxSettings) : PaintboxGame(paintboxS
     private lateinit var gdxPrefs: GdxPreferences
     lateinit var settings: SolitaireSettings
         private set
+    val volumeGain: VolumeGain by lazy { VolumeGain(settings) }
 
     private lateinit var fullscreenWindowedInputProcessor: IFullscreenWindowedInputProcessor
     private var toggleableDebugKeysInputProcessor: ToggleableDebugKeysInputProcessor? = null

@@ -53,8 +53,11 @@ class TestSolitaireGameScreen(main: SolitaireGame) : AbstractGameScreen(main) {
             onResize(Gdx.graphics.width, Gdx.graphics.height)
             addInputProcessor()
             
-            
             oldGameContainer.dispose()
+
+            gameMusic.transitionToStemMix(GameMusic.StemMixes.ALL, 1f)
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.G)) {
+            
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             gameLogic.animationContainer.renderUpdate(10f)
             gameLogic.checkTableauAfterActivity()
