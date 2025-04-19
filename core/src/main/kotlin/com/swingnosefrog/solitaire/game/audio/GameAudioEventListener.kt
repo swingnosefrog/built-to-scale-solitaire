@@ -1,6 +1,5 @@
 package com.swingnosefrog.solitaire.game.audio
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.Disposable
 import com.swingnosefrog.solitaire.game.Card
@@ -10,10 +9,7 @@ import com.swingnosefrog.solitaire.game.logic.CardStack
 import com.swingnosefrog.solitaire.game.logic.CardZone
 import com.swingnosefrog.solitaire.game.logic.GameEventListener
 import com.swingnosefrog.solitaire.game.logic.GameLogic
-import com.swingnosefrog.solitaire.soundsystem.SoundSystem
 import com.swingnosefrog.solitaire.soundsystem.beads.BeadsSound
-import paintbox.util.gdxutils.GdxDelayedRunnable
-import paintbox.util.gdxutils.GdxRunnableTransition
 
 
 class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disposable {
@@ -24,13 +20,11 @@ class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disp
         private const val FOUNDATION_SOUND_VOLUME = 1f
     }
     
-    private val soundSystem: SoundSystem = gameAudio.soundSystem
-
-    private val dealing: BeadsSound get() = GameAssets.get("sfx_game_dealing_loop")
+    private val dealing: BeadsSound get() = GameAssets.get<BeadsSound>("sfx_game_dealing_loop")
     private var dealingLoopSoundId: Long = -1
     
     private fun stopDealingLoop() {
-        soundSystem.getPlayerOrNull(dealingLoopSoundId)?.kill()
+        gameAudio.getPlayerOrNull(dealingLoopSoundId)?.kill()
         dealingLoopSoundId = -1
     }
     
@@ -43,7 +37,7 @@ class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disp
     }
 
     override fun onDealingStart(gameLogic: GameLogic) {
-        dealingLoopSoundId = soundSystem.playAudio(dealing) { player ->
+        dealingLoopSoundId = gameAudio.playAudio(dealing) { player ->
             player.gain = MOVEMENT_SOUND_VOLUME
         }
     }
@@ -62,13 +56,13 @@ class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disp
         } else {
             GameAssets.get<BeadsSound>("sfx_game_pickup${MathUtils.random(1, 3)}")
         }
-        soundSystem.playAudio(sound) { player ->
+        gameAudio.playAudio(sound) { player ->
             player.gain = MOVEMENT_SOUND_VOLUME
         }
     }
 
     private fun playPlaceSound(volumeMultiplier: Float = 1f) {
-        soundSystem.playAudio(GameAssets.get<BeadsSound>("sfx_game_place")) { player ->
+        gameAudio.playAudio(GameAssets.get<BeadsSound>("sfx_game_place")) { player ->
             player.gain = MOVEMENT_SOUND_VOLUME * volumeMultiplier
         }
     }
@@ -99,7 +93,7 @@ class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disp
         foundationZone: CardZone,
     ) {
         if (card.symbol in CardSymbol.SCALE_CARDS) {
-            soundSystem.playAudio(GameAssets.get<BeadsSound>("sfx_game_foundation_scale_${card.symbol.scaleOrder}")) { player ->
+            gameAudio.playAudio(GameAssets.get<BeadsSound>("sfx_game_foundation_scale_${card.symbol.scaleOrder}")) { player ->
                 player.gain = FOUNDATION_SOUND_VOLUME
             }
         }
@@ -109,7 +103,7 @@ class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disp
         gameLogic: GameLogic,
         freeCellZone: CardZone,
     ) {
-        soundSystem.playAudio(GameAssets.get<BeadsSound>("sfx_game_foundation_widget")) { player ->
+        gameAudio.playAudio(GameAssets.get<BeadsSound>("sfx_game_foundation_widget")) { player ->
             player.gain = 0.65f
         }
     }
@@ -118,14 +112,14 @@ class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disp
         gameLogic: GameLogic,
         foundationZone: CardZone,
     ) {
-        soundSystem.playAudio(GameAssets.get<BeadsSound>("sfx_game_foundation_scale_7")) { player ->
+        gameAudio.playAudio(GameAssets.get<BeadsSound>("sfx_game_foundation_scale_7")) { player ->
             player.gain = FOUNDATION_SOUND_VOLUME
         }
     }
 
     override fun onGameWon(gameLogic: GameLogic) {
         val sound = GameAssets.get<BeadsSound>("sfx_game_won")
-        soundSystem.playAudio(sound) { player ->
+        gameAudio.playAudio(sound) { player ->
             player.gain = 0.75f
         }
 
