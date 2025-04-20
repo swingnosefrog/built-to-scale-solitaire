@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.utils.Align
 import com.swingnosefrog.solitaire.AbstractGameScreen
 import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.game.GameContainer
@@ -43,9 +44,22 @@ class TestSolitaireGameScreen(
 
         super.render(delta)
 
-        gameContainer.gameRenderer.render(delta)
+        val gameRenderer = gameContainer.gameRenderer
+        gameRenderer.render(delta)
 
         main.resetViewportToScreen()
+
+        batch.projectionMatrix = main.emulatedCamera.combined
+        batch.begin()
+        batch.setColor(1f, 1f, 1f, 1f)
+        val font = main.defaultFonts.debugFont
+        font.useFont { f ->
+            f.setColor(1f, 1f, 1f, 1f)
+            f.draw(batch, "R - Restart | Shift+R - Restart with same seed | G - Restart with winning deal | Space - Skip animations",
+                main.emulatedCamera.viewportWidth / 2f, 60f, 0f,
+                Align.center, false)
+        }
+        batch.end()
     }
 
     override fun renderUpdate() {
