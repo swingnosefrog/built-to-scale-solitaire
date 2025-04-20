@@ -6,7 +6,7 @@ import com.swingnosefrog.solitaire.assets.AssetRegistryLoadingScreen
 import com.swingnosefrog.solitaire.game.assets.GameAssetLoader
 import com.swingnosefrog.solitaire.game.assets.GameAssets
 import com.swingnosefrog.solitaire.assets.AssetRegistryAssetLoader
-import com.swingnosefrog.solitaire.screen.TestSolitaireGameScreen
+import com.swingnosefrog.solitaire.screen.main.MainGameScreen
 import com.swingnosefrog.solitaire.steamworks.Steamworks
 import paintbox.PaintboxGame
 import paintbox.PaintboxSettings
@@ -83,15 +83,12 @@ class SolitaireGame(paintboxSettings: PaintboxSettings) : PaintboxGame(paintboxS
 
         Steamworks.init()
 
-        fun initializeScreens() {
-        }
         setScreen(AssetRegistryLoadingScreen(this, AssetRegistry, GameAssets).apply {
             onStart = {}
             onAssetLoadingComplete = {
-                initializeScreens()
             }
             nextScreenProducer = {
-                TestSolitaireGameScreen(this@SolitaireGame)
+                MainGameScreen(this@SolitaireGame)
             }
         })
     }
@@ -108,5 +105,4 @@ class SolitaireGame(paintboxSettings: PaintboxSettings) : PaintboxGame(paintboxS
         settings.persist()
         Steamworks.shutdown()
     }
-    
 }

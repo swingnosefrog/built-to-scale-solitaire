@@ -8,18 +8,15 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
-import paintbox.ui.Anchor
 import paintbox.ui.Pane
 import paintbox.ui.SceneRoot
 import paintbox.ui.area.Insets
 import paintbox.ui.control.TextLabel
-import paintbox.util.gdxutils.grey
-import com.swingnosefrog.solitaire.Localization
 import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.AbstractGameScreen
 
 
-class DebugNothingScreen(main: SolitaireGame) : AbstractGameScreen(main) {
+class DebugNoOpScreen(main: SolitaireGame) : AbstractGameScreen(main) {
 
     val batch: SpriteBatch = main.batch
     val uiCamera: OrthographicCamera = OrthographicCamera().apply {

@@ -14,6 +14,7 @@ import com.swingnosefrog.solitaire.game.logic.CardStack
 import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.game.logic.GameLogic.Companion.CARD_HEIGHT
 import com.swingnosefrog.solitaire.game.logic.GameLogic.Companion.CARD_WIDTH
+import paintbox.binding.BooleanVar
 import paintbox.util.gdxutils.fillRect
 
 
@@ -28,10 +29,14 @@ open class GameRenderer(
         setToOrtho(false, logic.viewportWidth, logic.viewportHeight)
     }
     val viewport: Viewport = FitViewport(camera.viewportWidth, camera.viewportHeight, camera)
+    
+    val shouldApplyViewport: BooleanVar = BooleanVar(true)
 
     open fun render(deltaSec: Float) {
         camera.update()
-        viewport.apply()
+        if (shouldApplyViewport.get()) {
+            viewport.apply()
+        }
         
         batch.projectionMatrix = camera.combined
         batch.begin()
