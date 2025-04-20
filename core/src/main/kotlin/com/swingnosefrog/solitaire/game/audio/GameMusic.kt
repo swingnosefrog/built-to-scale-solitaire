@@ -5,6 +5,8 @@ import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.utils.Disposable
 import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.game.assets.GameAssets
+import com.swingnosefrog.solitaire.game.logic.GameEventListener
+import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.soundsystem.SoundSystem
 import com.swingnosefrog.solitaire.soundsystem.beads.BeadsSound
 import com.swingnosefrog.solitaire.soundsystem.sample.PlayerLike
@@ -48,6 +50,8 @@ class GameMusic(soundSystem: SoundSystem) : Disposable {
     private var currentStemMix: StemMix = StemMixes.ALL
     private val stemPlayers: Map<StemType, PlayerLike>
     private var currentStemMixTransition: GdxRunnableTransition? = null
+    
+    val gameEventListener: GameEventListener = this.GameListener()
 
     init {
         stemPlayers = stemAudio.entries.associate { (stemType, beadsSound) ->
@@ -125,5 +129,14 @@ class GameMusic(soundSystem: SoundSystem) : Disposable {
     override fun dispose() {
         audioContext.out.removeAllConnections(commonUgen)
         commonUgen.pause(true)
+    }
+
+
+    private inner class GameListener : GameEventListener.Adapter() {
+
+        override fun onGameWon(gameLogic: GameLogic) {
+            attenuateMusicForGameWinSfx()
+            transitionToStemMix(StemMixes.AFTER_WIN, 0.5f)
+        }
     }
 }

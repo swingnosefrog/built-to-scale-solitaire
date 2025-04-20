@@ -14,7 +14,6 @@ import paintbox.binding.ReadOnlyFloatVar
 class GameAudio(
     val gameLogic: GameLogic,
     private val soundSystem: SoundSystem,
-    val music: GameMusic?,
 ) : Disposable {
 
     val eventListener: GameAudioEventListener = GameAudioEventListener(this)

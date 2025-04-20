@@ -129,10 +129,6 @@ class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disp
         gameAudio.playSfx(sound) { player ->
             player.gain = 0.75f
         }
-
-        val gameMusic = gameAudio.music
-        gameMusic?.attenuateMusicForGameWinSfx()
-        gameMusic?.transitionToStemMix(GameMusic.StemMixes.AFTER_WIN, 0.5f)
     }
 
 }
