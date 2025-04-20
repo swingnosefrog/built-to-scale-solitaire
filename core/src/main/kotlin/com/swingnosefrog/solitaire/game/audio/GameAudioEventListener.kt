@@ -14,20 +14,14 @@ import com.swingnosefrog.solitaire.soundsystem.beads.BeadsSound
 
 class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disposable {
 
-    companion object {
-
-        private const val MOVEMENT_SOUND_VOLUME = 1f
-        private const val FOUNDATION_SOUND_VOLUME = 1f
-    }
-    
     private val dealing: BeadsSound get() = GameAssets.get<BeadsSound>("sfx_game_dealing_loop")
     private var dealingLoopSoundId: Long = -1
-    
+
     private fun stopDealingLoop() {
         gameAudio.getPlayerOrNull(dealingLoopSoundId)?.kill()
         dealingLoopSoundId = -1
     }
-    
+
     fun stopAllSounds() {
         stopDealingLoop()
     }
@@ -37,9 +31,7 @@ class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disp
     }
 
     override fun onDealingStart(gameLogic: GameLogic) {
-        dealingLoopSoundId = gameAudio.playSfx(dealing) { player ->
-            player.gain = MOVEMENT_SOUND_VOLUME
-        }
+        dealingLoopSoundId = gameAudio.playSfx(dealing)
     }
 
     override fun onDealingEnd(gameLogic: GameLogic) {
@@ -56,14 +48,12 @@ class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disp
         } else {
             GameAssets.get<BeadsSound>("sfx_game_pickup${MathUtils.random(1, 3)}")
         }
-        gameAudio.playSfx(sound) { player ->
-            player.gain = MOVEMENT_SOUND_VOLUME
-        }
+        gameAudio.playSfx(sound)
     }
 
     private fun playPlaceSound(volumeMultiplier: Float = 1f) {
         gameAudio.playSfx(GameAssets.get<BeadsSound>("sfx_game_place")) { player ->
-            player.gain = MOVEMENT_SOUND_VOLUME * volumeMultiplier
+            player.gain = volumeMultiplier
         }
     }
 
@@ -92,6 +82,8 @@ class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disp
         card: Card,
         targetZone: CardZone,
     ) {
+        val sound = GameAssets.get<BeadsSound>("sfx_game_whoosh${MathUtils.random(1, 3)}")
+        gameAudio.playSfx(sound)
     }
 
     override fun onCardPlacedInFoundation(
@@ -100,9 +92,7 @@ class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disp
         foundationZone: CardZone,
     ) {
         if (card.symbol in CardSymbol.SCALE_CARDS) {
-            gameAudio.playSfx(GameAssets.get<BeadsSound>("sfx_game_foundation_scale_${card.symbol.scaleOrder}")) { player ->
-                player.gain = FOUNDATION_SOUND_VOLUME
-            }
+            gameAudio.playSfx(GameAssets.get<BeadsSound>("sfx_game_foundation_scale_${card.symbol.scaleOrder}"))
         }
     }
 
@@ -119,9 +109,7 @@ class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disp
         gameLogic: GameLogic,
         foundationZone: CardZone,
     ) {
-        gameAudio.playSfx(GameAssets.get<BeadsSound>("sfx_game_foundation_scale_7")) { player ->
-            player.gain = FOUNDATION_SOUND_VOLUME
-        }
+        gameAudio.playSfx(GameAssets.get<BeadsSound>("sfx_game_foundation_scale_7"))
     }
 
     override fun onGameWon(gameLogic: GameLogic) {
@@ -130,5 +118,4 @@ class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disp
             player.gain = 0.75f
         }
     }
-
 }
