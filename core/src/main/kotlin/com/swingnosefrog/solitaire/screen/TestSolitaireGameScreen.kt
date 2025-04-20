@@ -8,19 +8,29 @@ import com.swingnosefrog.solitaire.AbstractGameScreen
 import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.game.GameContainer
 import com.swingnosefrog.solitaire.game.audio.GameMusic
+import com.swingnosefrog.solitaire.game.logic.DeckInitializer
 import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.soundsystem.SoundSystem
 import paintbox.util.gdxutils.isShiftDown
 
 
-class TestSolitaireGameScreen(main: SolitaireGame) : AbstractGameScreen(main) {
+class TestSolitaireGameScreen(
+    main: SolitaireGame,
+    deckInitializer: DeckInitializer? = null,
+) : AbstractGameScreen(main) {
+
+    companion object {
+
+        private fun getDefaultDeckInitializer(): DeckInitializer = DeckInitializer.RandomSeed()
+    }
 
     val batch: SpriteBatch = main.batch
 
     val soundSystem = SoundSystem.createDefaultSoundSystem()
 
+    val deckInitializer: DeckInitializer = deckInitializer ?: getDefaultDeckInitializer()
     val gameMusic: GameMusic = GameMusic(soundSystem)
-    var gameContainer: GameContainer = GameContainer({ GameLogic() }, batch, soundSystem, gameMusic)
+    var gameContainer: GameContainer = GameContainer({ GameLogic(this.deckInitializer) }, batch, soundSystem, gameMusic)
         private set
 
     init {
@@ -45,23 +55,32 @@ class TestSolitaireGameScreen(main: SolitaireGame) : AbstractGameScreen(main) {
         gameLogic.renderUpdate(Gdx.graphics.deltaTime)
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
-            val oldGameContainer = this.gameContainer
-            removeInputProcessor()
-            
-            val useOldRandomSeed = if (Gdx.input.isShiftDown()) gameLogic.randomSeed else null
-            gameContainer = GameContainer({ GameLogic(useOldRandomSeed) }, batch, soundSystem, gameMusic)
-            onResize(Gdx.graphics.width, Gdx.graphics.height)
-            addInputProcessor()
-            
-            oldGameContainer.dispose()
-
-            gameMusic.transitionToStemMix(GameMusic.StemMixes.ALL, 1f)
+            val usePrevDeckInitializer = if (Gdx.input.isShiftDown()) gameLogic.deckInitializer else null
+            startNewGame(usePrevDeckInitializer ?: getDefaultDeckInitializer())
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.G)) {
-            
+            startNewGame(DeckInitializer.DebugAutoWin)
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             gameLogic.animationContainer.renderUpdate(10f)
             gameLogic.checkTableauAfterActivity()
         }
+    }
+    
+    private fun startNewGame(deckInitializer: DeckInitializer) {
+        val oldGameContainer = this.gameContainer
+        removeInputProcessor()
+
+        gameContainer = GameContainer(
+            { GameLogic(deckInitializer) },
+            batch,
+            soundSystem,
+            gameMusic
+        )
+        onResize(Gdx.graphics.width, Gdx.graphics.height)
+        addInputProcessor()
+
+        oldGameContainer.dispose()
+
+        gameMusic.transitionToStemMix(GameMusic.StemMixes.ALL, 1f)
     }
 
     override fun resize(width: Int, height: Int) {

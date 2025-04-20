@@ -10,7 +10,7 @@ import paintbox.Paintbox
 import kotlin.math.floor
 import kotlin.random.Random
 
-class GameLogic(randomSeed: Long? = null) {
+class GameLogic(val deckInitializer: DeckInitializer) {
 
     companion object {
 
@@ -21,8 +21,7 @@ class GameLogic(randomSeed: Long? = null) {
     val viewportWidth: Float = 20f
     val viewportHeight: Float = 11.25f
 
-    val randomSeed: Long = randomSeed ?: System.currentTimeMillis()
-    private val deck: List<Card> = Card.createStandardDeck().shuffled(Random(this.randomSeed))
+    private val deck: List<Card> = deckInitializer.initializeDeck(Card.createStandardDeck())
 
     val zones: CardZones = CardZones(this)
     val gameInput: GameInput by lazy { GameInput(this) }
@@ -33,7 +32,7 @@ class GameLogic(randomSeed: Long? = null) {
     private var gameWon: Boolean = false
 
     init {
-        Paintbox.LOGGER.debug("GameLogic: Random seed: ${this.randomSeed}")
+        Paintbox.LOGGER.debug("DeckInitializer: $deckInitializer", tag = "GameLogic")
     }
 
     init {
