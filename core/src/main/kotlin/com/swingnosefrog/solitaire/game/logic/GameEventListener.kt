@@ -15,6 +15,8 @@ interface GameEventListener {
 
     fun onCardStackPlacedDown(gameLogic: GameLogic, cardStack: CardStack, toZone: CardZone)
 
+    fun onCardAutoMoved(gameLogic: GameLogic, card: Card, targetZone: CardZone)
+    
     fun onCardPlacedInFoundation(gameLogic: GameLogic, card: Card, foundationZone: CardZone)
 
     fun onWidgetSetCompleted(gameLogic: GameLogic, freeCellZone: CardZone)
@@ -50,6 +52,13 @@ interface GameEventListener {
             gameLogic: GameLogic,
             cardStack: CardStack,
             toZone: CardZone,
+        ) {
+        }
+
+        override fun onCardAutoMoved(
+            gameLogic: GameLogic,
+            card: Card,
+            targetZone: CardZone,
         ) {
         }
 

@@ -8,7 +8,6 @@ import com.swingnosefrog.solitaire.game.animation.CardAnimation
 import com.swingnosefrog.solitaire.game.animation.GameAnimation
 import paintbox.Paintbox
 import kotlin.math.floor
-import kotlin.random.Random
 
 class GameLogic(val deckInitializer: DeckInitializer) {
 
@@ -114,6 +113,7 @@ class GameLogic(val deckInitializer: DeckInitializer) {
 
         // Possible animations for auto-placing into the foundation pile
         val autoPlaceZones = zones.playerZones + zones.freeCellZones
+        val spareZone = zones.spareZone
         for (zone in autoPlaceZones) {
             // Check if last item in the zone can be put in the foundation pile
             // Other cards cannot be played on top of it, and if its value is 3 or greater, all the cards with one less value must ALREADY be in the foundation
@@ -122,7 +122,8 @@ class GameLogic(val deckInitializer: DeckInitializer) {
                 if (tail.symbol == CardSymbol.SPARE) {
                     // If it is the spare card, move it immediately to the spare zone
                     gameInput.cancelDrag()
-                    enqueueDefaultCardMoveAnimation(tail, zone, zones.spareZone)
+                    eventDispatcher.onCardAutoMoved(this, tail, spareZone)
+                    enqueueDefaultCardMoveAnimation(tail, zone, spareZone)
                     return
                 } else if (!tail.symbol.isNumeric()) {
                     continue
@@ -154,6 +155,7 @@ class GameLogic(val deckInitializer: DeckInitializer) {
 
                 if (targetFoundation != null && canMoveToFoundation) {
                     gameInput.cancelDrag()
+                    eventDispatcher.onCardAutoMoved(this, tail, targetFoundation)
                     enqueueDefaultCardMoveAnimation(tail, zone, targetFoundation)
                     return
                 }
@@ -161,7 +163,6 @@ class GameLogic(val deckInitializer: DeckInitializer) {
         }
 
         // Check if a spare card can be placed to cap a foundation
-        val spareZone = this.zones.spareZone
         if (spareZone.cardStack.cardList.isNotEmpty()) {
             val tail = spareZone.cardStack.cardList.last()
             val tailSuit = tail.suit
@@ -171,6 +172,7 @@ class GameLogic(val deckInitializer: DeckInitializer) {
             }
             if (targetFoundation != null) {
                 gameInput.cancelDrag()
+                eventDispatcher.onCardAutoMoved(this, tail, targetFoundation)
                 enqueueDefaultCardMoveAnimation(tail, spareZone, targetFoundation, durationSec = 0.333f)
                 return
             }
@@ -183,6 +185,11 @@ class GameLogic(val deckInitializer: DeckInitializer) {
         toZone: CardZone,
         durationSec: Float? = null,
     ) {
+        val onCompleteAction: () -> Unit = {
+            if (toZone in zones.foundationZones) {
+                eventDispatcher.onCardPlacedInFoundation(this, card, toZone)
+            }
+        }
         animationContainer.enqueueAnimation(
             CardAnimation(
                 card,
@@ -190,9 +197,8 @@ class GameLogic(val deckInitializer: DeckInitializer) {
                 toZone,
                 durationSec ?: 0.25f,
                 0f,
-                onCompleteAction = {
-                    eventDispatcher.onCardPlacedInFoundation(this, card, toZone)
-                })
+                onCompleteAction = onCompleteAction
+            )
         )
     }
     
@@ -334,6 +340,14 @@ class GameLogic(val deckInitializer: DeckInitializer) {
             toZone: CardZone,
         ) {
             listeners.forEach { it.onCardStackPlacedDown(gameLogic, cardStack, toZone) }
+        }
+
+        override fun onCardAutoMoved(
+            gameLogic: GameLogic,
+            card: Card,
+            targetZone: CardZone,
+        ) {
+            listeners.forEach { it.onCardAutoMoved(gameLogic, card, targetZone) }
         }
 
         override fun onCardPlacedInFoundation(

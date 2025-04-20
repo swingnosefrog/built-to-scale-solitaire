@@ -87,6 +87,13 @@ class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disp
         playPlaceSound()
     }
 
+    override fun onCardAutoMoved(
+        gameLogic: GameLogic,
+        card: Card,
+        targetZone: CardZone,
+    ) {
+    }
+
     override fun onCardPlacedInFoundation(
         gameLogic: GameLogic,
         card: Card,
