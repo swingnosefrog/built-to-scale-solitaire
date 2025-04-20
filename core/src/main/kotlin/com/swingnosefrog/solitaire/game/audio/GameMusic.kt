@@ -99,6 +99,8 @@ class GameMusic(soundSystem: SoundSystem) : Disposable {
         }
         currentStemMixTransition = newTransition
         Gdx.app.postRunnable(newTransition)
+        
+        this.currentStemMix = newStemMix
     }
 
     fun attenuateMusicForGameWinSfx(
