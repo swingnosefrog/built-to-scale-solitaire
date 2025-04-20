@@ -103,7 +103,7 @@ class TestSolitaireGameScreen(
     }
     
     private fun onResize(width: Int, height: Int) {
-        gameContainer.gameRenderer.resize(width, height)
+        gameContainer.resize(width, height)
     }
 
     override fun show() {

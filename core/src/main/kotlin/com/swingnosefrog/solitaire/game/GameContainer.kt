@@ -25,6 +25,10 @@ class GameContainer(
     val inputProcessor: InputProcessor = GameInputProcessor(gameInput, gameRenderer.viewport)
     val gameAudio: GameAudio = GameAudio(gameLogic, soundSystem, music = gameMusic)
 
+    fun resize(width: Int, height: Int) {
+        gameRenderer.resize(width, height)
+    }
+    
     override fun dispose() {
         gameAudio.dispose()
     }
