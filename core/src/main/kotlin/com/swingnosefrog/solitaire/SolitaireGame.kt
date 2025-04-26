@@ -6,6 +6,7 @@ import com.swingnosefrog.solitaire.assets.AssetRegistryLoadingScreen
 import com.swingnosefrog.solitaire.game.assets.GameAssetLoader
 import com.swingnosefrog.solitaire.game.assets.GameAssets
 import com.swingnosefrog.solitaire.assets.AssetRegistryAssetLoader
+import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.screen.main.MainGameScreen
 import com.swingnosefrog.solitaire.steamworks.Steamworks
 import paintbox.PaintboxGame
@@ -43,19 +44,10 @@ class SolitaireGame(paintboxSettings: PaintboxSettings) : PaintboxGame(paintboxS
         private set
     val volumeGain: VolumeGain by lazy { VolumeGain(settings) }
 
+    val fonts: SolitaireFonts = SolitaireFonts(this)
+    
     private lateinit var fullscreenWindowedInputProcessor: IFullscreenWindowedInputProcessor
     private var toggleableDebugKeysInputProcessor: ToggleableDebugKeysInputProcessor? = null
-
-    override fun createDebugKeysInputProcessor(): IDebugKeysInputProcessor {
-        val currentProcessor = toggleableDebugKeysInputProcessor
-        if (currentProcessor != null) return currentProcessor
-
-        val processor = ToggleableDebugKeysInputProcessor()
-        toggleableDebugKeysInputProcessor = processor
-        return processor
-    }
-
-    override fun getWindowTitle(): String = "${Solitaire.TITLE} ${Solitaire.VERSION}"
 
     override fun create() {
         super.create()
@@ -70,6 +62,8 @@ class SolitaireGame(paintboxSettings: PaintboxSettings) : PaintboxGame(paintboxS
             setStartupSettings()
         }
         
+        fonts.registerFonts()
+
         fullscreenWindowedInputProcessor =
             DefaultFullscreenWindowedInputProcessor(
                 Solitaire.DEFAULT_SIZE,
@@ -92,6 +86,17 @@ class SolitaireGame(paintboxSettings: PaintboxSettings) : PaintboxGame(paintboxS
             }
         })
     }
+
+    override fun createDebugKeysInputProcessor(): IDebugKeysInputProcessor {
+        val currentProcessor = toggleableDebugKeysInputProcessor
+        if (currentProcessor != null) return currentProcessor
+
+        val processor = ToggleableDebugKeysInputProcessor()
+        toggleableDebugKeysInputProcessor = processor
+        return processor
+    }
+
+    override fun getWindowTitle(): String = "${Solitaire.TITLE} ${Solitaire.VERSION}"
 
     override fun postRender() {
         super.postRender()
