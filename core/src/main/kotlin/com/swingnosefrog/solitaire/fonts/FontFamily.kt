@@ -29,4 +29,8 @@ data class FontFamily(
         
         return FontFamilyInstance(this, weight, style)
     }
+    
+    operator fun get(weight: FontWeight, style: FontStyle): FontFamilyInstance {
+        return createInstance(weight, style)
+    }
 }

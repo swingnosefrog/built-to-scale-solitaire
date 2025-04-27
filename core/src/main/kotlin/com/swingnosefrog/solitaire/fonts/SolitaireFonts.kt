@@ -30,13 +30,13 @@ class SolitaireFonts(private val game: SolitaireGame) {
     var uiHeadingFont: PaintboxFont by bind(FontKeys.UI_HEADING)
         private set
     
-    var uiMainSerifFont: PaintboxFont by bind(uiMainSerifFamily.createInstance(FontWeight.MEDIUM, FontStyle.REGULAR))
+    var uiMainSerifFont: PaintboxFont by bind(uiMainSerifFamily[FontWeight.MEDIUM, FontStyle.REGULAR])
         private set
-    var uiMainSerifFontBold: PaintboxFont by bind(uiMainSerifFamily.createInstance(FontWeight.BOLD, FontStyle.REGULAR))
+    var uiMainSerifFontBold: PaintboxFont by bind(uiMainSerifFamily[FontWeight.BOLD, FontStyle.REGULAR])
         private set
-    var uiMainSerifFontItalic: PaintboxFont by bind(uiMainSerifFamily.createInstance(FontWeight.MEDIUM, FontStyle.ITALIC))
+    var uiMainSerifFontItalic: PaintboxFont by bind(uiMainSerifFamily[FontWeight.MEDIUM, FontStyle.ITALIC])
         private set
-    var uiMainSerifFontBoldItalic: PaintboxFont by bind(uiMainSerifFamily.createInstance(FontWeight.BOLD, FontStyle.ITALIC))
+    var uiMainSerifFontBoldItalic: PaintboxFont by bind(uiMainSerifFamily[FontWeight.BOLD, FontStyle.ITALIC])
         private set
 
     val uiMainSerifMarkup: Markup by lazy {
