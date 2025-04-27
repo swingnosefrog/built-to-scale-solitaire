@@ -5,9 +5,11 @@ import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.Hinting
 import com.swingnosefrog.solitaire.SolitaireGame
 import paintbox.font.FontCache
 import paintbox.font.FreeTypeFontAfterLoad
+import paintbox.font.Markup
 import paintbox.font.PaintboxFont
 import paintbox.font.PaintboxFontFreeType
 import paintbox.font.PaintboxFontParams
@@ -18,12 +20,38 @@ class SolitaireFonts(private val game: SolitaireGame) {
 
     private val fontCache: FontCache get() = game.fontCache
 
+    private val uiMainSerifFamily: FontFamily = FontFamily(
+        "Crimson Pro",
+        setOf(FontWeight.MEDIUM, FontWeight.BOLD),
+        setOf(FontStyle.REGULAR, FontStyle.ITALIC)
+    )
+    
 
-    var headingFont: PaintboxFont by bind(FontKeys.OUTFIT_BOLD)
+    var uiHeadingFont: PaintboxFont by bind(FontKeys.UI_HEADING)
         private set
+    
+    var uiMainSerifFont: PaintboxFont by bind(uiMainSerifFamily.createInstance(FontWeight.MEDIUM, FontStyle.REGULAR))
+        private set
+    var uiMainSerifFontBold: PaintboxFont by bind(uiMainSerifFamily.createInstance(FontWeight.BOLD, FontStyle.REGULAR))
+        private set
+    var uiMainSerifFontItalic: PaintboxFont by bind(uiMainSerifFamily.createInstance(FontWeight.MEDIUM, FontStyle.ITALIC))
+        private set
+    var uiMainSerifFontBoldItalic: PaintboxFont by bind(uiMainSerifFamily.createInstance(FontWeight.BOLD, FontStyle.ITALIC))
+        private set
+
+    val uiMainSerifMarkup: Markup by lazy {
+        Markup.createWithBoldItalic(
+            uiMainSerifFont,
+            uiMainSerifFontBold,
+            uiMainSerifFontItalic,
+            uiMainSerifFontBoldItalic,
+        )
+    }
 
     fun registerFonts() {
         val cache = this.fontCache
+        
+        val fontsFolder = Gdx.files.internal("fonts/")
 
         val defaultReferenceWindowSize = WindowSize(1280, 720)
         fun createDefaultFontParams(fileHandle: FileHandle): PaintboxFontParams {
@@ -43,7 +71,7 @@ class SolitaireFonts(private val game: SolitaireGame) {
             color = Color(1f, 1f, 1f, 1f)
             borderColor = Color(0f, 0f, 0f, 1f)
             characters = " a" // Needed to at least put one glyph in each font to prevent errors
-            hinting = FreeTypeFontGenerator.Hinting.Medium
+            hinting = Hinting.Medium
         }
 
         val defaultAfterLoad: FreeTypeFontAfterLoad = { font ->
@@ -53,20 +81,17 @@ class SolitaireFonts(private val game: SolitaireGame) {
         val defaultScaledFontAfterLoad: FreeTypeFontAfterLoad = { font ->
             font.setUseIntegerPositions(false) // Stops glyphs from being offset due to rounding
         }
-        val defaultFontSize = 20
 
         fun addFontFamily(
-            familyName: String, fontIDPrefix: String = familyName, fileExt: String = "ttf",
-            fontFamilies: List<FontFamily> = FontFamily.regularBoldWithItalic,
-            fontSize: Int = defaultFontSize, borderWidth: Float = 1.5f,
-            folderName: String = familyName,
-            hinting: FreeTypeFontGenerator.Hinting? = null, generateBordered: Boolean = true,
-            scaleToReferenceSize: Boolean = false, referenceSize: WindowSize = defaultReferenceWindowSize,
-            afterLoadFunc: FreeTypeFontAfterLoad = defaultAfterLoad,
+            family: FontFamily,
+            fontSize: Int,
+            scaleToReferenceSize: Boolean = true, referenceSize: WindowSize = defaultReferenceWindowSize,
+            hinting: Hinting? = null,
+            afterLoadFunc: FreeTypeFontAfterLoad = if (scaleToReferenceSize) defaultScaledFontAfterLoad else defaultAfterLoad,
         ) {
-            fontFamilies.forEach { family ->
-                val fileHandle = Gdx.files.internal("fonts/${folderName}/${family.toFullFilename(familyName, fileExt)}")
-                cache[family.toID(fontIDPrefix, false)] = PaintboxFontFreeType(
+            family.createAllInstances().forEach { instance ->
+                val fileHandle = fontsFolder.child("${family.familyName}/${instance.getFilename()}")
+                cache[instance] = PaintboxFontFreeType(
                     PaintboxFontParams(fileHandle, scaleToReferenceSize, referenceSize),
                     createIncrementalFtfParam().apply {
                         if (hinting != null) {
@@ -74,34 +99,26 @@ class SolitaireFonts(private val game: SolitaireGame) {
                         }
                         this.size = fontSize
                         this.borderWidth = 0f
-                    }).setAfterLoad(afterLoadFunc)
-                if (generateBordered) {
-                    cache[family.toID(fontIDPrefix, true)] = PaintboxFontFreeType(
-                        PaintboxFontParams(fileHandle, scaleToReferenceSize, referenceSize),
-                        createIncrementalFtfParam().apply {
-                            if (hinting != null) {
-                                this.hinting = hinting
-                            }
-                            this.size = fontSize
-                            this.borderWidth = borderWidth
-                        }).setAfterLoad(afterLoadFunc)
-                }
+                    }
+                ).setAfterLoad(afterLoadFunc)
             }
         }
         
-        headingFont = PaintboxFontFreeType(
-            createDefaultFontParams(Gdx.files.internal("fonts/Outfit/Outfit-SemiBold.ttf")),
+        uiHeadingFont = PaintboxFontFreeType(
+            createDefaultFontParams(fontsFolder.child("Outfit/Outfit-SemiBold.ttf")),
             createIncrementalFtfParam().apply {
-                hinting = FreeTypeFontGenerator.Hinting.Slight
-                size = 20
+                hinting = Hinting.Slight
+                size = 64
                 borderWidth = 0f
             }
-        ).setAfterLoad(defaultAfterLoad)
+        ).setAfterLoad(defaultScaledFontAfterLoad)
+        
+        addFontFamily(uiMainSerifFamily, fontSize = 32, hinting = Hinting.Medium)
     }
 
-    private fun bind(key: FontKeys): FontBindingDelegate = FontBindingDelegate(key)
+    private fun bind(key: Any): FontBindingDelegate = FontBindingDelegate(key)
     
-    private inner class FontBindingDelegate(private val key: FontKeys) {
+    private inner class FontBindingDelegate(private val key: Any) {
 
         operator fun getValue(thisRef: SolitaireFonts, property: KProperty<*>): PaintboxFont {
             return fontCache[key]
@@ -115,7 +132,8 @@ class SolitaireFonts(private val game: SolitaireGame) {
 
     private enum class FontKeys {
 
-        OUTFIT_BOLD,
+        UI_HEADING,
+        
 
     }
 }

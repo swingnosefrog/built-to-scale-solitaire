@@ -16,6 +16,7 @@ import com.swingnosefrog.solitaire.game.logic.DeckInitializer
 import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.soundsystem.SoundSystem
 import paintbox.framebuffer.FrameBufferManager
+import paintbox.input.ToggleableInputProcessor
 
 class MainGameScreen(
     main: SolitaireGame,
@@ -32,17 +33,18 @@ class MainGameScreen(
     private val soundSystem: SoundSystem = SoundSystem.createDefaultSoundSystem()
     private val gameMusic: GameMusic = GameMusic(soundSystem)
 
+    private val gameInputMultiplexer: InputMultiplexer = InputMultiplexer()
     private var _backingGameContainer: GameContainer? = null
     var gameContainer: GameContainer
         private set(newValue) {
             val oldValue = _backingGameContainer
             if (oldValue != null) {
-                this.screenInputMultiplexer.removeProcessor(oldValue.inputProcessor)
+                this.gameInputMultiplexer.removeProcessor(oldValue.inputProcessor)
             }
 
             newValue.resize(Gdx.graphics.width, Gdx.graphics.height)
             newValue.gameRenderer.shouldApplyViewport.set(true)
-            this.screenInputMultiplexer.addProcessor(newValue.inputProcessor)
+            this.gameInputMultiplexer.addProcessor(newValue.inputProcessor)
             _backingGameContainer = newValue
 
             oldValue?.dispose()
@@ -57,10 +59,13 @@ class MainGameScreen(
     private val gameFrameBufferMgr: FrameBufferManager = FrameBufferManager(
         1, FrameBufferManager.BufferSettings(Pixmap.Format.RGB888), scaling = gameFrameBufferViewport.scaling,
     )
-    
+
     private val ui: MainGameUi = MainGameUi(this)
+    private val toggleableGameInputProcessor: ToggleableInputProcessor = ToggleableInputProcessor(gameInputMultiplexer)
             
     init {
+        toggleableGameInputProcessor.enabled.bind { !ui.isPauseMenuOpen.use() }
+        
         this.screenInputMultiplexer.addProcessor(ui.inputProcessor)
         
         startNewGame(DeckInitializer.RandomSeed())
@@ -68,6 +73,7 @@ class MainGameScreen(
         soundSystem.startRealtime()
         
         this.screenInputMultiplexer.addProcessor(DebugInputAdapter(this))
+        this.screenInputMultiplexer.addProcessor(toggleableGameInputProcessor)
     }
     
     fun startNewGame(deckInitializer: DeckInitializer) {
