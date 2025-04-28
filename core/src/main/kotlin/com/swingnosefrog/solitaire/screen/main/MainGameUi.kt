@@ -9,8 +9,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.swingnosefrog.solitaire.screen.main.menu.MainGameMenus
-import com.swingnosefrog.solitaire.screen.main.menu.MenuController
-import com.swingnosefrog.solitaire.screen.main.menu.MenuInput
+import com.swingnosefrog.solitaire.menu.MenuController
+import com.swingnosefrog.solitaire.menu.MenuInput
 import paintbox.Paintbox
 import paintbox.binding.BooleanVar
 import paintbox.binding.ReadOnlyBooleanVar

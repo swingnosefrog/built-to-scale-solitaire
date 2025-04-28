@@ -7,10 +7,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.Align
 import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
-import com.swingnosefrog.solitaire.screen.main.menu.Menu
-import com.swingnosefrog.solitaire.screen.main.menu.MenuController
-import com.swingnosefrog.solitaire.screen.main.menu.MenuInput
-import com.swingnosefrog.solitaire.screen.main.menu.MenuOption
+import com.swingnosefrog.solitaire.menu.Menu
+import com.swingnosefrog.solitaire.menu.MenuController
+import com.swingnosefrog.solitaire.menu.MenuInput
+import com.swingnosefrog.solitaire.menu.MenuOption
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 import paintbox.font.Markup

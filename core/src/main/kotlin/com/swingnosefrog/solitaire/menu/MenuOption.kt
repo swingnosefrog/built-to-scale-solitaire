@@ -1,4 +1,4 @@
-package com.swingnosefrog.solitaire.screen.main.menu
+package com.swingnosefrog.solitaire.menu
 
 import paintbox.binding.ReadOnlyVar
 

@@ -2,7 +2,9 @@ package com.swingnosefrog.solitaire.screen.main.menu
 
 import com.badlogic.gdx.Gdx
 import com.swingnosefrog.solitaire.Localization
-
+import com.swingnosefrog.solitaire.menu.MenuOption
+import com.swingnosefrog.solitaire.menu.QuitConfirmationMenu
+import com.swingnosefrog.solitaire.menu.RootMenu
 
 @Suppress("JoinDeclarationAndAssignment")
 class MainGameMenus(
