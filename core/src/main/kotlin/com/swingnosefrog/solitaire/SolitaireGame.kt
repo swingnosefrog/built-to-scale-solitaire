@@ -91,7 +91,9 @@ class SolitaireGame(paintboxSettings: PaintboxSettings) : PaintboxGame(paintboxS
         val currentProcessor = toggleableDebugKeysInputProcessor
         if (currentProcessor != null) return currentProcessor
 
-        val processor = ToggleableDebugKeysInputProcessor()
+        val processor = ToggleableDebugKeysInputProcessor().apply { 
+            this.reloadableLocalizationInstances = listOf(Localization)
+        }
         toggleableDebugKeysInputProcessor = processor
         return processor
     }
