@@ -10,6 +10,9 @@ class AssetRegistryAssetLoader : AssetLoaderBase<AssetRegistry>(AssetRegistry) {
     override fun addManagedAssets(manager: AssetManager) {
         super.addManagedAssets(manager)
 
+        val assetRegistry = assetRegistryInstance
+        
+        assetRegistry.loadAsset<Texture>("ui_nut_icon", "textures/ui/nut_icon.png", linearTexture())
     }
 
     override fun addUnmanagedAssets(assets: MutableMap<String, Any>) {
