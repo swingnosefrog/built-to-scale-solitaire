@@ -8,14 +8,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
-import com.swingnosefrog.solitaire.screen.main.menu.Menu
+import com.swingnosefrog.solitaire.screen.main.menu.MainGameMenus
 import com.swingnosefrog.solitaire.screen.main.menu.MenuController
 import com.swingnosefrog.solitaire.screen.main.menu.MenuInput
-import com.swingnosefrog.solitaire.screen.main.menu.MenuOption
 import paintbox.Paintbox
 import paintbox.binding.BooleanVar
 import paintbox.binding.ReadOnlyBooleanVar
-import paintbox.binding.toConstVar
 import paintbox.input.ToggleableInputProcessor
 import paintbox.ui.SceneRoot
 
@@ -42,8 +40,8 @@ class MainGameUi(private val mainGameScreen: MainGameScreen) {
         inputProcessor.addProcessor(sceneRootInputProcessor)
         inputProcessor.addProcessor(uiInputHandler)
 
-        sceneRootInputProcessor.enabled.bind { _isPauseMenuOpen.use() }
-        uiSceneRoot.visible.bind { _isPauseMenuOpen.use() }
+        sceneRootInputProcessor.enabled.bind { isPauseMenuOpen.use() }
+        uiSceneRoot.visible.bind { isPauseMenuOpen.use() }
     }
 
     init {
@@ -74,21 +72,13 @@ class MainGameUi(private val mainGameScreen: MainGameScreen) {
             _isPauseMenuOpen.set(true)
             
             val gameContainer = mainGameScreen.gameContainer
-            if (!_isPauseMenuOpen.get() && gameContainer.gameInput.isDragging()) {
+            if (!isPauseMenuOpen.get() && gameContainer.gameInput.isDragging()) {
                 gameContainer.gameInput.cancelDrag()
             }
-            
+
+            val menus = MainGameMenus(requestCloseMenu = { closePauseMenu() })
             menuController.clearMenuStack()
-            menuController.setNewMenu(
-                Menu(
-                    "testRoot", "Menu".toConstVar(), listOf(
-                        MenuOption.Custom("Resume".toConstVar()) {},
-                        MenuOption.Custom("How to Play".toConstVar()) {},
-                        MenuOption.Custom("Settings".toConstVar()) {},
-                        MenuOption.Custom("Quit Game".toConstVar()) {},
-                    )
-                )
-            )
+            menuController.setNewMenu(menus.rootMenu)
         }
 
         private fun closePauseMenu() {
@@ -144,7 +134,7 @@ class MainGameUi(private val mainGameScreen: MainGameScreen) {
                 }
             }
 
-            if (_isPauseMenuOpen.get() && Paintbox.debugMode.get() && keycode == Input.Keys.R) {
+            if (isPauseMenuOpen.get() && Paintbox.debugMode.get() && keycode == Input.Keys.R) {
                 debugReinitSceneRoot()
                 return true
             }

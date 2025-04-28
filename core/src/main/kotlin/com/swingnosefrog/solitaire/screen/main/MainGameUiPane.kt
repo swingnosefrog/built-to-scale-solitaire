@@ -1,5 +1,6 @@
 package com.swingnosefrog.solitaire.screen.main
 
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
@@ -8,6 +9,7 @@ import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.screen.main.menu.Menu
 import com.swingnosefrog.solitaire.screen.main.menu.MenuController
+import com.swingnosefrog.solitaire.screen.main.menu.MenuInput
 import com.swingnosefrog.solitaire.screen.main.menu.MenuOption
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
@@ -15,6 +17,7 @@ import paintbox.font.Markup
 import paintbox.font.PaintboxFont
 import paintbox.font.TextAlign
 import paintbox.registry.AssetRegistry
+import paintbox.ui.ClickPressed
 import paintbox.ui.ImageIcon
 import paintbox.ui.MouseEntered
 import paintbox.ui.Pane
@@ -121,10 +124,26 @@ class MainGameUiPane(
                     }
                     
                     this.addInputEventListener { evt ->
-                        if (evt is MouseEntered) {
-                            menuController.setHighlightedMenuOption(option)
-                            true
-                        } else false
+                        when (evt) {
+                            is MouseEntered -> {
+                                menuController.setHighlightedMenuOption(option)
+                                true
+                            }
+                            
+                            is ClickPressed -> {
+                                menuController.setHighlightedMenuOption(option)
+                                
+                                if (evt.button == Input.Buttons.LEFT) {
+                                    menuController.onMenuInput(MenuInput.SELECT)
+                                    true
+                                } else if (evt.button == Input.Buttons.RIGHT) {
+                                    menuController.onMenuInput(MenuInput.BACK)
+                                    true
+                                } else false
+                            }
+
+                            else -> false
+                        }
                     }
                 }
             }

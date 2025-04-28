@@ -1,7 +1,6 @@
 package com.swingnosefrog.solitaire.screen.main.menu
 
 import paintbox.binding.ReadOnlyVar
-import java.awt.SystemColor.text
 
 
 sealed class MenuOption(
@@ -15,10 +14,18 @@ sealed class MenuOption(
         }
     }
 
-    class SubMenu(text: ReadOnlyVar<String>, private val nextMenuGetter: () -> Menu) : MenuOption(text) {
+    class SubMenu(text: ReadOnlyVar<String>, private val nextMenuGetter: (MenuController) -> Menu) : MenuOption(text) {
 
         override fun onSelect(controller: MenuController) {
-            controller.goToNextMenu(nextMenuGetter())
+            controller.goToNextMenu(nextMenuGetter(controller))
+        }
+    }
+
+    class Back(text: ReadOnlyVar<String>, private val callback: (MenuController) -> Unit = {}) : MenuOption(text) {
+
+        override fun onSelect(controller: MenuController) {
+            controller.backOutOfMenu()
+            callback(controller)
         }
     }
 
@@ -28,5 +35,9 @@ sealed class MenuOption(
 
 
     abstract fun onSelect(controller: MenuController)
+
+    open fun onBack(controller: MenuController) {}
+    open fun onLeft(controller: MenuController) {}
+    open fun onRight(controller: MenuController) {}
 
 }
