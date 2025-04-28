@@ -95,9 +95,7 @@ class MainGameUiPane(
 
     private fun createUIElementFromMenuOption(option: MenuOption): UIElement {
         return when (option) {
-//            is MenuOption.Custom -> TODO()
-//            is MenuOption.SubMenu -> TODO()
-            else -> {
+            is MenuOption.Simple, is MenuOption.SubMenu, is MenuOption.Back -> {
                 HBox().apply {
                     this.bounds.height.set(54f)
 

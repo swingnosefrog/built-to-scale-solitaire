@@ -18,11 +18,11 @@ class MainGameMenus(
             "root",
             Localization["game.menu.root.heading"],
             listOf(
-                MenuOption.Custom(Localization["game.menu.root.option.resume"]) {
+                MenuOption.Simple(Localization["game.menu.root.option.resume"]) {
                     requestCloseMenu()
                 },
-                MenuOption.Custom(Localization["game.menu.root.option.howToPlay"]) {},
-                MenuOption.Custom(Localization["game.menu.root.option.settings"]) {},
+                MenuOption.Simple(Localization["game.menu.root.option.howToPlay"]) {},
+                MenuOption.Simple(Localization["game.menu.root.option.settings"]) {},
                 MenuOption.SubMenu(Localization["game.menu.root.option.quitGame"]) { quitConfirmationMenu },
             )
         )
@@ -30,7 +30,7 @@ class MainGameMenus(
             "quitConfirmation",
             Localization["game.menu.quitConfirmation.heading"],
             listOf(
-                MenuOption.Custom(Localization["game.menu.quitConfirmation.option.confirm"]) {
+                MenuOption.Simple(Localization["game.menu.quitConfirmation.option.confirm"]) {
                     Gdx.app.exit()
                 },
                 MenuOption.Back(Localization["common.cancel"]),

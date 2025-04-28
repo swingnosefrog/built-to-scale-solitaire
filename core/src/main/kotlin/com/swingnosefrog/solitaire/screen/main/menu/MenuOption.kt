@@ -7,7 +7,7 @@ sealed class MenuOption(
     val text: ReadOnlyVar<String>,
 ) {
 
-    class Custom(text: ReadOnlyVar<String>, private val onSelectAction: (MenuController) -> Unit) : MenuOption(text) {
+    class Simple(text: ReadOnlyVar<String>, private val onSelectAction: (MenuController) -> Unit) : MenuOption(text) {
 
         override fun onSelect(controller: MenuController) {
             onSelectAction(controller)
@@ -29,7 +29,7 @@ sealed class MenuOption(
         }
     }
 
-    sealed class Option(text: ReadOnlyVar<String>) : MenuOption(text) {
+    sealed class OptionWidget(text: ReadOnlyVar<String>) : MenuOption(text) {
         // TODO
     }
 
