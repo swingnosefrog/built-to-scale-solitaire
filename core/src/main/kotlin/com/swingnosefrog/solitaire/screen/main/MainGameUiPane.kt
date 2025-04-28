@@ -57,7 +57,7 @@ class MainGameUiPane(
                             this.bindHeightToParent(multiplier = 0.35f)
                             this.margin.set(Insets(48f, 0f))
 
-                            this += TextLabel({ currentMenu.use()?.heading?.use() ?: "" }, headingFont).apply {
+                            this += TextLabel({ currentMenu.use()?.headingText?.use() ?: "" }, headingFont).apply {
                                 this.textColor.set(Color.WHITE)
                                 this.textAlign.set(TextAlign.LEFT)
                                 this.renderAlign.set(Align.bottomLeft)

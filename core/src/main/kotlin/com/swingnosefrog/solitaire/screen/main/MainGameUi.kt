@@ -93,6 +93,7 @@ class MainGameUi(private val mainGameScreen: MainGameScreen) {
         }
 
         override fun keyDown(keycode: Int): Boolean {
+            // TODO don't hardcode keycodes
             if (isPauseMenuOpen.get()) {
                 when (keycode) {
                     Input.Keys.W, Input.Keys.UP -> {

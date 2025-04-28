@@ -5,7 +5,7 @@ import paintbox.binding.ReadOnlyVar
 
 open class Menu(
     val id: String,
-    val heading: ReadOnlyVar<String>,
+    val headingText: ReadOnlyVar<String>,
     val options: List<MenuOption>,
 ) {
 
