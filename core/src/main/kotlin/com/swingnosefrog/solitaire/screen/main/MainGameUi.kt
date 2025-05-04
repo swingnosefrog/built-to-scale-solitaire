@@ -10,6 +10,8 @@ import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.swingnosefrog.solitaire.screen.main.menu.MainGameMenus
 import com.swingnosefrog.solitaire.menu.MenuController
+import com.swingnosefrog.solitaire.menu.MenuInput
+import com.swingnosefrog.solitaire.menu.MenuInputSource
 import com.swingnosefrog.solitaire.menu.MenuInputType
 import paintbox.Paintbox
 import paintbox.binding.BooleanVar
@@ -92,36 +94,38 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
             uiSceneRoot.removeAllChildren()
             initSceneRoot()
         }
+        
+        private fun MenuInputType.toKeyboardInput(): MenuInput = MenuInput(this, MenuInputSource.KEYBOARD)
 
         override fun keyDown(keycode: Int): Boolean {
             // TODO don't hardcode keycodes
             if (isPauseMenuOpen.get()) {
                 when (keycode) {
                     Input.Keys.W, Input.Keys.UP -> {
-                        menuController.onMenuInput(MenuInputType.UP)
+                        menuController.onMenuInput(MenuInputType.UP.toKeyboardInput())
                         return true
                     }
                     Input.Keys.S, Input.Keys.DOWN -> {
-                        menuController.onMenuInput(MenuInputType.DOWN)
+                        menuController.onMenuInput(MenuInputType.DOWN.toKeyboardInput())
                         return true
                     }
                     Input.Keys.A, Input.Keys.LEFT -> {
-                        menuController.onMenuInput(MenuInputType.LEFT)
+                        menuController.onMenuInput(MenuInputType.LEFT.toKeyboardInput())
                         return true
                     }
                     Input.Keys.D, Input.Keys.RIGHT -> {
-                        menuController.onMenuInput(MenuInputType.RIGHT)
+                        menuController.onMenuInput(MenuInputType.RIGHT.toKeyboardInput())
                         return true
                     }
                     Input.Keys.Z, Input.Keys.SPACE, Input.Keys.ENTER -> {
-                        menuController.onMenuInput(MenuInputType.SELECT)
+                        menuController.onMenuInput(MenuInputType.SELECT.toKeyboardInput())
                         return true
                     }
                     Input.Keys.X, Input.Keys.ESCAPE, Input.Keys.BACKSPACE -> {
                         if (menuController.isAtRootMenu()) {
                             closePauseMenu()
                         } else {
-                            menuController.onMenuInput(MenuInputType.BACK)
+                            menuController.onMenuInput(MenuInputType.BACK.toKeyboardInput())
                         }
 
                         return true

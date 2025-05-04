@@ -54,7 +54,7 @@ open class MenuController {
         return previousMenuStack.isEmpty()
     }
 
-    fun onMenuInput(menuInput: MenuInputType) {
+    fun onMenuInput(menuInput: MenuInput) {
         val current = currentMenu.getOrCompute()
         if (current?.onMenuInput(this, menuInput) == true) {
             return
@@ -62,13 +62,13 @@ open class MenuController {
 
         val currentOption = currentHighlightedMenuOption.getOrCompute()
 
-        when (menuInput) {
+        when (menuInput.type) {
             MenuInputType.UP -> navigateMenuOption(-1)
             MenuInputType.DOWN -> navigateMenuOption(+1)
-            MenuInputType.LEFT -> currentOption?.onLeft(this)
-            MenuInputType.RIGHT -> currentOption?.onRight(this)
-            MenuInputType.SELECT -> currentOption?.onSelect(this)
-            MenuInputType.BACK -> currentOption?.onBack(this)
+            MenuInputType.LEFT -> currentOption?.onLeft(this, menuInput)
+            MenuInputType.RIGHT -> currentOption?.onRight(this, menuInput)
+            MenuInputType.SELECT -> currentOption?.onSelect(this, menuInput)
+            MenuInputType.BACK -> currentOption?.onBack(this, menuInput)
         }
     }
 

@@ -2,6 +2,7 @@ package com.swingnosefrog.solitaire.screen.main.menu
 
 import com.swingnosefrog.solitaire.menu.Menu
 import com.swingnosefrog.solitaire.menu.MenuController
+import com.swingnosefrog.solitaire.menu.MenuInput
 import com.swingnosefrog.solitaire.menu.MenuInputType
 import com.swingnosefrog.solitaire.menu.MenuOption
 import paintbox.binding.ReadOnlyVar
@@ -11,12 +12,12 @@ class RootMenu(id: String, heading: ReadOnlyVar<String>, options: List<MenuOptio
     
     override fun onMenuInput(
         menuController: MenuController,
-        menuInputType: MenuInputType,
+        menuInput: MenuInput,
     ): Boolean {
-        if (menuInputType == MenuInputType.BACK) {
-            options.first().onSelect(menuController)
+        if (menuInput.type == MenuInputType.BACK) {
+            options.first().onSelect(menuController, menuInput)
         }
         
-        return super.onMenuInput(menuController, menuInputType)
+        return super.onMenuInput(menuController, menuInput)
     }
 }

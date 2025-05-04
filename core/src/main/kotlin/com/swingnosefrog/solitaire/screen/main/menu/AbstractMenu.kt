@@ -1,6 +1,7 @@
 package com.swingnosefrog.solitaire.screen.main.menu
 
 import com.swingnosefrog.solitaire.menu.MenuController
+import com.swingnosefrog.solitaire.menu.MenuInput
 import com.swingnosefrog.solitaire.menu.MenuInputType
 import com.swingnosefrog.solitaire.menu.MenuOption
 import paintbox.binding.ReadOnlyVar
@@ -28,18 +29,18 @@ abstract class AbstractMenu(val id: String) {
      *
      * By default, if the last option is of type [MenuOption.Back], then it triggers that.
      */
-    open fun onMenuInput(menuController: MenuController, menuInputType: MenuInputType): Boolean {
-        if (menuInputType == MenuInputType.BACK) {
-            if (defaultBackInputBackOptionHandling(menuController)) return true
+    open fun onMenuInput(menuController: MenuController, menuInput: MenuInput): Boolean {
+        if (menuInput.type == MenuInputType.BACK) {
+            if (defaultBackInputBackOptionHandling(menuController, menuInput)) return true
         }
 
         return false
     }
 
-    protected fun defaultBackInputBackOptionHandling(menuController: MenuController): Boolean {
+    protected fun defaultBackInputBackOptionHandling(menuController: MenuController, menuInput: MenuInput): Boolean {
         val lastOption = options.lastOrNull() ?: return false
         if (lastOption is MenuOption.Back) {
-            lastOption.onSelect(menuController)
+            lastOption.onSelect(menuController, menuInput)
             return true
         }
 

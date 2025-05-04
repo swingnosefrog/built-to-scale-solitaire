@@ -14,7 +14,7 @@ sealed class MenuOption(
         private val onSelectAction: (MenuController) -> Unit,
     ) : MenuOption(text) {
 
-        override fun onSelect(controller: MenuController) {
+        override fun onSelect(controller: MenuController, menuInput: MenuInput) {
             onSelectAction(controller)
         }
     }
@@ -24,8 +24,9 @@ sealed class MenuOption(
         private val nextMenuGetter: (MenuController) -> AbstractMenu,
     ) : MenuOption(text) {
 
-        override fun onSelect(controller: MenuController) {
-            controller.goToNextMenu(nextMenuGetter(controller), true /* FIXME */)
+        override fun onSelect(controller: MenuController, menuInput: MenuInput) {
+            val useDefaultNextMenuOption = menuInput.source == MenuInputSource.KEYBOARD
+            controller.goToNextMenu(nextMenuGetter(controller), useDefaultNextMenuOption)
         }
     }
 
@@ -34,7 +35,7 @@ sealed class MenuOption(
         private val callback: (MenuController) -> Unit = {},
     ) : MenuOption(text) {
 
-        override fun onSelect(controller: MenuController) {
+        override fun onSelect(controller: MenuController, menuInput: MenuInput) {
             controller.backOutOfMenu()
             callback(controller)
         }
@@ -45,10 +46,10 @@ sealed class MenuOption(
     }
 
 
-    abstract fun onSelect(controller: MenuController)
+    abstract fun onSelect(controller: MenuController, menuInput: MenuInput)
 
-    open fun onBack(controller: MenuController) {}
-    open fun onLeft(controller: MenuController) {}
-    open fun onRight(controller: MenuController) {}
+    open fun onBack(controller: MenuController, menuInput: MenuInput) {}
+    open fun onLeft(controller: MenuController, menuInput: MenuInput) {}
+    open fun onRight(controller: MenuController, menuInput: MenuInput) {}
 
 }
