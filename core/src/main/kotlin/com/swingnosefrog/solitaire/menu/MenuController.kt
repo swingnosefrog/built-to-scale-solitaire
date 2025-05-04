@@ -1,21 +1,22 @@
 package com.swingnosefrog.solitaire.menu
 
+import com.swingnosefrog.solitaire.screen.main.menu.AbstractMenu
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 import paintbox.util.MathHelper
 
 
-class MenuController {
+open class MenuController {
 
     private val previousMenuStack: ArrayDeque<MenuHistory> = ArrayDeque()
 
-    private val _currentMenu: Var<Menu?> = Var(null)
-    val currentMenu: ReadOnlyVar<Menu?> get() = _currentMenu
+    private val _currentMenu: Var<AbstractMenu?> = Var(null)
+    val currentMenu: ReadOnlyVar<AbstractMenu?> get() = _currentMenu
 
     private val _currentHighlightedMenuOption: Var<MenuOption?> = Var(null)
     val currentHighlightedMenuOption: ReadOnlyVar<MenuOption?> get() = _currentHighlightedMenuOption
 
-    fun setNewMenu(menu: Menu?, menuOption: MenuOption? = null) {
+    open fun setNewMenu(menu: AbstractMenu?, menuOption: MenuOption? = null) {
         if (_currentMenu.getOrCompute() != menu) {
             _currentMenu.set(menu)
 
@@ -30,13 +31,13 @@ class MenuController {
         }
     }
 
-    fun setHighlightedMenuOption(menuOption: MenuOption?) {
+    open fun setHighlightedMenuOption(menuOption: MenuOption?) {
         if (_currentHighlightedMenuOption.getOrCompute() != menuOption) {
             _currentHighlightedMenuOption.set(menuOption)
         }
     }
 
-    fun goToNextMenu(nextMenu: Menu) {
+    open fun goToNextMenu(nextMenu: AbstractMenu) {
         val current = currentMenu.getOrCompute()
         if (current != null) {
             previousMenuStack.addFirst(MenuHistory(current, currentHighlightedMenuOption.getOrCompute()))
@@ -45,7 +46,7 @@ class MenuController {
         setNewMenu(nextMenu)
     }
 
-    fun backOutOfMenu(): Menu? {
+    open fun backOutOfMenu(): AbstractMenu? {
         val prevMenu = previousMenuStack.removeFirstOrNull()
 
         setNewMenu(prevMenu?.menu)
@@ -96,6 +97,6 @@ class MenuController {
         setHighlightedMenuOption(optionsList[newIndex])
     }
 
-    private data class MenuHistory(val menu: Menu, val selectedOption: MenuOption?)
+    private data class MenuHistory(val menu: AbstractMenu, val selectedOption: MenuOption?)
 
 }

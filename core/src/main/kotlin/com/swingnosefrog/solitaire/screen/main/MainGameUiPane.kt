@@ -5,12 +5,11 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.Align
-import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
-import com.swingnosefrog.solitaire.menu.Menu
 import com.swingnosefrog.solitaire.menu.MenuController
 import com.swingnosefrog.solitaire.menu.MenuInput
 import com.swingnosefrog.solitaire.menu.MenuOption
+import com.swingnosefrog.solitaire.screen.main.menu.AbstractMenu
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 import paintbox.font.Markup
@@ -35,11 +34,11 @@ class MainGameUiPane(
     private val menuController: MenuController,
 ) : Pane() {
 
-    private val fonts: SolitaireFonts get() = SolitaireGame.instance.fonts
+    private val fonts: SolitaireFonts get() = mainGameUi.mainGameScreen.main.fonts
     private val headingFont: PaintboxFont get() = fonts.uiHeadingFont
     private val mainSerifMarkup: Markup get() = fonts.uiMainSerifMarkup
 
-    private val currentMenu: ReadOnlyVar<Menu?> = Var { menuController.currentMenu.use() }
+    private val currentMenu: ReadOnlyVar<AbstractMenu?> = Var { menuController.currentMenu.use() }
     private val currentHighlightedMenuOption: ReadOnlyVar<MenuOption?> =
         Var { menuController.currentHighlightedMenuOption.use() }
 

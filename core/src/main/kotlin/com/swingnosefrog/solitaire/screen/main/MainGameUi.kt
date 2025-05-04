@@ -18,7 +18,7 @@ import paintbox.input.ToggleableInputProcessor
 import paintbox.ui.SceneRoot
 
 
-class MainGameUi(private val mainGameScreen: MainGameScreen) {
+class MainGameUi(val mainGameScreen: MainGameScreen) {
 
     private val uiCamera: OrthographicCamera = OrthographicCamera().apply {
         setToOrtho(false, 1280f, 720f)
