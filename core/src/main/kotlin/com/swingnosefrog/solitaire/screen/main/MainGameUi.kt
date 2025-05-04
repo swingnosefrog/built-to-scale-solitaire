@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.swingnosefrog.solitaire.screen.main.menu.MainGameMenus
 import com.swingnosefrog.solitaire.menu.MenuController
-import com.swingnosefrog.solitaire.menu.MenuInput
+import com.swingnosefrog.solitaire.menu.MenuInputType
 import paintbox.Paintbox
 import paintbox.binding.BooleanVar
 import paintbox.binding.ReadOnlyBooleanVar
@@ -78,13 +78,14 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
 
             val menus = MainGameMenus(requestCloseMenu = { closePauseMenu() })
             menuController.clearMenuStack()
-            menuController.setNewMenu(menus.rootMenu)
+            val rootMenu = menus.rootMenu
+            menuController.setNewMenu(rootMenu, rootMenu.getAutoHighlightedOption(menuController))
         }
 
         private fun closePauseMenu() {
             _isPauseMenuOpen.set(false)
             menuController.clearMenuStack()
-            menuController.setNewMenu(null)
+            menuController.setNewMenu(null, null)
         }
 
         private fun debugReinitSceneRoot() {
@@ -97,30 +98,30 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
             if (isPauseMenuOpen.get()) {
                 when (keycode) {
                     Input.Keys.W, Input.Keys.UP -> {
-                        menuController.onMenuInput(MenuInput.UP)
+                        menuController.onMenuInput(MenuInputType.UP)
                         return true
                     }
                     Input.Keys.S, Input.Keys.DOWN -> {
-                        menuController.onMenuInput(MenuInput.DOWN)
+                        menuController.onMenuInput(MenuInputType.DOWN)
                         return true
                     }
                     Input.Keys.A, Input.Keys.LEFT -> {
-                        menuController.onMenuInput(MenuInput.LEFT)
+                        menuController.onMenuInput(MenuInputType.LEFT)
                         return true
                     }
                     Input.Keys.D, Input.Keys.RIGHT -> {
-                        menuController.onMenuInput(MenuInput.RIGHT)
+                        menuController.onMenuInput(MenuInputType.RIGHT)
                         return true
                     }
                     Input.Keys.Z, Input.Keys.SPACE, Input.Keys.ENTER -> {
-                        menuController.onMenuInput(MenuInput.SELECT)
+                        menuController.onMenuInput(MenuInputType.SELECT)
                         return true
                     }
                     Input.Keys.X, Input.Keys.ESCAPE, Input.Keys.BACKSPACE -> {
                         if (menuController.isAtRootMenu()) {
                             closePauseMenu()
                         } else {
-                            menuController.onMenuInput(MenuInput.BACK)
+                            menuController.onMenuInput(MenuInputType.BACK)
                         }
 
                         return true

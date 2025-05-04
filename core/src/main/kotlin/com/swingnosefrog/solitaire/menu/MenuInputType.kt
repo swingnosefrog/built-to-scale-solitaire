@@ -1,7 +1,7 @@
 package com.swingnosefrog.solitaire.menu
 
 
-enum class MenuInput {
+enum class MenuInputType {
     
     UP,
     DOWN,

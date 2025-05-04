@@ -1,7 +1,7 @@
 package com.swingnosefrog.solitaire.screen.main.menu
 
 import com.swingnosefrog.solitaire.menu.MenuController
-import com.swingnosefrog.solitaire.menu.MenuInput
+import com.swingnosefrog.solitaire.menu.MenuInputType
 import com.swingnosefrog.solitaire.menu.MenuOption
 import paintbox.binding.ReadOnlyVar
 
@@ -13,21 +13,23 @@ abstract class AbstractMenu(val id: String) {
 
     
     /**
-     * Returns the [MenuOption] index in [options] to highlight when this menu is entered.
+     * Returns the [MenuOption] index in [options] to highlight when this menu is entered with the keyboard.
      * A value outside of the valid index range (such as -1) will not select anything.
      * Defaults to first item (index 0).
      */
     open fun getAutoHighlightedOptionIndex(controller: MenuController): Int {
         return 0
     }
+    
+    fun getAutoHighlightedOption(controller: MenuController): MenuOption? = options.getOrNull(getAutoHighlightedOptionIndex(controller))
 
     /**
      * Return true to override handling.
      *
      * By default, if the last option is of type [MenuOption.Back], then it triggers that.
      */
-    open fun onMenuInput(menuController: MenuController, menuInput: MenuInput): Boolean {
-        if (menuInput == MenuInput.BACK) {
+    open fun onMenuInput(menuController: MenuController, menuInputType: MenuInputType): Boolean {
+        if (menuInputType == MenuInputType.BACK) {
             if (defaultBackInputBackOptionHandling(menuController)) return true
         }
 

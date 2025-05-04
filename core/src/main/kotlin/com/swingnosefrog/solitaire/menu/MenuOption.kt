@@ -25,7 +25,7 @@ sealed class MenuOption(
     ) : MenuOption(text) {
 
         override fun onSelect(controller: MenuController) {
-            controller.goToNextMenu(nextMenuGetter(controller))
+            controller.goToNextMenu(nextMenuGetter(controller), true /* FIXME */)
         }
     }
 

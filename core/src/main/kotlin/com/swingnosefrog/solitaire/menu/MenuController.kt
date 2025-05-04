@@ -16,18 +16,10 @@ open class MenuController {
     private val _currentHighlightedMenuOption: Var<MenuOption?> = Var(null)
     val currentHighlightedMenuOption: ReadOnlyVar<MenuOption?> get() = _currentHighlightedMenuOption
 
-    open fun setNewMenu(menu: AbstractMenu?, menuOption: MenuOption? = null) {
+    open fun setNewMenu(menu: AbstractMenu?, selectedMenuOption: MenuOption?) {
         if (_currentMenu.getOrCompute() != menu) {
             _currentMenu.set(menu)
-
-            val selectedOption: MenuOption? = menuOption ?: if (menu != null) {
-                val autoHighlightedIndex = menu.getAutoHighlightedOptionIndex(this)
-                menu.options.getOrNull(autoHighlightedIndex)
-            } else {
-                null
-            }
-
-            _currentHighlightedMenuOption.set(selectedOption)
+            _currentHighlightedMenuOption.set(selectedMenuOption)
         }
     }
 
@@ -37,20 +29,19 @@ open class MenuController {
         }
     }
 
-    open fun goToNextMenu(nextMenu: AbstractMenu) {
+    open fun goToNextMenu(nextMenu: AbstractMenu, useDefaultNextMenuOption: Boolean) {
         val current = currentMenu.getOrCompute()
         if (current != null) {
             previousMenuStack.addFirst(MenuHistory(current, currentHighlightedMenuOption.getOrCompute()))
         }
 
-        setNewMenu(nextMenu)
+        setNewMenu(nextMenu, if (useDefaultNextMenuOption) nextMenu.getAutoHighlightedOption(this) else null)
     }
 
     open fun backOutOfMenu(): AbstractMenu? {
         val prevMenu = previousMenuStack.removeFirstOrNull()
 
-        setNewMenu(prevMenu?.menu)
-        setHighlightedMenuOption(prevMenu?.selectedOption)
+        setNewMenu(prevMenu?.menu, prevMenu?.selectedOption)
 
         return prevMenu?.menu
     }
@@ -60,10 +51,10 @@ open class MenuController {
     }
 
     fun isAtRootMenu(): Boolean {
-        return previousMenuStack.isEmpty
+        return previousMenuStack.isEmpty()
     }
 
-    fun onMenuInput(menuInput: MenuInput) {
+    fun onMenuInput(menuInput: MenuInputType) {
         val current = currentMenu.getOrCompute()
         if (current?.onMenuInput(this, menuInput) == true) {
             return
@@ -72,12 +63,12 @@ open class MenuController {
         val currentOption = currentHighlightedMenuOption.getOrCompute()
 
         when (menuInput) {
-            MenuInput.UP -> navigateMenuOption(-1)
-            MenuInput.DOWN -> navigateMenuOption(+1)
-            MenuInput.LEFT -> currentOption?.onLeft(this)
-            MenuInput.RIGHT -> currentOption?.onRight(this)
-            MenuInput.SELECT -> currentOption?.onSelect(this)
-            MenuInput.BACK -> currentOption?.onBack(this)
+            MenuInputType.UP -> navigateMenuOption(-1)
+            MenuInputType.DOWN -> navigateMenuOption(+1)
+            MenuInputType.LEFT -> currentOption?.onLeft(this)
+            MenuInputType.RIGHT -> currentOption?.onRight(this)
+            MenuInputType.SELECT -> currentOption?.onSelect(this)
+            MenuInputType.BACK -> currentOption?.onBack(this)
         }
     }
 

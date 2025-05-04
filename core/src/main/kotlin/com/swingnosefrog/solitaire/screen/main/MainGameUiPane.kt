@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.Align
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.menu.MenuController
-import com.swingnosefrog.solitaire.menu.MenuInput
+import com.swingnosefrog.solitaire.menu.MenuInputType
 import com.swingnosefrog.solitaire.menu.MenuOption
 import com.swingnosefrog.solitaire.screen.main.menu.AbstractMenu
 import paintbox.binding.ReadOnlyVar
@@ -131,10 +131,10 @@ class MainGameUiPane(
                                 menuController.setHighlightedMenuOption(option)
                                 
                                 if (evt.button == Input.Buttons.LEFT) {
-                                    menuController.onMenuInput(MenuInput.SELECT)
+                                    menuController.onMenuInput(MenuInputType.SELECT)
                                     true
                                 } else if (evt.button == Input.Buttons.RIGHT) {
-                                    menuController.onMenuInput(MenuInput.BACK)
+                                    menuController.onMenuInput(MenuInputType.BACK)
                                     true
                                 } else false
                             }
