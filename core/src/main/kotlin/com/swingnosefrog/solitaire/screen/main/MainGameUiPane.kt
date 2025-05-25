@@ -97,28 +97,25 @@ class MainGameUiPane(
     private fun createUIElementFromMenuOption(option: MenuOption): UIElement {
         return when (option) {
             is MenuOption.Simple, is MenuOption.SubMenu, is MenuOption.Back -> {
-                HBox().apply {
+                val pane = Pane().apply {
                     this.bounds.height.set(54f)
-
-                    val selectedIcon = ImageIcon(TextureRegion(AssetRegistry.get<Texture>("ui_nut_icon"))).apply {
-                        this.bounds.width.bind { 
-                            if (currentHighlightedMenuOption.use() == option) {
-                                40f
-                            } else 0f
-                        }
-                        this.visible.bind { bounds.width.use() > 0f }
-                        this.margin.set(Insets(0f, 0f, 0f, 10f))
-                        this.renderAlign.set(Align.left)
-                    }
+                }
+                val selectedIcon = ImageIcon(TextureRegion(AssetRegistry.get<Texture>("ui_nut_icon"))).apply {
+                    this.bounds.width.set(40f)
+                    this.bindVarToSelfWidth(this.bounds.x, multiplier = -1f)
+                    this.visible.bind { currentHighlightedMenuOption.use() == option }
+                    this.margin.set(Insets(0f, 0f, 0f, 10f))
+                    this.renderAlign.set(Align.left)
+                }
+                pane += selectedIcon
+                pane += HBox().apply {
                     val label = TextLabel(option.text).apply {
-                        this.bindWidthToParent(adjustBinding = { -selectedIcon.bounds.width.use() })
                         this.markup.set(mainSerifMarkup)
                         this.textColor.set(Color.WHITE)
                         this.textAlign.set(TextAlign.LEFT)
                     }
 
                     this.temporarilyDisableLayouts {
-                        this += selectedIcon
                         this += label
                     }
                     
@@ -145,6 +142,7 @@ class MainGameUiPane(
                         }
                     }
                 }
+                pane
             }
         }
     }
