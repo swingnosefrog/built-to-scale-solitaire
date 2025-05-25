@@ -6,15 +6,19 @@ import paintbox.binding.ReadOnlyVar
 
 
 class SettingsRootMenu(
-    id: String
+    id: String,
 ) : AbstractMenu(id) {
-    
+
+    private val gameplaySettingsMenu: GameplaySettingsMenu = GameplaySettingsMenu("gameplaySettings")
+    private val audioSettingsMenu: AudioSettingsMenu = AudioSettingsMenu("audioSettings")
+    private val videoSettingsMenu: VideoSettingsMenu = VideoSettingsMenu("videoSettings")
+
     override val headingText: ReadOnlyVar<String> = Localization["game.menu.settings.heading"]
 
     override val options: List<MenuOption> = listOf(
-        MenuOption.Simple(Localization["game.menu.settings.option.gameplay"]) {},
-        MenuOption.Simple(Localization["game.menu.settings.option.audio"]) {},
-        MenuOption.Simple(Localization["game.menu.settings.option.video"]) {},
+        MenuOption.SubMenu(Localization["game.menu.settings.option.gameplay"]) { gameplaySettingsMenu },
+        MenuOption.SubMenu(Localization["game.menu.settings.option.audio"]) { audioSettingsMenu },
+        MenuOption.SubMenu(Localization["game.menu.settings.option.video"]) { videoSettingsMenu },
         MenuOption.Back(),
     )
 }

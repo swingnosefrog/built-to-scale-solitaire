@@ -8,6 +8,13 @@ import paintbox.binding.ReadOnlyVar
 sealed class MenuOption(
     val text: ReadOnlyVar<String>,
 ) {
+    
+    companion object {
+        
+        fun createNoOp(text: ReadOnlyVar<String>): MenuOption {
+            return Simple(text) {}
+        }
+    }
 
     class Simple(
         text: ReadOnlyVar<String>,
