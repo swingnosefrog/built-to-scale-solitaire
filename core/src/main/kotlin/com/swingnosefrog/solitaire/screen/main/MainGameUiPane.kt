@@ -96,7 +96,7 @@ class MainGameUiPane(
 
     private fun createUIElementFromMenuOption(option: MenuOption): UIElement {
         return when (option) {
-            is MenuOption.Simple, is MenuOption.SubMenu, is MenuOption.Back -> {
+            is MenuOption.Simple, is MenuOption.SubMenu, is MenuOption.Back, is MenuOption.OptionWidget -> {
                 val pane = Pane().apply {
                     this.bounds.height.set(54f)
                 }
