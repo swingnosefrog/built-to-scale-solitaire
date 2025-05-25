@@ -2,7 +2,11 @@ package com.swingnosefrog.solitaire.menu
 
 import com.swingnosefrog.solitaire.Localization
 import com.swingnosefrog.solitaire.screen.main.menu.AbstractMenu
+import paintbox.binding.BooleanVar
 import paintbox.binding.ReadOnlyVar
+import paintbox.binding.Var
+import paintbox.ui.StringVarConverter
+import paintbox.util.MathHelper
 
 
 sealed class MenuOption(
@@ -49,7 +53,49 @@ sealed class MenuOption(
     }
 
     sealed class OptionWidget(text: ReadOnlyVar<String>) : MenuOption(text) {
-        // TODO
+        
+        class Cycle<T>(
+            text: ReadOnlyVar<String>,
+            val options: ReadOnlyVar<List<T>>,
+            val selectedOption: Var<T>,
+            val stringVarConverter: StringVarConverter<T> = StringVarConverter.createDefaultConverter()
+        ) : OptionWidget(text) {
+
+            override fun onLeft(controller: MenuController, menuInput: MenuInput) {
+                if (isSelected.get()) {
+                    selectNext(-1)
+                }
+            }
+
+            override fun onRight(controller: MenuController, menuInput: MenuInput) {
+                if (isSelected.get()) {
+                    selectNext(+1)
+                }
+            }
+            
+            private fun selectNext(indexChange: Int) {
+                val list = options.getOrCompute()
+                if (list.size >= 2) {
+                    val currentIndex = list.indexOf(selectedOption.getOrCompute())
+                    val nextIndex = MathHelper.indexWraparound(currentIndex, indexChange, list.size)
+                    selectedOption.set(list[nextIndex])
+                }
+            }
+        }
+        
+        val isSelected: BooleanVar = BooleanVar(false)
+
+        override fun onSelect(controller: MenuController, menuInput: MenuInput) {
+            if (!isSelected.get()) {
+                isSelected.set(true)
+            }
+        }
+
+        override fun onBack(controller: MenuController, menuInput: MenuInput) {
+            if (isSelected.get()) {
+                isSelected.set(false)
+            }
+        }
     }
 
 
