@@ -4,6 +4,7 @@ import com.swingnosefrog.solitaire.menu.MenuController
 import com.swingnosefrog.solitaire.menu.MenuInput
 import com.swingnosefrog.solitaire.menu.MenuInputType
 import com.swingnosefrog.solitaire.menu.MenuOption
+import paintbox.binding.IntVar
 import paintbox.binding.ReadOnlyVar
 
 
@@ -12,6 +13,7 @@ abstract class AbstractMenu(val id: String) {
     abstract val headingText: ReadOnlyVar<String>
     abstract val options: List<MenuOption>
 
+    val menuSizeAdjustment: IntVar = IntVar(0)
     
     /**
      * Returns the [MenuOption] index in [options] to highlight when this menu is entered with the keyboard.

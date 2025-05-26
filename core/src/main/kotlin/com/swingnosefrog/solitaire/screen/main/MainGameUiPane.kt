@@ -12,6 +12,8 @@ import com.swingnosefrog.solitaire.menu.MenuInputSource
 import com.swingnosefrog.solitaire.menu.MenuInputType
 import com.swingnosefrog.solitaire.menu.MenuOption
 import com.swingnosefrog.solitaire.screen.main.menu.AbstractMenu
+import paintbox.binding.IntVar
+import paintbox.binding.ReadOnlyIntVar
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 import paintbox.font.Markup
@@ -35,6 +37,11 @@ class MainGameUiPane(
     private val mainGameUi: MainGameUi,
     private val menuController: MenuController,
 ) : Pane() {
+    
+    companion object {
+        
+        private const val MENU_SIZE_ADJUSTMENT_MULTIPLIER: Float = 0.05f
+    }
 
     private val fonts: SolitaireFonts get() = mainGameUi.mainGameScreen.main.fonts
     private val headingFont: PaintboxFont get() = fonts.uiHeadingFont
@@ -44,12 +51,18 @@ class MainGameUiPane(
     private val currentHighlightedMenuOption: ReadOnlyVar<MenuOption?> =
         Var { menuController.currentHighlightedMenuOption.use() }
 
+    private val currentMenuSizeAdjustment: ReadOnlyIntVar =
+        IntVar { currentMenu.use()?.menuSizeAdjustment?.use()?.coerceAtLeast(0) ?: 0 }
+
     init {
         val dark = Color(0f, 0f, 0f, 0.85f)
         this += HBox().apply {
             this.temporarilyDisableLayouts {
                 this += RectElement(dark).apply {
-                    this.bindWidthToParent(multiplier = 0.4f)
+                    this.bindWidthToParent(
+                        multiplierBinding = { 0.4f + currentMenuSizeAdjustment.use() * MENU_SIZE_ADJUSTMENT_MULTIPLIER },
+                        adjustBinding = { 0f }
+                    )
 
                     this += VBox().apply {
                         this.margin.set(Insets(48f).copy(right = 24f))

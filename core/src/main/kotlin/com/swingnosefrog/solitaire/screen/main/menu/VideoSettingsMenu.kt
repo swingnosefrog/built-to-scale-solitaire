@@ -19,4 +19,8 @@ class VideoSettingsMenu(
         MenuOption.createNoOp(Localization["game.menu.videoSettings.option.maxFps"]),
         MenuOption.Back(),
     )
+    
+    init {
+        this.menuSizeAdjustment.set(4)
+    }
 }

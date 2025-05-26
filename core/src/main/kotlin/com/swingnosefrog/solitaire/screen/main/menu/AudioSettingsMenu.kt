@@ -16,4 +16,8 @@ class AudioSettingsMenu(
         MenuOption.createNoOp(Localization["game.menu.audioSettings.option.sfxVolume"]),
         MenuOption.Back(),
     )
+
+    init {
+        this.menuSizeAdjustment.set(3)
+    }
 }

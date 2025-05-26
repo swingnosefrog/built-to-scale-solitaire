@@ -16,4 +16,8 @@ class GameplaySettingsMenu(
         MenuOption.createNoOp(Localization["game.menu.gameplaySettings.option.2"]),
         MenuOption.Back(),
     )
+
+    init {
+        this.menuSizeAdjustment.set(2)
+    }
 }
