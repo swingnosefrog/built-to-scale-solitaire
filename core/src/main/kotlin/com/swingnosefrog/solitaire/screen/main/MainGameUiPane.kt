@@ -135,6 +135,7 @@ class MainGameUiPane(
                             } else false
                         } else {
                             if (evt.button == Input.Buttons.LEFT || evt.button == Input.Buttons.RIGHT) {
+                                // Attempt to unfocus the selected item
                                 menuController.onMenuInput(MenuInput(MenuInputType.BACK, MenuInputSource.MOUSE))
                                 true
                             } else false
@@ -179,15 +180,29 @@ class MainGameUiPane(
 
                 is MenuOption.OptionWidget.Cycle<*> -> {
                     textLabel.bindWidthToParent(multiplier = 0.5f)
-                    pane += TextLabel(binding = {
-                        val selectedOption = option.selectedOption.use()
-                        (option.stringVarConverter as StringVarConverter<Any?>).toVar(selectedOption).use()
-                    }, font = fonts.uiMainSerifFontBold).apply {
+                    pane += Pane().apply {
                         this.bindWidthToParent(multiplier = 0.5f)
                         this.bindVarToSelfWidth(this.bounds.x)
-                        this.textColor.bind { textColor.use() }
-                        this.textAlign.set(TextAlign.CENTRE)
-                        this.renderAlign.set(Align.center)
+
+                        this += TextLabel(binding = {
+                            val selectedOption = option.selectedOption.use()
+                            (option.stringVarConverter as StringVarConverter<Any?>).toVar(selectedOption).use()
+                        }, font = fonts.uiMainSerifFontBold).apply {
+                            this.textColor.bind { textColor.use() }
+                            this.textAlign.set(TextAlign.CENTRE)
+                            this.renderAlign.set(Align.center)
+                        }
+                        this += Pane().apply {
+                            this.visible.bind { isSelected.use() }
+                            this += TextLabel("<", font = fonts.uiMainSerifFontBold).apply {
+                                this.textColor.set(Color.WHITE)
+                                this.renderAlign.set(Align.left)
+                            }
+                            this += TextLabel(">", font = fonts.uiMainSerifFontBold).apply {
+                                this.textColor.set(Color.WHITE)
+                                this.renderAlign.set(Align.right)
+                            }
+                        }
                     }
                 }
             }
