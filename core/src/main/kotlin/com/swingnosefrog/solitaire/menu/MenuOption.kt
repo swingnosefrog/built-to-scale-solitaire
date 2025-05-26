@@ -99,8 +99,6 @@ sealed class MenuOption(
         }
 
 
-        val isSelected: BooleanVar = BooleanVar(false)
-
         override fun onSelect(controller: MenuController, menuInput: MenuInput) {
             if (!isSelected.get()) {
                 isSelected.set(true)
@@ -113,7 +111,9 @@ sealed class MenuOption(
             }
         }
     }
+    
 
+    val isSelected: BooleanVar = BooleanVar(false)
 
     abstract fun onSelect(controller: MenuController, menuInput: MenuInput)
 

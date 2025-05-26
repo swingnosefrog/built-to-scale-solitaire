@@ -12,7 +12,9 @@ import com.swingnosefrog.solitaire.menu.MenuInputSource
 import com.swingnosefrog.solitaire.menu.MenuInputType
 import com.swingnosefrog.solitaire.menu.MenuOption
 import com.swingnosefrog.solitaire.screen.main.menu.AbstractMenu
+import paintbox.binding.BooleanVar
 import paintbox.binding.IntVar
+import paintbox.binding.ReadOnlyBooleanVar
 import paintbox.binding.ReadOnlyIntVar
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
@@ -24,6 +26,7 @@ import paintbox.ui.ClickPressed
 import paintbox.ui.ImageIcon
 import paintbox.ui.MouseEntered
 import paintbox.ui.Pane
+import paintbox.ui.StringVarConverter
 import paintbox.ui.UIElement
 import paintbox.ui.area.Insets
 import paintbox.ui.control.TextLabel
@@ -121,13 +124,21 @@ class MainGameUiPane(
                     is ClickPressed -> {
                         menuController.setHighlightedMenuOption(option)
 
-                        if (evt.button == Input.Buttons.LEFT) {
-                            menuController.onMenuInput(MenuInput(MenuInputType.SELECT, MenuInputSource.MOUSE))
-                            true
-                        } else if (evt.button == Input.Buttons.RIGHT) {
-                            menuController.onMenuInput(MenuInput(MenuInputType.BACK, MenuInputSource.MOUSE))
-                            true
-                        } else false
+                        if (menuController.currentHighlightedMenuOption.getOrCompute() == option) {
+                            // If the currently highlighted option isn't this one, it means someone else has focus
+                            if (evt.button == Input.Buttons.LEFT) {
+                                menuController.onMenuInput(MenuInput(MenuInputType.SELECT, MenuInputSource.MOUSE))
+                                true
+                            } else if (evt.button == Input.Buttons.RIGHT) {
+                                menuController.onMenuInput(MenuInput(MenuInputType.BACK, MenuInputSource.MOUSE))
+                                true
+                            } else false
+                        } else {
+                            if (evt.button == Input.Buttons.LEFT || evt.button == Input.Buttons.RIGHT) {
+                                menuController.onMenuInput(MenuInput(MenuInputType.BACK, MenuInputSource.MOUSE))
+                                true
+                            } else false
+                        }
                     }
 
                     else -> false
@@ -142,10 +153,15 @@ class MainGameUiPane(
             this.renderAlign.set(Align.left)
         }
         pane += selectedIcon
+        
+        val isSelected: ReadOnlyBooleanVar = BooleanVar { option.isSelected.use() }
+        val textColor: ReadOnlyVar<Color> = Var { if (isSelected.use()) Color.CYAN else Color.WHITE }
+        
         val textLabel = TextLabel(option.text).apply {
             this.markup.set(mainSerifMarkup)
-            this.textColor.set(Color.WHITE)
+            this.textColor.bind { textColor.use() }
             this.textAlign.set(TextAlign.LEFT)
+            this.padding.set(Insets(0f, 0f, 0f, 8f))
         }
         pane += textLabel
         
@@ -162,7 +178,17 @@ class MainGameUiPane(
                 }
 
                 is MenuOption.OptionWidget.Cycle<*> -> {
-                    // TODO
+                    textLabel.bindWidthToParent(multiplier = 0.5f)
+                    pane += TextLabel(binding = {
+                        val selectedOption = option.selectedOption.use()
+                        (option.stringVarConverter as StringVarConverter<Any?>).toVar(selectedOption).use()
+                    }, font = fonts.uiMainSerifFontBold).apply {
+                        this.bindWidthToParent(multiplier = 0.5f)
+                        this.bindVarToSelfWidth(this.bounds.x)
+                        this.textColor.bind { textColor.use() }
+                        this.textAlign.set(TextAlign.CENTRE)
+                        this.renderAlign.set(Align.center)
+                    }
                 }
             }
         }
