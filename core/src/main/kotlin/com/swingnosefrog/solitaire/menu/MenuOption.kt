@@ -7,6 +7,7 @@ import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 import paintbox.ui.StringVarConverter
 import paintbox.util.MathHelper
+import java.awt.SystemColor.text
 
 
 sealed class MenuOption(
@@ -82,7 +83,22 @@ sealed class MenuOption(
                 }
             }
         }
-        
+
+        class Checkbox(
+            text: ReadOnlyVar<String>,
+            val selectedState: BooleanVar,
+        ) : OptionWidget(text) {
+
+            override fun onSelect(controller: MenuController, menuInput: MenuInput) {
+                selectedState.invert()
+            }
+
+            override fun onBack(controller: MenuController, menuInput: MenuInput) {
+                // Intentionally don't toggle isSelected
+            }
+        }
+
+
         val isSelected: BooleanVar = BooleanVar(false)
 
         override fun onSelect(controller: MenuController, menuInput: MenuInput) {

@@ -95,56 +95,66 @@ class MainGameUiPane(
     }
 
     private fun createUIElementFromMenuOption(option: MenuOption): UIElement {
-        return when (option) {
-            is MenuOption.Simple, is MenuOption.SubMenu, is MenuOption.Back, is MenuOption.OptionWidget -> {
-                val pane = Pane().apply {
-                    this.bounds.height.set(54f)
-                }
-                val selectedIcon = ImageIcon(TextureRegion(AssetRegistry.get<Texture>("ui_nut_icon"))).apply {
-                    this.bounds.width.set(40f)
-                    this.bindVarToSelfWidth(this.bounds.x, multiplier = -1f)
-                    this.visible.bind { currentHighlightedMenuOption.use() == option }
-                    this.margin.set(Insets(0f, 0f, 0f, 10f))
-                    this.renderAlign.set(Align.left)
-                }
-                pane += selectedIcon
-                pane += HBox().apply {
-                    val label = TextLabel(option.text).apply {
-                        this.markup.set(mainSerifMarkup)
-                        this.textColor.set(Color.WHITE)
-                        this.textAlign.set(TextAlign.LEFT)
+        val pane = Pane().apply {
+            this.bounds.height.set(54f)
+
+            this.addInputEventListener { evt ->
+                when (evt) {
+                    is MouseEntered -> {
+                        menuController.setHighlightedMenuOption(option)
+                        true
                     }
 
-                    this.temporarilyDisableLayouts {
-                        this += label
-                    }
-                    
-                    this.addInputEventListener { evt ->
-                        when (evt) {
-                            is MouseEntered -> {
-                                menuController.setHighlightedMenuOption(option)
-                                true
-                            }
-                            
-                            is ClickPressed -> {
-                                menuController.setHighlightedMenuOption(option)
-                                
-                                if (evt.button == Input.Buttons.LEFT) {
-                                    menuController.onMenuInput(MenuInput(MenuInputType.SELECT, MenuInputSource.MOUSE))
-                                    true
-                                } else if (evt.button == Input.Buttons.RIGHT) {
-                                    menuController.onMenuInput(MenuInput(MenuInputType.BACK, MenuInputSource.MOUSE))
-                                    true
-                                } else false
-                            }
+                    is ClickPressed -> {
+                        menuController.setHighlightedMenuOption(option)
 
-                            else -> false
-                        }
+                        if (evt.button == Input.Buttons.LEFT) {
+                            menuController.onMenuInput(MenuInput(MenuInputType.SELECT, MenuInputSource.MOUSE))
+                            true
+                        } else if (evt.button == Input.Buttons.RIGHT) {
+                            menuController.onMenuInput(MenuInput(MenuInputType.BACK, MenuInputSource.MOUSE))
+                            true
+                        } else false
                     }
+
+                    else -> false
                 }
-                pane
             }
         }
+        val selectedIcon = ImageIcon(TextureRegion(AssetRegistry.get<Texture>("ui_nut_icon"))).apply {
+            this.bounds.width.set(40f)
+            this.bindVarToSelfWidth(this.bounds.x, multiplier = -1f)
+            this.visible.bind { currentHighlightedMenuOption.use() == option }
+            this.margin.set(Insets(0f, 0f, 0f, 10f))
+            this.renderAlign.set(Align.left)
+        }
+        pane += selectedIcon
+        val textLabel = TextLabel(option.text).apply {
+            this.markup.set(mainSerifMarkup)
+            this.textColor.set(Color.WHITE)
+            this.textAlign.set(TextAlign.LEFT)
+        }
+        pane += textLabel
+        
+        if (option is MenuOption.OptionWidget) {
+            when (option) {
+                is MenuOption.OptionWidget.Checkbox -> {
+                    pane += TextLabel(binding = {
+                        if (option.selectedState.use()) "[X]" else "[   ]"
+                    }, font = fonts.uiMainSerifFontBold).apply {
+                        this.textColor.set(Color.WHITE)
+                        this.textAlign.set(TextAlign.RIGHT)
+                        this.renderAlign.set(Align.right)
+                    }
+                }
+
+                is MenuOption.OptionWidget.Cycle<*> -> {
+                    // TODO
+                }
+            }
+        }
+        
+        return pane
     }
 
 }

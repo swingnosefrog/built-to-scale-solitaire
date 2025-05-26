@@ -2,6 +2,7 @@ package com.swingnosefrog.solitaire.screen.main.menu
 
 import com.swingnosefrog.solitaire.Localization
 import com.swingnosefrog.solitaire.menu.MenuOption
+import paintbox.binding.BooleanVar
 import paintbox.binding.ReadOnlyVar
 
 
@@ -14,7 +15,7 @@ class VideoSettingsMenu(
     override val options: List<MenuOption> = listOf(
         MenuOption.createNoOp(Localization["game.menu.videoSettings.option.windowedResolution"]),
         MenuOption.createNoOp(Localization["game.menu.videoSettings.option.fullscreen"]),
-        MenuOption.createNoOp(Localization["game.menu.videoSettings.option.vsync"]),
+        MenuOption.OptionWidget.Checkbox(Localization["game.menu.videoSettings.option.vsync"], BooleanVar(false)),
         MenuOption.createNoOp(Localization["game.menu.videoSettings.option.maxFps"]),
         MenuOption.Back(),
     )
