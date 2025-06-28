@@ -42,8 +42,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         inputProcessor.addProcessor(sceneRootInputProcessor)
         inputProcessor.addProcessor(uiInputHandler)
 
-        sceneRootInputProcessor.enabled.bind { isPauseMenuOpen.use() }
-        uiSceneRoot.visible.bind { isPauseMenuOpen.use() }
+        sceneRootInputProcessor.enabled.bind(isPauseMenuOpen)
     }
 
     init {
@@ -51,7 +50,12 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
     }
 
     private fun initSceneRoot() {
-        uiSceneRoot += MainGameUiPane(this, menuController)
+        uiSceneRoot += MainGameHudPane(this).apply {
+            this.visible.bind { !isPauseMenuOpen.use() }
+        }
+        uiSceneRoot += MainGameUiPane(this, menuController).apply { 
+            this.visible.bind(isPauseMenuOpen)
+        }
     }
 
     fun render(batch: SpriteBatch) {

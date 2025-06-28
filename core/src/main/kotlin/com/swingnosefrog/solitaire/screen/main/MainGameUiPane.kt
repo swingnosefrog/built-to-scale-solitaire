@@ -26,6 +26,7 @@ import paintbox.ui.ClickPressed
 import paintbox.ui.ImageIcon
 import paintbox.ui.MouseEntered
 import paintbox.ui.Pane
+import paintbox.ui.RenderAlign
 import paintbox.ui.StringVarConverter
 import paintbox.ui.UIElement
 import paintbox.ui.area.Insets
@@ -49,6 +50,7 @@ class MainGameUiPane(
     private val fonts: SolitaireFonts get() = mainGameUi.mainGameScreen.main.fonts
     private val headingFont: PaintboxFont get() = fonts.uiHeadingFont
     private val mainSerifMarkup: Markup get() = fonts.uiMainSerifMarkup
+    private val mainSansSerifMarkup: Markup get() = fonts.uiMainSansSerifMarkup
 
     private val currentMenu: ReadOnlyVar<AbstractMenu?> = Var { menuController.currentMenu.use() }
     private val currentHighlightedMenuOption: ReadOnlyVar<MenuOption?> =
@@ -108,6 +110,22 @@ class MainGameUiPane(
                 }
             }
         }
+
+//        this += Pane().apply {
+////            this.margin.set(Insets(32f))
+//
+//            this += TextLabel(binding = {
+//                "R - Restart"
+//            }).apply {
+//                this.markup.set(mainSansSerifMarkup)
+//                this.renderAlign.set(RenderAlign.bottomLeft)
+//                this.textColor.set(Color.WHITE)
+//                this.backgroundColor.set(dark)
+//                this.renderBackground.set(true)
+//                this.bgPadding.set(Insets(8f))
+//                this.setScaleXY(0.75f)
+//            }
+//        }
     }
 
     private fun createUIElementFromMenuOption(option: MenuOption): UIElement {

@@ -27,6 +27,8 @@ open class GameRenderer(
 
     val camera: OrthographicCamera = OrthographicCamera().apply {
         setToOrtho(false, logic.viewportWidth, logic.viewportHeight)
+        this.zoom = 0.7875f
+        this.translate(0f, 0.5f)
     }
     val viewport: Viewport = FitViewport(camera.viewportWidth, camera.viewportHeight, camera)
     

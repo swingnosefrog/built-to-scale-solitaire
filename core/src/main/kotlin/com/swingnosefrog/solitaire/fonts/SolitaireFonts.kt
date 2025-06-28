@@ -25,6 +25,11 @@ class SolitaireFonts(private val game: SolitaireGame) {
         setOf(FontWeight.MEDIUM, FontWeight.BOLD),
         setOf(FontStyle.REGULAR, FontStyle.ITALIC)
     )
+    private val uiMainSansSerifFamily: FontFamily = FontFamily(
+        "Radio Canada Big",
+        setOf(FontWeight.MEDIUM, FontWeight.BOLD),
+        setOf(FontStyle.REGULAR, FontStyle.ITALIC)
+    )
     
 
     var uiHeadingFont: PaintboxFont by bind(FontKeys.UI_HEADING)
@@ -38,6 +43,15 @@ class SolitaireFonts(private val game: SolitaireGame) {
         private set
     var uiMainSerifFontBoldItalic: PaintboxFont by bind(uiMainSerifFamily[FontWeight.BOLD, FontStyle.ITALIC])
         private set
+    
+    var uiMainSansSerifFont: PaintboxFont by bind(uiMainSansSerifFamily[FontWeight.MEDIUM, FontStyle.REGULAR])
+        private set
+    var uiMainSansSerifFontBold: PaintboxFont by bind(uiMainSansSerifFamily[FontWeight.BOLD, FontStyle.REGULAR])
+        private set
+    var uiMainSansSerifFontItalic: PaintboxFont by bind(uiMainSansSerifFamily[FontWeight.MEDIUM, FontStyle.ITALIC])
+        private set
+    var uiMainSansSerifFontBoldItalic: PaintboxFont by bind(uiMainSansSerifFamily[FontWeight.BOLD, FontStyle.ITALIC])
+        private set
 
     val uiMainSerifMarkup: Markup by lazy {
         Markup.createWithBoldItalic(
@@ -45,6 +59,14 @@ class SolitaireFonts(private val game: SolitaireGame) {
             uiMainSerifFontBold,
             uiMainSerifFontItalic,
             uiMainSerifFontBoldItalic,
+        )
+    }
+    val uiMainSansSerifMarkup: Markup by lazy {
+        Markup.createWithBoldItalic(
+            uiMainSansSerifFont,
+            uiMainSansSerifFontBold,
+            uiMainSansSerifFontItalic,
+            uiMainSansSerifFontBoldItalic,
         )
     }
 
@@ -114,6 +136,7 @@ class SolitaireFonts(private val game: SolitaireGame) {
         ).setAfterLoad(defaultScaledFontAfterLoad)
         
         addFontFamily(uiMainSerifFamily, fontSize = 32, hinting = Hinting.Medium)
+        addFontFamily(uiMainSansSerifFamily, fontSize = 32, hinting = Hinting.Medium)
     }
 
     private fun bind(key: Any): FontBindingDelegate = FontBindingDelegate(key)
