@@ -15,6 +15,8 @@ import com.swingnosefrog.solitaire.game.audio.GameMusic
 import com.swingnosefrog.solitaire.game.logic.DeckInitializer
 import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.soundsystem.SoundSystem
+import paintbox.binding.ReadOnlyVar
+import paintbox.binding.Var
 import paintbox.framebuffer.FrameBufferManager
 import paintbox.input.ToggleableInputProcessor
 
@@ -35,8 +37,8 @@ class MainGameScreen(
 
     private val gameInputMultiplexer: InputMultiplexer = InputMultiplexer()
     private var _backingGameContainer: GameContainer? = null
-    var gameContainer: GameContainer
-        private set(newValue) {
+    private var backingGameContainer: GameContainer
+        set(newValue) {
             val oldValue = _backingGameContainer
             if (oldValue != null) {
                 this.gameInputMultiplexer.removeProcessor(oldValue.inputProcessor)
@@ -46,10 +48,12 @@ class MainGameScreen(
             newValue.gameRenderer.shouldApplyViewport.set(true)
             this.gameInputMultiplexer.addProcessor(newValue.inputProcessor)
             _backingGameContainer = newValue
+            (gameContainer as Var).set(newValue)
 
             oldValue?.dispose()
         }
         get() = _backingGameContainer ?: error("backingGameContainer is not initialized yet")
+    val gameContainer: ReadOnlyVar<GameContainer> by lazy { Var(backingGameContainer) }
 
     private val gameFrameBufferCamera: OrthographicCamera = OrthographicCamera().apply { 
         setToOrtho(false, 1280f, 720f)
@@ -78,7 +82,7 @@ class MainGameScreen(
     
     fun startNewGame(deckInitializer: DeckInitializer) {
         val newContainer = GameContainer({ GameLogic(deckInitializer) }, batch, soundSystem, gameMusic)
-        gameContainer = newContainer
+        backingGameContainer = newContainer
         
         gameMusic.transitionToStemMix(GameMusic.StemMixes.ALL, 1f)
     }
@@ -106,7 +110,7 @@ class MainGameScreen(
             Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
-            val gameRenderer = gameContainer.gameRenderer
+            val gameRenderer = backingGameContainer.gameRenderer
             gameRenderer.render(delta)
 
             gameFb.end()
@@ -131,7 +135,7 @@ class MainGameScreen(
     override fun renderUpdate() {
         super.renderUpdate()
 
-        val gameLogic = gameContainer.gameLogic
+        val gameLogic = backingGameContainer.gameLogic
         gameLogic.renderUpdate(Gdx.graphics.deltaTime)
     }
 
@@ -139,7 +143,7 @@ class MainGameScreen(
         super.resize(width, height)
         gameFrameBufferViewport.update(width, height)
         ui.resize(width, height)
-        gameContainer.resize(width, height)
+        backingGameContainer.resize(width, height)
     }
     
     override fun show() {
@@ -153,7 +157,7 @@ class MainGameScreen(
     }
 
     override fun dispose() {
-        gameContainer.dispose()
+        backingGameContainer.dispose()
         
         main.inputMultiplexer.removeProcessor(this.screenInputMultiplexer)
         

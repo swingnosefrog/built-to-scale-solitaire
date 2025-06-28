@@ -102,6 +102,7 @@ class SolitaireFonts(private val game: SolitaireGame) {
         }
         val defaultScaledFontAfterLoad: FreeTypeFontAfterLoad = { font ->
             font.setUseIntegerPositions(false) // Stops glyphs from being offset due to rounding
+            font.setFixedWidthGlyphs("0123456789")
         }
 
         fun addFontFamily(

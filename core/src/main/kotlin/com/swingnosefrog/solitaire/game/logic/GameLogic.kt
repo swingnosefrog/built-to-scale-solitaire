@@ -7,6 +7,8 @@ import com.swingnosefrog.solitaire.game.animation.AnimationContainer
 import com.swingnosefrog.solitaire.game.animation.CardAnimation
 import com.swingnosefrog.solitaire.game.animation.GameAnimation
 import paintbox.Paintbox
+import paintbox.binding.BooleanVar
+import paintbox.binding.ReadOnlyBooleanVar
 import kotlin.math.floor
 
 class GameLogic(val deckInitializer: DeckInitializer) {
@@ -24,11 +26,13 @@ class GameLogic(val deckInitializer: DeckInitializer) {
 
     val zones: CardZones = CardZones(this)
     val gameInput: GameInput by lazy { GameInput(this) }
+    val gameStats: GameStats by lazy { GameStats(this) }
     val animationContainer: AnimationContainer = AnimationContainer()
 
     val eventDispatcher: GameEventDispatcher = DispatcherImpl()
     
-    private var gameWon: Boolean = false
+    val isStillDealing: ReadOnlyBooleanVar = BooleanVar(true)
+    val gameWon: ReadOnlyBooleanVar = BooleanVar(false)
 
     init {
         Paintbox.LOGGER.debug("DeckInitializer: $deckInitializer", tag = "GameLogic")
@@ -79,12 +83,14 @@ class GameLogic(val deckInitializer: DeckInitializer) {
             checkTableauAfterActivity()
         }
 
-        var shouldInputsBeDisabled = gameWon || animationContainer.getPlayingAnimations().isNotEmpty()
+        val shouldInputsBeDisabled = gameWon.get() || animationContainer.getPlayingAnimations().isNotEmpty()
         gameInput.inputsDisabled.set(shouldInputsBeDisabled)
+        
+        gameStats.renderUpdate(deltaSec)
     }
 
     fun checkTableauAfterActivity() {
-        if (gameWon) {
+        if (gameWon.get()) {
             return
         }
 
@@ -104,7 +110,7 @@ class GameLogic(val deckInitializer: DeckInitializer) {
 
         // Game complete check
         if ((zones.freeCellZones + zones.foundationZones).all { z -> z.isFlippedOver }) {
-            gameWon = true
+            (gameWon as BooleanVar).set(true)
             eventDispatcher.onGameWon(this)
             
             // TODO animation on win
@@ -201,9 +207,13 @@ class GameLogic(val deckInitializer: DeckInitializer) {
             )
         )
     }
-    
+
     private fun enqueueSlightDelayAnimation(durationSec: Float? = null) {
-        animationContainer.enqueueAnimation(GameAnimation(durationSec = durationSec ?: 0.15f, 0f))
+        animationContainer.enqueueAnimation(object : GameAnimation(durationSec = durationSec ?: 0.15f, 0f) {
+            override fun onComplete() {
+                (isStillDealing as BooleanVar).set(false)
+            }
+        })
     }
 
     fun getSelectedZoneCoordinates(worldX: Float, worldY: Float): ZoneCoordinates? {

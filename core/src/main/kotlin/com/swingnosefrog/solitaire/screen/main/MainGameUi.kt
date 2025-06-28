@@ -77,7 +77,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         private fun openPauseMenu() {
             _isPauseMenuOpen.set(true)
             
-            val gameContainer = mainGameScreen.gameContainer
+            val gameContainer = mainGameScreen.gameContainer.getOrCompute()
             if (!isPauseMenuOpen.get() && gameContainer.gameInput.isDragging()) {
                 gameContainer.gameInput.cancelDrag()
             }

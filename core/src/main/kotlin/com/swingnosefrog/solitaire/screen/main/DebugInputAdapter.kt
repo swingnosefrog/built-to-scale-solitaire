@@ -10,7 +10,7 @@ import paintbox.util.gdxutils.isShiftDown
 class DebugInputAdapter(private val mainGameScreen: MainGameScreen) : InputAdapter() {
     
     override fun keyDown(keycode: Int): Boolean {
-        val gameLogic = mainGameScreen.gameContainer.gameLogic
+        val gameLogic = mainGameScreen.gameContainer.getOrCompute().gameLogic
 
         if (keycode == Input.Keys.R) {
             val usePrevDeckInitializer = if (Gdx.input.isShiftDown()) gameLogic.deckInitializer else null
@@ -22,7 +22,6 @@ class DebugInputAdapter(private val mainGameScreen: MainGameScreen) : InputAdapt
 
             return true
         } else if (keycode == Input.Keys.SPACE) {
-            val gameLogic = mainGameScreen.gameContainer.gameLogic
             gameLogic.animationContainer.renderUpdate(10f)
             gameLogic.checkTableauAfterActivity()
             
