@@ -28,7 +28,7 @@ class GameStats(private val logic: GameLogic) {
     }
 
     fun renderUpdate(deltaSec: Float) {
-        if (!logic.isStillDealing.get()) {
+        if (!logic.isStillDealing.get() && !logic.gameWon.get()) {
             _timeElapsedSec.set(_timeElapsedSec.get() + deltaSec)
         }
     }
