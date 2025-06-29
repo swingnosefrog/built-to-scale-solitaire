@@ -34,6 +34,7 @@ class MainGameGameplayUiPane(
                         this.bindHeightToSelfWidth()
                         this.textAlign.set(TextAlign.CENTRE)
                         this.renderAlign.set(Align.center)
+                        this.markup.set(mainSerifMarkup)
                         
                         this.setOnAction { 
                             uiInputHandler.openPauseMenu()
@@ -43,6 +44,7 @@ class MainGameGameplayUiPane(
                         this.bindHeightToSelfWidth()
                         this.textAlign.set(TextAlign.CENTRE)
                         this.renderAlign.set(Align.center)
+                        this.markup.set(mainSerifMarkup)
                         
                         this.setOnAction {
                             uiInputHandler.startNewGame()

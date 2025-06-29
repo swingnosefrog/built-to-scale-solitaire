@@ -14,6 +14,7 @@ import com.swingnosefrog.solitaire.game.logic.CardStack
 import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.game.logic.GameLogic.Companion.CARD_HEIGHT
 import com.swingnosefrog.solitaire.game.logic.GameLogic.Companion.CARD_WIDTH
+import com.swingnosefrog.solitaire.game.logic.StackDirection
 import paintbox.binding.BooleanVar
 import paintbox.util.gdxutils.fillRect
 
@@ -55,7 +56,7 @@ open class GameRenderer(
         batch.setColor(1f, 1f, 1f, 1f)
 
         logic.zones.allCardZones.forEach { zone ->
-            zone.cardStack.render(zone.x.get(), zone.y.get(), zone.isFlippedOver)
+            zone.cardStack.render(zone.x.get(), zone.y.get(), zone.isFlippedOver, zone.cardStack.stackDirection == StackDirection.DOWN)
         }
         batch.setColor(1f, 1f, 1f, 1f)
 
@@ -63,30 +64,40 @@ open class GameRenderer(
             if (playingAnimation.secondsElapsed < 0f) continue
 
             if (playingAnimation is CardPlayingAnimation) {
-                playingAnimation.cardAnimation.card.render(playingAnimation.currentX, playingAnimation.currentY, false)
+                playingAnimation.cardAnimation.card.render(playingAnimation.currentX, playingAnimation.currentY, false, true)
             }
         }
         batch.setColor(1f, 1f, 1f, 1f)
 
         logic.gameInput.getDraggingInfo()?.also { dragging ->
-            dragging.cardStack.render(dragging.x, dragging.y, false)
+            dragging.cardStack.render(dragging.x, dragging.y, false, true)
         }
 
         batch.color = Color.WHITE
         batch.end()
     }
 
-    protected open fun CardStack.render(x: Float, y: Float, isFlippedOver: Boolean) {
+    protected open fun CardStack.render(x: Float, y: Float, isFlippedOver: Boolean, renderShadow: Boolean) {
         val stackOffset = this.stackDirection.yOffset
         this.cardList.forEachIndexed { index, card ->
-            card.render(x, y + index * stackOffset, isFlippedOver)
+            card.render(x, y + index * stackOffset, isFlippedOver, renderShadow)
         }
     }
 
-    protected open fun Card.render(x: Float, y: Float, flippedOver: Boolean) {
-        batch.setColor(1f, 1f, 1f, 1f)
-
+    protected open fun Card.render(x: Float, y: Float, flippedOver: Boolean, renderShadow: Boolean) {
+        if (renderShadow) {
+            batch.setColor(0f, 0f, 0f, 0.35f)
+            renderCardTex(CardAssetKey.Silhouette, x, y + 0.1f)
+        }
+        
         val cardAssetKey: CardAssetKey = if (flippedOver) CardAssetKey.Back else this.cardAssetKey
+        batch.setColor(1f, 1f, 1f, 1f)
+        renderCardTex(cardAssetKey, x, y)
+        
+        batch.setColor(1f, 1f, 1f, 1f)
+    }
+    
+    private fun renderCardTex(cardAssetKey: CardAssetKey, x: Float, y: Float) {
         val tex = GameAssets.get<Texture>(cardAssetKey.getAssetKey())
         batch.draw(tex, x, camera.viewportHeight - (y + CARD_HEIGHT), CARD_WIDTH, CARD_HEIGHT)
     }

@@ -40,6 +40,11 @@ sealed class CardAssetKey {
         override fun getAssetKey(): String = "slot_card"
     }
     
+    data object Silhouette : CardAssetKey() {
+        
+        override fun getAssetKey(): String = "card_silhouette"
+    }
+    
     abstract fun getAssetKey(): String
 }
 
