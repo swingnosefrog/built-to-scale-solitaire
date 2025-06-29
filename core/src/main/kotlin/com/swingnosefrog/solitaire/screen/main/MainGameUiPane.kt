@@ -131,8 +131,12 @@ class MainGameUiPane(
     private fun createUIElementFromMenuOption(option: MenuOption): UIElement {
         val pane = Pane().apply {
             this.bounds.height.set(54f)
+            
+            this.opacity.bind { if (option.disabled.use()) 0.5f else 1f }
 
             this.addInputEventListener { evt ->
+                if (option.disabled.get()) return@addInputEventListener false
+                
                 when (evt) {
                     is MouseEntered -> {
                         menuController.setHighlightedMenuOption(option)

@@ -20,7 +20,9 @@ class MainGameMenus(
                 MenuOption.Simple(Localization["game.menu.root.option.resume"]) {
                     requestCloseMenu()
                 },
-                MenuOption.createNoOp(Localization["game.menu.root.option.howToPlay"]),
+                MenuOption.createNoOp(Localization["game.menu.root.option.howToPlay"]).apply {
+                    this.disabled.set(true)
+                },
                 MenuOption.SubMenu(Localization["game.menu.root.option.settings"]) { settingsMenu },
                 MenuOption.SubMenu(Localization["game.menu.root.option.quitGame"]) { quitConfirmationMenu },
             )

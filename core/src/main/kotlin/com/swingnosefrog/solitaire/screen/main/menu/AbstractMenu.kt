@@ -18,10 +18,10 @@ abstract class AbstractMenu(val id: String) {
     /**
      * Returns the [MenuOption] index in [options] to highlight when this menu is entered with the keyboard.
      * A value outside of the valid index range (such as -1) will not select anything.
-     * Defaults to first item (index 0).
+     * Defaults to first non-disabled item (usually index 0).
      */
     open fun getAutoHighlightedOptionIndex(controller: MenuController): Int {
-        return 0
+        return options.indexOfFirst { !it.disabled.get() }
     }
     
     fun getAutoHighlightedOption(controller: MenuController): MenuOption? = options.getOrNull(getAutoHighlightedOptionIndex(controller))

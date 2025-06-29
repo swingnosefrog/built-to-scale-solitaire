@@ -4,6 +4,8 @@ import com.swingnosefrog.solitaire.screen.main.menu.AbstractMenu
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 import paintbox.util.MathHelper
+import kotlin.math.abs
+import kotlin.math.absoluteValue
 
 
 open class MenuController {
@@ -26,6 +28,9 @@ open class MenuController {
     open fun setHighlightedMenuOption(menuOption: MenuOption?) {
         if (_currentHighlightedMenuOption.getOrCompute() != menuOption) {
             if (_currentMenu.getOrCompute()?.options?.any { opt -> opt.isSelected.get() } == true) {
+                return
+            }
+            if (menuOption?.disabled?.get() == true) {
                 return
             }
             
@@ -88,19 +93,26 @@ open class MenuController {
     }
 
     private fun navigateMenuOption(indexChange: Int) {
+        if (indexChange == 0) return
+        if (indexChange.absoluteValue > 1) return navigateMenuOption(indexChange.coerceIn(-1, +1))
+        
         val currentMenu = currentMenu.getOrCompute() ?: return
         val currentOption = currentHighlightedMenuOption.getOrCompute()
-
+    
         val optionsList = currentMenu.options
-        val indexOfCurrentOption = optionsList.indexOf(currentOption)
+        
+        if (optionsList.none { !it.disabled.get() }) return
 
-        val newIndex = if (indexOfCurrentOption == -1) 0 else MathHelper.indexWraparound(
-            indexOfCurrentOption,
-            indexChange,
-            optionsList.size
-        )
+        val startIndex = optionsList.indexOf(currentOption).takeIf { it != -1 } ?: 0
+        var newIndex = startIndex
 
-        setHighlightedMenuOption(optionsList[newIndex])
+        repeat(optionsList.size) {
+            newIndex = MathHelper.indexWraparound(newIndex, indexChange, optionsList.size)
+            if (!optionsList[newIndex].disabled.get()) {
+                setHighlightedMenuOption(optionsList[newIndex])
+                return
+            }
+        }
     }
 
     private data class MenuHistory(val menu: AbstractMenu, val selectedOption: MenuOption?)

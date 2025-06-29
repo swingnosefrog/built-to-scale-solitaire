@@ -114,6 +114,7 @@ sealed class MenuOption(
     
 
     val isSelected: BooleanVar = BooleanVar(false)
+    val disabled: BooleanVar = BooleanVar(false)
 
     abstract fun onSelect(controller: MenuController, menuInput: MenuInput)
 

@@ -16,7 +16,9 @@ class SettingsRootMenu(
     override val headingText: ReadOnlyVar<String> = Localization["game.menu.settings.heading"]
 
     override val options: List<MenuOption> = listOf(
-        MenuOption.SubMenu(Localization["game.menu.settings.option.gameplay"]) { gameplaySettingsMenu },
+        MenuOption.SubMenu(Localization["game.menu.settings.option.gameplay"]) { gameplaySettingsMenu }.apply {
+            this.disabled.set(true)
+        },
         MenuOption.SubMenu(Localization["game.menu.settings.option.audio"]) { audioSettingsMenu },
         MenuOption.SubMenu(Localization["game.menu.settings.option.video"]) { videoSettingsMenu },
         MenuOption.Back(),
