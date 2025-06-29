@@ -7,8 +7,10 @@ import com.swingnosefrog.solitaire.game.GameContainer
 import paintbox.binding.ReadOnlyVar
 import paintbox.font.Markup
 import paintbox.font.TextAlign
+import paintbox.ui.Corner
 import paintbox.ui.Pane
 import paintbox.ui.control.Button
+import paintbox.ui.control.ButtonSkin
 import paintbox.ui.layout.VBox
 
 
@@ -30,21 +32,31 @@ class MainGameGameplayUiPane(
                 this.bounds.width.set(64f)
                 
                 this.temporarilyDisableLayouts { 
-                    this += Button("Menu").apply {
-                        this.bindHeightToSelfWidth()
+                    fun Button.applyStyle(vararg corners: Corner) {
                         this.textAlign.set(TextAlign.CENTRE)
                         this.renderAlign.set(Align.center)
                         this.markup.set(mainSerifMarkup)
+                        this.setScaleXY(0.75f)
+                        (this.skin.getOrCompute() as ButtonSkin).apply {
+                            this.roundedRadius.set(10)
+                            this.roundedCorners.clear()
+                            this.roundedCorners.addAll(corners)
+                            this.defaultBgColor.set(dark)
+                            this.defaultTextColor.set(Color.WHITE)
+                        }
+                    }
+                    
+                    this += Button("Menu").apply {
+                        this.bindHeightToSelfWidth()
+                        this.applyStyle(Corner.TOP_RIGHT)
                         
                         this.setOnAction { 
                             uiInputHandler.openPauseMenu()
                         }
                     }
-                    this += Button("New Game").apply {
+                    this += Button("[lineheight=0.875]New\nGame[]").apply {
                         this.bindHeightToSelfWidth()
-                        this.textAlign.set(TextAlign.CENTRE)
-                        this.renderAlign.set(Align.center)
-                        this.markup.set(mainSerifMarkup)
+                        this.applyStyle(Corner.BOTTOM_RIGHT)
                         
                         this.setOnAction {
                             uiInputHandler.startNewGame()
