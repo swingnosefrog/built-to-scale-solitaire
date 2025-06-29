@@ -26,7 +26,6 @@ import paintbox.ui.ClickPressed
 import paintbox.ui.ImageIcon
 import paintbox.ui.MouseEntered
 import paintbox.ui.Pane
-import paintbox.ui.RenderAlign
 import paintbox.ui.StringVarConverter
 import paintbox.ui.UIElement
 import paintbox.ui.area.Insets
@@ -37,7 +36,7 @@ import paintbox.ui.layout.HBox
 import paintbox.ui.layout.VBox
 
 
-class MainGameUiPane(
+class MainGameMenuPane(
     private val mainGameUi: MainGameUi,
     private val menuController: MenuController,
 ) : Pane() {

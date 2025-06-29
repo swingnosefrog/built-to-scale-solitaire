@@ -7,6 +7,8 @@ import com.swingnosefrog.solitaire.game.GameContainer
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 import paintbox.font.Markup
+import paintbox.ui.Anchor
+import paintbox.ui.NoInputPane
 import paintbox.ui.Pane
 import paintbox.ui.RenderAlign
 import paintbox.ui.animation.Animation
@@ -18,7 +20,7 @@ import paintbox.util.DecimalFormats
 
 class MainGameHudPane(
     private val mainGameUi: MainGameUi,
-) : Pane() {
+) : NoInputPane() {
     
     private val gameContainer: ReadOnlyVar<GameContainer> get() = mainGameUi.mainGameScreen.gameContainer
 
@@ -68,6 +70,9 @@ class MainGameHudPane(
                 
                 "Time: $clockPortion | Moves: $movesMadePortion"
             }).apply { 
+                this.bindWidthToParent(multiplier = 0.4f)
+                this.bounds.height.set(48f)
+                Anchor.TopRight.configure(this)
                 this.markup.set(mainSansSerifMarkup)
                 this.renderAlign.set(RenderAlign.topRight)
                 this.textColor.set(Color.WHITE)

@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.swingnosefrog.solitaire.game.logic.DeckInitializer
 import com.swingnosefrog.solitaire.screen.main.menu.MainGameMenus
 import com.swingnosefrog.solitaire.menu.MenuController
 import com.swingnosefrog.solitaire.menu.MenuInput
@@ -18,6 +19,7 @@ import paintbox.Paintbox
 import paintbox.binding.BooleanVar
 import paintbox.binding.ReadOnlyBooleanVar
 import paintbox.input.ToggleableInputProcessor
+import paintbox.ui.Pane
 import paintbox.ui.SceneRoot
 import paintbox.ui.animation.Animation
 import paintbox.ui.animation.AnimationHandler
@@ -47,8 +49,6 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         inputProcessor = InputMultiplexer()
         inputProcessor.addProcessor(sceneRootInputProcessor)
         inputProcessor.addProcessor(uiInputHandler)
-
-        sceneRootInputProcessor.enabled.bind(isPauseMenuOpen)
     }
 
     init {
@@ -57,21 +57,36 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
 
     private fun initSceneRoot() {
         animationHandler.cancelAllAnimations()
-        uiSceneRoot += MainGameHudPane(this).apply {
+        
+        val parentPane = Pane()
+        parentPane += MainGameHudPane(this).apply {
             this.opacity.bind(TransitioningFloatVar(animationHandler, {
                 if (isPauseMenuOpen.use()) 0.25f else 1f
             }, { currentValue, targetValue ->
                 Animation(Interpolation.exp5, 0.2f, currentValue, targetValue)
             }))
         }
-        uiSceneRoot += MainGameUiPane(this, menuController).apply { 
-            this.opacity.bind(TransitioningFloatVar(animationHandler, {
-                if (isPauseMenuOpen.use()) 1f else 0f
-            }, { currentValue, targetValue ->
-                Animation(Interpolation.exp5, 0.2f, currentValue, targetValue)
-            }))
-            this.visible.bind { opacity.use() > 0f }
+        parentPane += Pane().apply {
+            this += MainGameMenuPane(this@MainGameUi, menuController).apply {
+                this.opacity.bind(TransitioningFloatVar(animationHandler, {
+                    if (isPauseMenuOpen.use()) 1f else 0f
+                }, { currentValue, targetValue ->
+                    Animation(Interpolation.exp5, 0.2f, currentValue, targetValue)
+                }))
+                this.visible.bind { opacity.use() > 0f }
+            }
+            this += MainGameGameplayUiPane(this@MainGameUi, uiInputHandler).apply {
+                this.opacity.bind(TransitioningFloatVar(animationHandler, {
+                    if (isPauseMenuOpen.use()) 0f else 1f
+                }, { currentValue, targetValue ->
+                    if (targetValue < currentValue) null
+                    else Animation(Interpolation.exp5, 0.2f, currentValue, targetValue)
+                }))
+                this.visible.bind { opacity.use() > 0f }
+            }
         }
+        
+        uiSceneRoot += parentPane
     }
 
     fun render(batch: SpriteBatch, deltaSec: Float) {
@@ -90,9 +105,18 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         uiViewport.update(width, height)
     }
 
-    private inner class UiInputHandler : InputAdapter() {
+    interface IUiInputHandler {
 
-        private fun openPauseMenu() {
+        fun openPauseMenu()
+
+        fun closePauseMenu()
+        
+        fun startNewGame()
+    }
+
+    private inner class UiInputHandler : InputAdapter(), IUiInputHandler {
+
+        override fun openPauseMenu() {
             _isPauseMenuOpen.set(true)
             
             val gameContainer = mainGameScreen.gameContainer.getOrCompute()
@@ -106,10 +130,15 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
             menuController.setNewMenu(rootMenu, rootMenu.getAutoHighlightedOption(menuController))
         }
 
-        private fun closePauseMenu() {
+        override fun closePauseMenu() {
             _isPauseMenuOpen.set(false)
             menuController.clearMenuStack()
             menuController.setNewMenu(null, null)
+        }
+
+        override fun startNewGame() {
+            // TODO This currently only exists for new game button
+            mainGameScreen.startNewGame(DeckInitializer.RandomSeed())
         }
 
         private fun debugReinitSceneRoot() {
