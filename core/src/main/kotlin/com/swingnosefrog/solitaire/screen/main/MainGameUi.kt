@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.swingnosefrog.solitaire.screen.main.menu.MainGameMenus
@@ -18,7 +19,9 @@ import paintbox.binding.BooleanVar
 import paintbox.binding.ReadOnlyBooleanVar
 import paintbox.input.ToggleableInputProcessor
 import paintbox.ui.SceneRoot
+import paintbox.ui.animation.Animation
 import paintbox.ui.animation.AnimationHandler
+import paintbox.ui.animation.TransitioningFloatVar
 
 
 class MainGameUi(val mainGameScreen: MainGameScreen) {
@@ -55,10 +58,19 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
     private fun initSceneRoot() {
         animationHandler.cancelAllAnimations()
         uiSceneRoot += MainGameHudPane(this).apply {
-            this.visible.bind { !isPauseMenuOpen.use() }
+            this.opacity.bind(TransitioningFloatVar(animationHandler, {
+                if (isPauseMenuOpen.use()) 0.25f else 1f
+            }, { currentValue, targetValue ->
+                Animation(Interpolation.exp5, 0.2f, currentValue, targetValue)
+            }))
         }
         uiSceneRoot += MainGameUiPane(this, menuController).apply { 
-            this.visible.bind(isPauseMenuOpen)
+            this.opacity.bind(TransitioningFloatVar(animationHandler, {
+                if (isPauseMenuOpen.use()) 1f else 0f
+            }, { currentValue, targetValue ->
+                Animation(Interpolation.exp5, 0.2f, currentValue, targetValue)
+            }))
+            this.visible.bind { opacity.use() > 0f }
         }
     }
 
