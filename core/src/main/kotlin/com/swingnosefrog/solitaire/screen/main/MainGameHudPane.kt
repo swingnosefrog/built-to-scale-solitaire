@@ -40,7 +40,7 @@ class MainGameHudPane(
             val elapsedMillisPart = (elapsedSec % 1f * 1000).toInt()
             val elapsedCentisecondsPart = elapsedMillisPart / 10
             var clockPortion =
-                "${DecimalFormats.format("00", elapsedMinutesPart)}:${DecimalFormats.format("00", elapsedSecondsPart)}.[scale=0.75]${DecimalFormats.format("00", elapsedCentisecondsPart)}[]"
+                "${DecimalFormats.format("00", elapsedMinutesPart)}:${DecimalFormats.format("00", elapsedSecondsPart)}[scale=0.75].${DecimalFormats.format("00", elapsedCentisecondsPart)}[]"
 
             clockPortion
         }
@@ -50,21 +50,19 @@ class MainGameHudPane(
             val gameStats = gameContainer.gameStats
 
             val movesMade = gameStats.movesMade.use()
-            val movesMadePortion = DecimalFormats.format("#,###", movesMade)
+            var movesMadePortion = DecimalFormats.format("#,###", movesMade)
 
+            if (movesMadePortion.length < 3) {
+                val extraZeroes = "0".repeat(3 - movesMadePortion.length)
+                movesMadePortion = "[opacity=0.4]${extraZeroes}[]" + movesMadePortion
+            }
+            
             movesMadePortion
         }
         
         val dark = Color(0f, 0f, 0f, 0.5f)
         this += Pane().apply { 
-//            this.margin.set(Insets(32f))
-            
             this += TextLabel(binding = {
-                val gameContainer = gameContainer.use()
-                val gameLogic = gameContainer.gameLogic
-                
-//                val isStillDealing = gameLogic.isStillDealing.use()
-                
                 val clockPortion = elapsedTimeClock.use()
                 val movesMadePortion = movesMadeString.use()
                 
