@@ -18,6 +18,7 @@ import paintbox.binding.BooleanVar
 import paintbox.binding.ReadOnlyBooleanVar
 import paintbox.input.ToggleableInputProcessor
 import paintbox.ui.SceneRoot
+import paintbox.ui.animation.AnimationHandler
 
 
 class MainGameUi(val mainGameScreen: MainGameScreen) {
@@ -36,6 +37,8 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
     val isPauseMenuOpen: ReadOnlyBooleanVar get() = _isPauseMenuOpen
 
     private val menuController: MenuController = MenuController()
+    
+    val animationHandler: AnimationHandler = AnimationHandler()
 
     init {
         inputProcessor = InputMultiplexer()
@@ -50,6 +53,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
     }
 
     private fun initSceneRoot() {
+        animationHandler.cancelAllAnimations()
         uiSceneRoot += MainGameHudPane(this).apply {
             this.visible.bind { !isPauseMenuOpen.use() }
         }
@@ -58,7 +62,9 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         }
     }
 
-    fun render(batch: SpriteBatch) {
+    fun render(batch: SpriteBatch, deltaSec: Float) {
+        animationHandler.frameUpdate(deltaSec)
+
         val camera = uiCamera
         batch.projectionMatrix = camera.combined
         batch.begin()
