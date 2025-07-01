@@ -7,7 +7,7 @@ data class AudioDeviceSettings(val bufferSize: Int, val bufferCount: Int) {
     companion object {
 
         const val DEFAULT_SIZE_WINDOWS: Int = 1024
-        const val DEFAULT_COUNT_WINDOWS: Int = 6
+        const val DEFAULT_COUNT_WINDOWS: Int = 8
         const val DEFAULT_SIZE: Int = 1024
         const val DEFAULT_COUNT: Int = 10
 
