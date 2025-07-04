@@ -2,6 +2,7 @@ package com.swingnosefrog.solitaire.screen.main
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
+import com.swingnosefrog.solitaire.fonts.PromptFontConsts
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.game.GameContainer
 import paintbox.binding.ReadOnlyVar
@@ -46,16 +47,16 @@ class MainGameGameplayUiPane(
                         }
                     }
                     
-                    this += Button("Menu").apply {
-                        this.bindHeightToSelfWidth()
+                    this += Button("[lineheight=0.8]Menu[]\n[font=promptfont]${PromptFontConsts.KEYBOARD_ESCAPE}[]").apply {
+                        this.bindHeightToSelfWidth(multiplier = 1.25f)
                         this.applyStyle(Corner.TOP_RIGHT)
                         
                         this.setOnAction { 
                             uiInputHandler.openPauseMenu()
                         }
                     }
-                    this += Button("[lineheight=0.875]New\nGame[]").apply {
-                        this.bindHeightToSelfWidth()
+                    this += Button("[lineheight=0.8]New\nGame[]\n[font=promptfont]${PromptFontConsts.KEYBOARD_R}[]").apply {
+                        this.bindHeightToSelfWidth(multiplier = 1.25f)
                         this.applyStyle(Corner.BOTTOM_RIGHT)
                         
                         this.setOnAction {

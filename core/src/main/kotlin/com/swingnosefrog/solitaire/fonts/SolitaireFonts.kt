@@ -31,6 +31,9 @@ class SolitaireFonts(private val game: SolitaireGame) {
         setOf(FontStyle.REGULAR, FontStyle.ITALIC)
     )
     
+    
+    var uiPromptFont: PaintboxFont by bind(FontKeys.UI_PROMPTFONT)
+        private set
 
     var uiHeadingFont: PaintboxFont by bind(FontKeys.UI_HEADING)
         private set
@@ -53,12 +56,14 @@ class SolitaireFonts(private val game: SolitaireGame) {
     var uiMainSansSerifFontBoldItalic: PaintboxFont by bind(uiMainSansSerifFamily[FontWeight.BOLD, FontStyle.ITALIC])
         private set
 
+    
     val uiMainSerifMarkup: Markup by lazy {
         Markup.createWithBoldItalic(
             uiMainSerifFont,
             uiMainSerifFontBold,
             uiMainSerifFontItalic,
             uiMainSerifFontBoldItalic,
+            additionalMappings = getAdditionalMarkupFontMappings(),
         )
     }
     val uiMainSansSerifMarkup: Markup by lazy {
@@ -69,6 +74,10 @@ class SolitaireFonts(private val game: SolitaireGame) {
             uiMainSansSerifFontBoldItalic,
         )
     }
+
+    fun getAdditionalMarkupFontMappings(): Map<String, PaintboxFont> = mapOf(
+        "promptfont" to uiPromptFont
+    )
 
     fun registerFonts() {
         val cache = this.fontCache
@@ -136,6 +145,15 @@ class SolitaireFonts(private val game: SolitaireGame) {
             }
         ).setAfterLoad(defaultScaledFontAfterLoad)
         
+        uiPromptFont = PaintboxFontFreeType(
+            createDefaultFontParams(fontsFolder.child("PromptFont/promptfont.ttf")),
+            createIncrementalFtfParam().apply {
+                hinting = Hinting.Slight
+                size = 32
+                borderWidth = 0f
+            }
+        ).setAfterLoad(defaultScaledFontAfterLoad)
+        
         addFontFamily(uiMainSerifFamily, fontSize = 32, hinting = Hinting.Medium)
         addFontFamily(uiMainSansSerifFamily, fontSize = 32, hinting = Hinting.Medium)
     }
@@ -157,6 +175,7 @@ class SolitaireFonts(private val game: SolitaireGame) {
     private enum class FontKeys {
 
         UI_HEADING,
+        UI_PROMPTFONT,
         
 
     }
