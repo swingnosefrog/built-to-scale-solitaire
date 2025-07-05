@@ -9,6 +9,7 @@ import com.swingnosefrog.solitaire.assets.AssetRegistryAssetLoader
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.screen.main.MainGameScreen
 import com.swingnosefrog.solitaire.steamworks.Steamworks
+import paintbox.Paintbox
 import paintbox.PaintboxGame
 import paintbox.PaintboxSettings
 import paintbox.ResizeAction
@@ -73,9 +74,12 @@ class SolitaireGame(paintboxSettings: PaintboxSettings) : PaintboxGame(paintboxS
             )
         this.inputMultiplexer.addProcessor(fullscreenWindowedInputProcessor)
         
-        (Gdx.graphics as Lwjgl3Graphics).window.setVisible(true)
-
         Steamworks.init()
+        if (Steamworks.getSteamInterfaces()?.isRunningOnSteamDeck == true) {
+            Paintbox.LOGGER.info("Detected running on Steam Deck/SteamOS")
+        }
+        
+        (Gdx.graphics as Lwjgl3Graphics).window.setVisible(true)
 
         setScreen(AssetRegistryLoadingScreen(this, AssetRegistry, GameAssets).apply {
             onStart = {}
