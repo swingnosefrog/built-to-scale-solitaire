@@ -25,9 +25,12 @@ open class GameRenderer(
 ) {
 
     private val tableauColor: Color = Color.valueOf("125942")
-
+    
+    val viewportWidth: Float = 20f
+    val viewportHeight: Float = 11.25f
+    
     val camera: OrthographicCamera = OrthographicCamera().apply {
-        setToOrtho(false, logic.viewportWidth, logic.viewportHeight)
+        setToOrtho(false, this@GameRenderer.viewportWidth, this@GameRenderer.viewportHeight)
         this.zoom = 0.7875f
         this.translate(0f, 0.5f)
     }
@@ -36,22 +39,26 @@ open class GameRenderer(
     val shouldApplyViewport: BooleanVar = BooleanVar(true)
 
     open fun render(deltaSec: Float) {
-        camera.update()
+        val cam = this.camera
+        val camWidth = cam.viewportWidth
+        val camHeight = cam.viewportHeight
+        
+        cam.update()
         if (shouldApplyViewport.get()) {
             viewport.apply()
         }
         
-        batch.projectionMatrix = camera.combined
+        batch.projectionMatrix = cam.combined
         batch.begin()
 
         batch.color = tableauColor
-        batch.fillRect(0f, 0f, camera.viewportWidth, camera.viewportHeight)
+        batch.fillRect(0f, 0f, camWidth, camHeight)
 
         batch.setColor(1f, 1f, 1f, 0.25f)
         val slotCardTex = GameAssets.get<Texture>(CardAssetKey.Slot.getAssetKey())
         for (zone in logic.zones.allCardZones) {
             if (!zone.isOutlineVisible) continue
-            batch.draw(slotCardTex, zone.x.get(), camera.viewportHeight - (zone.y.get() + CARD_HEIGHT), CARD_WIDTH, CARD_HEIGHT)
+            batch.draw(slotCardTex, zone.x.get(), camHeight - (zone.y.get() + CARD_HEIGHT), CARD_WIDTH, CARD_HEIGHT)
         }
         batch.setColor(1f, 1f, 1f, 1f)
 

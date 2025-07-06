@@ -57,7 +57,7 @@ class CardZones(
 
         // Horizontal center
         val totalWidth = (allCardZones.maxOf { it.x.get() } + 1) - allCardZones.minOf { it.x.get() }
-        val hcOffset = (logic.viewportWidth - totalWidth) / 2
+        val hcOffset = (20f - totalWidth) / 2
         allCardZones.forEach {
             it.x.set(it.x.get() + hcOffset)
             it.y.set(it.y.get() + 1.5f)

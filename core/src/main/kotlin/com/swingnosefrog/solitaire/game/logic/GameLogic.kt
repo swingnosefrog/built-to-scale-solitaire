@@ -19,9 +19,6 @@ class GameLogic(val deckInitializer: DeckInitializer) {
         const val CARD_HEIGHT: Float = 1.5f
     }
 
-    val viewportWidth: Float = 20f
-    val viewportHeight: Float = 11.25f
-
     private val deck: List<Card> = deckInitializer.initializeDeck(Card.createStandardDeck())
 
     val zones: CardZones = CardZones(this)
