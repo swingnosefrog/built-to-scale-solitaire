@@ -55,11 +55,11 @@ class MainGameScreen(
         get() = _backingGameContainer ?: error("backingGameContainer is not initialized yet")
     val gameContainer: ReadOnlyVar<GameContainer> by lazy { Var(backingGameContainer) }
 
+    // Note: Game framebuffer is set to stretch scaling, so initial width/height doesn't matter and can be 1
     private val gameFrameBufferCamera: OrthographicCamera = OrthographicCamera().apply { 
-        setToOrtho(false, 1280f, 720f)
+        setToOrtho(false, 1f, 1f)
     }
-    private val gameFrameBufferViewport: ScalingViewport =
-        StretchViewport(gameFrameBufferCamera.viewportWidth, gameFrameBufferCamera.viewportHeight, gameFrameBufferCamera)
+    private val gameFrameBufferViewport: ScalingViewport = StretchViewport(1f, 1f, gameFrameBufferCamera)
     private val gameFrameBufferMgr: FrameBufferManager = FrameBufferManager(
         1, FrameBufferManager.BufferSettings(Pixmap.Format.RGB888), scaling = gameFrameBufferViewport.scaling,
     )
