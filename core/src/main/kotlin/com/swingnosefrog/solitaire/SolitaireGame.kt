@@ -9,9 +9,9 @@ import com.swingnosefrog.solitaire.assets.AssetRegistryAssetLoader
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.screen.main.MainGameScreen
 import com.swingnosefrog.solitaire.steamworks.Steamworks
+import paintbox.IPaintboxSettings
 import paintbox.Paintbox
 import paintbox.PaintboxGame
-import paintbox.PaintboxSettings
 import paintbox.ResizeAction
 import paintbox.debug.IDebugKeysInputProcessor
 import paintbox.debug.ToggleableDebugKeysInputProcessor
@@ -24,7 +24,7 @@ import java.io.File
 typealias GdxPreferences = com.badlogic.gdx.Preferences
 
 
-class SolitaireGame(paintboxSettings: PaintboxSettings) : PaintboxGame(paintboxSettings) {
+class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintboxSettings) {
 
     companion object {
 
@@ -33,8 +33,8 @@ class SolitaireGame(paintboxSettings: PaintboxSettings) : PaintboxGame(paintboxS
 
         val globalVolumeGain: VolumeGain get() = instance.volumeGain
 
-        fun createPaintboxSettings(launchArguments: List<String>, logger: Logger, logToFile: File?): PaintboxSettings =
-            PaintboxSettings(
+        fun createPaintboxSettings(launchArguments: List<String>, logger: Logger, logToFile: File?): IPaintboxSettings =
+            IPaintboxSettings.Impl(
                 launchArguments, logger, logToFile, Solitaire.VERSION, Solitaire.DEFAULT_SIZE,
                 ResizeAction.ANY_SIZE, Solitaire.MINIMUM_SIZE
             )

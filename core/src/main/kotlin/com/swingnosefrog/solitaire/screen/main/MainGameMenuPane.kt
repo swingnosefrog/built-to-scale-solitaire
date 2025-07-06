@@ -130,22 +130,6 @@ class MainGameMenuPane(
                 }
             }
         }
-
-//        this += Pane().apply {
-////            this.margin.set(Insets(32f))
-//
-//            this += TextLabel(binding = {
-//                "R - Restart"
-//            }).apply {
-//                this.markup.set(mainSansSerifMarkup)
-//                this.renderAlign.set(RenderAlign.bottomLeft)
-//                this.textColor.set(Color.WHITE)
-//                this.backgroundColor.set(dark)
-//                this.renderBackground.set(true)
-//                this.bgPadding.set(Insets(8f))
-//                this.setScaleXY(0.75f)
-//            }
-//        }
     }
 
     private fun createUIElementFromMenuOption(option: MenuOption): UIElement {

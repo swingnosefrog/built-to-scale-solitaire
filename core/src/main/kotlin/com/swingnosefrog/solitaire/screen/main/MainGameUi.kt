@@ -105,8 +105,8 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         uiViewport.update(width, height)
     }
     
-    fun createOpacityAnimation(currentValue: Float, targetValue: Float, duration: Float? = null): Animation {
-        return Animation(Interpolation.exp5, duration ?: 0.2f, currentValue, targetValue)
+    fun createOpacityAnimation(currentValue: Float, targetValue: Float, duration: Float = 0.2f): Animation {
+        return Animation(Interpolation.exp5, duration, currentValue, targetValue)
     }
 
     interface IUiInputHandler {
