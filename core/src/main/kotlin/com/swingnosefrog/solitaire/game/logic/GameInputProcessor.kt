@@ -10,8 +10,7 @@ class GameInputProcessor(private val input: GameInput, private val viewport: Vie
 
     private fun convertToWorldCoords(screenX: Int, screenY: Int): Vector2 {
         val unprojected = viewport.unproject(Vector2(screenX.toFloat(), screenY.toFloat()))
-        
-        unprojected.y = viewport.worldHeight - unprojected.y
+        unprojected.y = -unprojected.y
         return unprojected
     }
     

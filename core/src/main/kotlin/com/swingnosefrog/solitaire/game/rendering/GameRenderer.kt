@@ -16,6 +16,7 @@ import com.swingnosefrog.solitaire.game.logic.GameLogic.Companion.CARD_HEIGHT
 import com.swingnosefrog.solitaire.game.logic.GameLogic.Companion.CARD_WIDTH
 import com.swingnosefrog.solitaire.game.logic.StackDirection
 import paintbox.binding.BooleanVar
+import paintbox.util.gdxutils.drawRect
 import paintbox.util.gdxutils.fillRect
 
 
@@ -32,6 +33,7 @@ open class GameRenderer(
     val camera: OrthographicCamera = OrthographicCamera().apply {
         setToOrtho(false, this@GameRenderer.viewportWidth, this@GameRenderer.viewportHeight)
         this.zoom = 0.7875f
+        this.position.set(0f, 0f, 0f)
         this.translate(0f, 0.5f)
     }
     val viewport: Viewport = FitViewport(camera.viewportWidth, camera.viewportHeight, camera)
@@ -52,13 +54,13 @@ open class GameRenderer(
         batch.begin()
 
         batch.color = tableauColor
-        batch.fillRect(0f, 0f, camWidth, camHeight)
+        batch.fillRect(-camWidth / 2f, -camHeight / 2f, camWidth, camHeight)
 
         batch.setColor(1f, 1f, 1f, 0.25f)
         val slotCardTex = GameAssets.get<Texture>(CardAssetKey.Slot.getAssetKey())
         for (zone in logic.zones.allCardZones) {
             if (!zone.isOutlineVisible) continue
-            batch.draw(slotCardTex, zone.x.get(), camHeight - (zone.y.get() + CARD_HEIGHT), CARD_WIDTH, CARD_HEIGHT)
+            batch.draw(slotCardTex, zone.x.get(), - (zone.y.get() + CARD_HEIGHT), CARD_WIDTH, CARD_HEIGHT)
         }
         batch.setColor(1f, 1f, 1f, 1f)
 
@@ -106,7 +108,7 @@ open class GameRenderer(
     
     private fun renderCardTex(cardAssetKey: CardAssetKey, x: Float, y: Float) {
         val tex = GameAssets.get<Texture>(cardAssetKey.getAssetKey())
-        batch.draw(tex, x, camera.viewportHeight - (y + CARD_HEIGHT), CARD_WIDTH, CARD_HEIGHT)
+        batch.draw(tex, x, -(y + CARD_HEIGHT), CARD_WIDTH, CARD_HEIGHT)
     }
     
     fun resize(width: Int, height: Int) {

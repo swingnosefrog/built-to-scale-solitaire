@@ -55,12 +55,12 @@ class CardZones(
         placeableCardZones = freeCellZones + playerZones + foundationZones
         allCardZones = freeCellZones + playerZones + spareZone + dealZone + foundationZones
 
-        // Horizontal center
+        // Centre horizontally
         val totalWidth = (allCardZones.maxOf { it.x.get() } + 1) - allCardZones.minOf { it.x.get() }
-        val hcOffset = (20f - totalWidth) / 2
+        val xOffset = totalWidth / 2f * -1
         allCardZones.forEach {
-            it.x.set(it.x.get() + hcOffset)
-            it.y.set(it.y.get() + 1.5f)
+            it.x.set(it.x.get() + xOffset)
+            it.y.set(it.y.get() - (GameLogic.CARD_HEIGHT * 2 + zoneSpacingY * 1))
         }
     }
 }
