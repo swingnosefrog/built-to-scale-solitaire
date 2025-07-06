@@ -10,6 +10,7 @@ import paintbox.logging.Logger
 import com.swingnosefrog.solitaire.Solitaire
 import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.soundsystem.AudioDeviceSettings
+import paintbox.IPaintboxSettings
 
 object DesktopLauncher {
 
@@ -42,8 +43,10 @@ object DesktopLauncher {
         val app = SolitaireGame(
             SolitaireGame.createPaintboxSettings(
                 args.toList(),
-                Logger(),
-                Solitaire.DOT_DIRECTORY.resolve("logs/")
+                IPaintboxSettings.ILoggerSettings.Impl(
+                    Logger(),
+                    Solitaire.DOT_DIRECTORY.resolve("logs/")
+                )
             )
         )
 

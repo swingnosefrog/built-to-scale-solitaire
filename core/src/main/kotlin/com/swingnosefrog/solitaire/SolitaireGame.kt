@@ -17,9 +17,7 @@ import paintbox.debug.IDebugKeysInputProcessor
 import paintbox.debug.ToggleableDebugKeysInputProcessor
 import paintbox.input.DefaultFullscreenWindowedInputProcessor
 import paintbox.input.IFullscreenWindowedInputProcessor
-import paintbox.logging.Logger
 import paintbox.registry.AssetRegistry
-import java.io.File
 
 typealias GdxPreferences = com.badlogic.gdx.Preferences
 
@@ -33,9 +31,12 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
 
         val globalVolumeGain: VolumeGain get() = instance.volumeGain
 
-        fun createPaintboxSettings(launchArguments: List<String>, logger: Logger, logToFile: File?): IPaintboxSettings =
+        fun createPaintboxSettings(
+            launchArguments: List<String>, 
+            loggerSettings: IPaintboxSettings.ILoggerSettings
+        ): IPaintboxSettings =
             IPaintboxSettings.Impl(
-                launchArguments, logger, logToFile, Solitaire.VERSION, Solitaire.DEFAULT_SIZE,
+                launchArguments, loggerSettings, Solitaire.VERSION, Solitaire.DEFAULT_SIZE,
                 ResizeAction.ANY_SIZE, Solitaire.MINIMUM_SIZE
             )
     }
