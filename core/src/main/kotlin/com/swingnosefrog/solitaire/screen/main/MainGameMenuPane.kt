@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.Align
+import com.swingnosefrog.solitaire.Solitaire
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.menu.MenuController
 import com.swingnosefrog.solitaire.menu.MenuInput
@@ -12,6 +13,7 @@ import com.swingnosefrog.solitaire.menu.MenuInputSource
 import com.swingnosefrog.solitaire.menu.MenuInputType
 import com.swingnosefrog.solitaire.menu.MenuOption
 import com.swingnosefrog.solitaire.screen.main.menu.AbstractMenu
+import com.swingnosefrog.solitaire.screen.main.menu.RootMenu
 import paintbox.binding.BooleanVar
 import paintbox.binding.IntVar
 import paintbox.binding.ReadOnlyBooleanVar
@@ -22,6 +24,7 @@ import paintbox.font.Markup
 import paintbox.font.PaintboxFont
 import paintbox.font.TextAlign
 import paintbox.registry.AssetRegistry
+import paintbox.ui.Anchor
 import paintbox.ui.ClickPressed
 import paintbox.ui.ImageIcon
 import paintbox.ui.MouseEntered
@@ -34,6 +37,7 @@ import paintbox.ui.element.QuadElement
 import paintbox.ui.element.RectElement
 import paintbox.ui.layout.HBox
 import paintbox.ui.layout.VBox
+import paintbox.util.Version
 
 
 class MainGameMenuPane(
@@ -102,6 +106,23 @@ class MainGameMenuPane(
                         }
                         this += bodyPane
                     }
+
+                    val versionLabel = TextLabel(Solitaire.VERSION.toMarkupString()).apply {
+                        this.bounds.height.set(24f)
+                        this.margin.set(Insets(4f))
+                        Anchor.BottomLeft.configure(this)
+                        this.markup.set(mainSansSerifMarkup)
+                        this.setScaleXY(0.675f)
+                        this.textColor.set(Color.WHITE)
+                        this.textAlign.set(TextAlign.LEFT)
+                        this.renderAlign.set(Align.bottomLeft)
+                        
+                        this.visible.bind {
+                            val menu = currentMenu.use()
+                            menu == null || menu is RootMenu
+                        }
+                    }
+                    this += versionLabel
                 }
                 this += QuadElement().apply {
                     this.leftRightGradient(dark, Color.CLEAR)
@@ -215,11 +236,12 @@ class MainGameMenuPane(
                         }
                         this += Pane().apply {
                             this.visible.bind { isSelected.use() }
-                            this += TextLabel("<", font = fonts.uiMainSerifFontBold).apply {
+                            val font = fonts.uiMainSansSerifFontBold
+                            this += TextLabel("<", font = font).apply {
                                 this.textColor.set(Color.WHITE)
                                 this.renderAlign.set(Align.left)
                             }
-                            this += TextLabel(">", font = fonts.uiMainSerifFontBold).apply {
+                            this += TextLabel(">", font = font).apply {
                                 this.textColor.set(Color.WHITE)
                                 this.renderAlign.set(Align.right)
                             }
@@ -232,4 +254,23 @@ class MainGameMenuPane(
         return pane
     }
 
+    private fun Version.toMarkupString(): String {
+        val ver = this
+
+        val onlyDateRegex = """(\d{8}(?:.+)?)""".toRegex()
+        val dateMatch = onlyDateRegex.matchEntire(ver.suffix)
+
+        val versionString = if (dateMatch != null) {
+            "v${ver.major}.${ver.minor}.${ver.patch}${if (ver.suffix.isNotEmpty()) "[scale=0.75]-${dateMatch.value}[]" else ""}"
+        } else {
+            val verSuffixRegex = """(.+)(_\d{8}(?:.+)?)""".toRegex()
+            val suffixMatch = verSuffixRegex.matchEntire(ver.suffix)
+            val verSuffixNoDate = suffixMatch?.groupValues?.get(1)
+                ?: ver.suffix // Use entire suffix if cannot match _date
+            val verSuffixDate = suffixMatch?.groupValues?.get(2) ?: ""
+            "v${ver.major}.${ver.minor}.${ver.patch}${if (ver.suffix.isNotEmpty()) "-${verSuffixNoDate}[scale=0.75]${verSuffixDate}[]" else ""}"
+        }
+
+        return versionString
+    }
 }

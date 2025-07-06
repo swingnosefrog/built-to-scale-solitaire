@@ -63,7 +63,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
             this.opacity.bind(TransitioningFloatVar(animationHandler, {
                 if (isPauseMenuOpen.use()) 0.25f else 1f
             }, { currentValue, targetValue ->
-                Animation(Interpolation.exp5, 0.2f, currentValue, targetValue)
+                createOpacityAnimation(currentValue, targetValue)
             }))
         }
         parentPane += Pane().apply {
@@ -71,7 +71,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
                 this.opacity.bind(TransitioningFloatVar(animationHandler, {
                     if (isPauseMenuOpen.use()) 1f else 0f
                 }, { currentValue, targetValue ->
-                    Animation(Interpolation.exp5, 0.2f, currentValue, targetValue)
+                    createOpacityAnimation(currentValue, targetValue)
                 }))
                 this.visible.bind { opacity.use() > 0f }
             }
@@ -80,7 +80,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
                     if (isPauseMenuOpen.use()) 0f else 1f
                 }, { currentValue, targetValue ->
                     if (targetValue < currentValue) null
-                    else Animation(Interpolation.exp5, 0.2f, currentValue, targetValue)
+                    else createOpacityAnimation(currentValue, targetValue)
                 }))
                 this.visible.bind { opacity.use() > 0f }
             }
@@ -103,6 +103,10 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
 
     fun resize(width: Int, height: Int) {
         uiViewport.update(width, height)
+    }
+    
+    fun createOpacityAnimation(currentValue: Float, targetValue: Float, duration: Float? = null): Animation {
+        return Animation(Interpolation.exp5, duration ?: 0.2f, currentValue, targetValue)
     }
 
     interface IUiInputHandler {

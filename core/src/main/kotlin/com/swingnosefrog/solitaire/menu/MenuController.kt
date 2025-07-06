@@ -4,7 +4,6 @@ import com.swingnosefrog.solitaire.screen.main.menu.AbstractMenu
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 import paintbox.util.MathHelper
-import kotlin.math.abs
 import kotlin.math.absoluteValue
 
 
