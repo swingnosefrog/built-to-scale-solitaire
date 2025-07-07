@@ -97,6 +97,8 @@ class MainGameScreen(
 
         renderGameToBuffer(delta)
         renderGameBufferToBackBuffer()
+
+        main.resetViewportToScreen()
         
         ui.render(batch, delta)
 

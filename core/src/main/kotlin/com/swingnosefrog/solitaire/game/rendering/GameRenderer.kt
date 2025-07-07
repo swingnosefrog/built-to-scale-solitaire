@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.utils.viewport.FitViewport
+import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.swingnosefrog.solitaire.game.Card
 import com.swingnosefrog.solitaire.game.animation.CardPlayingAnimation
@@ -26,17 +26,18 @@ open class GameRenderer(
 ) {
 
     private val tableauColor: Color = Color.valueOf("125942")
-    
-    val viewportWidth: Float = 20f
+
+    val viewportWidth: Float = 18f // 20f
     val viewportHeight: Float = 11.25f
-    
+
     val camera: OrthographicCamera = OrthographicCamera().apply {
         setToOrtho(false, this@GameRenderer.viewportWidth, this@GameRenderer.viewportHeight)
-        this.zoom = 0.7875f
         this.position.set(0f, 0f, 0f)
-        this.translate(0f, 0.5f)
+
+        this.zoom = 0.7875f
+        this.translate(0f, 0.25f)
     }
-    val viewport: Viewport = FitViewport(camera.viewportWidth, camera.viewportHeight, camera)
+    val viewport: Viewport = ExtendViewport(18f, 11.25f, 20f, 11.25f, camera)
     
     val shouldApplyViewport: BooleanVar = BooleanVar(true)
 

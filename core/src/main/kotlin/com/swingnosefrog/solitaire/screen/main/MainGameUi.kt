@@ -7,7 +7,7 @@ import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Interpolation
-import com.badlogic.gdx.utils.viewport.FitViewport
+import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.swingnosefrog.solitaire.game.logic.DeckInitializer
 import com.swingnosefrog.solitaire.screen.main.menu.MainGameMenus
@@ -29,9 +29,9 @@ import paintbox.ui.animation.TransitioningFloatVar
 class MainGameUi(val mainGameScreen: MainGameScreen) {
 
     private val uiCamera: OrthographicCamera = OrthographicCamera().apply {
-        setToOrtho(false, 1280f, 720f)
+        setToOrtho(false, 1f, 1f) // width and height controlled by uiViewport
     }
-    private val uiViewport: Viewport = FitViewport(uiCamera.viewportWidth, uiCamera.viewportHeight, uiCamera)
+    private val uiViewport: Viewport = ExtendViewport(1280f, 720f, 1280f, 800f, uiCamera)
     private val uiSceneRoot: SceneRoot = SceneRoot(uiViewport)
     private val sceneRootInputProcessor: ToggleableInputProcessor = ToggleableInputProcessor(uiSceneRoot.inputSystem)
 
@@ -99,10 +99,13 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         uiSceneRoot.renderAsRoot(batch)
 
         batch.end()
+        
+        mainGameScreen.main.resetViewportToScreen()
     }
 
     fun resize(width: Int, height: Int) {
-        uiViewport.update(width, height)
+        uiViewport.update(width, height, true)
+        uiSceneRoot.resize(uiViewport.worldWidth, uiViewport.worldHeight)
     }
     
     fun createOpacityAnimation(currentValue: Float, targetValue: Float, duration: Float = 0.2f): Animation {
