@@ -11,7 +11,6 @@ import net.beadsproject.beads.core.UGen
 import paintbox.util.gdxutils.disposeQuietly
 import com.swingnosefrog.solitaire.soundsystem.AudioDeviceSettings
 import java.util.concurrent.atomic.AtomicBoolean
-import javax.sound.sampled.AudioFormat
 import kotlin.concurrent.thread
 import kotlin.math.roundToInt
 
@@ -31,6 +30,27 @@ class OpenALAudioIO(val audioDeviceSettings: AudioDeviceSettings) : AudioIO() {
         val bufferSize: Int = audioDeviceSettings.bufferSize
         val bufferCount: Int = audioDeviceSettings.bufferCount
         val forceKill: AtomicBoolean = AtomicBoolean(false)
+
+        private val renderedSecondsGetter: (() -> Float)?
+
+        init {
+            val clazz = OpenALAudioDevice::class.java
+            renderedSecondsGetter = try {
+                val field = clazz.getDeclaredField("renderedSeconds")
+                field.isAccessible = true
+
+                val getter = { field.getFloat(audioDevice) }
+                getter() // Provoke initialization at least once
+                getter
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
+        }
+        
+        fun getRenderedSeconds(): Float {
+            return renderedSecondsGetter?.invoke() ?: -1f
+        }
 
         override fun dispose() {
             forceKill.set(true)
@@ -56,8 +76,8 @@ class OpenALAudioIO(val audioDeviceSettings: AudioDeviceSettings) : AudioIO() {
             Gdx.audio as OpenALLwjgl3Audio,
             ioAudioFormat.sampleRate.roundToInt(),
             ioAudioFormat.outputs == 1,
-            audioDeviceSettings.bufferSize.coerceAtLeast(256),
-            audioDeviceSettings.bufferCount.coerceAtLeast(3)
+            audioDeviceSettings.bufferSize.coerceAtLeast(AudioDeviceSettings.MINIMUM_BUFFER_SIZE),
+            audioDeviceSettings.bufferCount.coerceAtLeast(AudioDeviceSettings.MINIMUM_BUFFER_COUNT)
         )
         val lifecycle = Lifecycle(newAudioDevice)
         this.lifecycleInstance = lifecycle
@@ -78,15 +98,15 @@ class OpenALAudioIO(val audioDeviceSettings: AudioDeviceSettings) : AudioIO() {
     private fun runRealTime() {
         val context = getContext()
         val ioAudioFormat = context.audioFormat
-        val audioFormat = ioAudioFormat.toJavaAudioFormat()
         val bufferSizeInFrames = context.bufferSize
-        val sampleBufferSize = bufferSizeInFrames * ioAudioFormat.outputs
+        val numChannels = ioAudioFormat.outputs
+        val sampleBufferSize = bufferSizeInFrames * numChannels
         val sampleBuffer = FloatArray(sampleBufferSize)
 
         val lifecycle = this.lifecycleInstance ?: return
 
         while (context.isRunning && !lifecycle.forceKill.get()) {
-            prepareLineBuffer(audioFormat, sampleBuffer, bufferSizeInFrames)
+            prepareLineBuffer(numChannels, sampleBuffer, bufferSizeInFrames)
 
             lifecycle.audioDevice.writeSamples(sampleBuffer, 0, sampleBufferSize)
         }
@@ -94,16 +114,15 @@ class OpenALAudioIO(val audioDeviceSettings: AudioDeviceSettings) : AudioIO() {
 
     /**
      * Read audio from UGens and copy them into a buffer ready to write to Audio Line
-     * @param audioFormat The AudioFormat
      * @param interleavedSamples Interleaved samples as floats
      * @param bufferSizeInFrames The size of interleaved samples in frames
      */
-    private fun prepareLineBuffer(audioFormat: AudioFormat, interleavedSamples: FloatArray, bufferSizeInFrames: Int) {
+    private fun prepareLineBuffer(numChannels: Int, interleavedSamples: FloatArray, bufferSizeInFrames: Int) {
         update() // This propagates update call to context from super-method
         var i = 0
         var counter = 0
         while (i < bufferSizeInFrames) {
-            for (j in 0..<audioFormat.channels) {
+            for (j in 0..<numChannels) {
                 interleavedSamples[counter++] = context.out.getValue(j, i)
             }
             ++i
