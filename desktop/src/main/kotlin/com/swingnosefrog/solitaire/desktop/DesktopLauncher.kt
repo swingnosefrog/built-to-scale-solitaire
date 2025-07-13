@@ -63,7 +63,6 @@ object DesktopLauncher {
         
         // Early Steamworks SDK init
         Steamworks.init()
-        val runningOnSteamDeck = Steamworks.getSteamInterfaces()?.isRunningOnSteamDeck == true
 
         PaintboxDesktopLauncher(app, arguments).editConfig {
             this.setAutoIconify(true)
@@ -73,7 +72,7 @@ object DesktopLauncher {
             this.setWindowSizeLimits(minimumSize.width, minimumSize.height, -1, -1)
             this.setTitle(app.getWindowTitle())
             this.setResizable(true)
-            this.setInitialVisible(runningOnSteamDeck)
+            this.setInitialVisible(false)
             this.setInitialBackgroundColor(Color(0f, 0f, 0f, 1f))
             // Note: the audio buffer size and count here are largely ignored since we don't use Gdx.audio.newAudioDevice
             val audioDeviceSettings = Solitaire.CommandLineArguments.audioDeviceSettings
