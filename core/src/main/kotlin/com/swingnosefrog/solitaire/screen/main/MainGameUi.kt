@@ -15,6 +15,7 @@ import com.swingnosefrog.solitaire.menu.MenuController
 import com.swingnosefrog.solitaire.menu.MenuInput
 import com.swingnosefrog.solitaire.menu.MenuInputSource
 import com.swingnosefrog.solitaire.menu.MenuInputType
+import com.swingnosefrog.solitaire.screen.main.menu.GameplaySettingsMenu
 import paintbox.Paintbox
 import paintbox.binding.BooleanVar
 import paintbox.binding.ReadOnlyBooleanVar
@@ -61,7 +62,11 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         val parentPane = Pane()
         parentPane += MainGameHudPane(this).apply {
             this.opacity.bind(TransitioningFloatVar(animationHandler, {
-                if (isPauseMenuOpen.use()) 0.25f else 1f
+                if (isPauseMenuOpen.use()) {
+                    if (menuController.currentMenu.use() is GameplaySettingsMenu)
+                        1f
+                    else 0.25f
+                } else 1f
             }, { currentValue, targetValue ->
                 createOpacityAnimation(currentValue, targetValue)
             }))
