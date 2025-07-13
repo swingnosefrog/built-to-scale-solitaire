@@ -39,6 +39,7 @@ class MainGameMenuPane(
     private val fonts: SolitaireFonts get() = mainGameUi.mainGameScreen.main.fonts
     private val headingFont: PaintboxFont get() = fonts.uiHeadingFont
     private val mainSerifMarkup: Markup get() = fonts.uiMainSerifMarkup
+    private val mainSerifBoldMarkup: Markup get() = fonts.uiMainSerifBoldMarkup
     private val mainSansSerifMarkup: Markup get() = fonts.uiMainSansSerifMarkup
 
     private val currentMenu: ReadOnlyVar<AbstractMenu?> = Var { menuController.currentMenu.use() }
@@ -182,8 +183,9 @@ class MainGameMenuPane(
             when (option) {
                 is MenuOption.OptionWidget.Checkbox -> {
                     pane += TextLabel(binding = {
-                        if (option.selectedState.use()) "[X]" else "[   ]"
-                    }, font = fonts.uiMainSerifFontBold).apply {
+                        if (option.selectedState.use()) "\\[[opacity=1.0]X[]]" else "\\[[opacity=0.0]X[]]"
+                    }).apply {
+                        this.markup.set(mainSerifBoldMarkup)
                         this.disabled.bind(option.disabled)
                         this.textColor.set(Color.WHITE)
                         this.textAlign.set(TextAlign.RIGHT)
@@ -200,7 +202,8 @@ class MainGameMenuPane(
                         this += TextLabel(binding = {
                             val selectedOption = option.selectedOption.use()
                             (option.stringVarConverter as StringVarConverter<Any?>).toVar(selectedOption).use()
-                        }, font = fonts.uiMainSerifFontBold).apply {
+                        }).apply {
+                            this.markup.set(mainSerifBoldMarkup)
                             this.disabled.bind(option.disabled)
                             this.textColor.bind { textColor.use() }
                             this.textAlign.set(TextAlign.CENTRE)

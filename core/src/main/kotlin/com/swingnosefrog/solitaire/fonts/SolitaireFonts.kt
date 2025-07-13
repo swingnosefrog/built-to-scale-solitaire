@@ -66,12 +66,22 @@ class SolitaireFonts(private val game: SolitaireGame) {
             additionalMappings = getAdditionalMarkupFontMappings(),
         )
     }
+    val uiMainSerifBoldMarkup: Markup by lazy {
+        Markup.createWithBoldItalic(
+            uiMainSerifFontBold,
+            uiMainSerifFont,
+            uiMainSerifFontBoldItalic,
+            uiMainSerifFontItalic,
+            additionalMappings = getAdditionalMarkupFontMappings(),
+        )
+    }
     val uiMainSansSerifMarkup: Markup by lazy {
         Markup.createWithBoldItalic(
             uiMainSansSerifFont,
             uiMainSansSerifFontBold,
             uiMainSansSerifFontItalic,
             uiMainSansSerifFontBoldItalic,
+            additionalMappings = getAdditionalMarkupFontMappings(),
         )
     }
 
