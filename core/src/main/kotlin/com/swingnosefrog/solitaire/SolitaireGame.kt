@@ -2,6 +2,7 @@ package com.swingnosefrog.solitaire
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics
+import com.badlogic.gdx.graphics.Color
 import com.swingnosefrog.solitaire.assets.AssetRegistryLoadingScreen
 import com.swingnosefrog.solitaire.game.assets.GameAssetLoader
 import com.swingnosefrog.solitaire.game.assets.GameAssets
@@ -18,6 +19,9 @@ import paintbox.debug.ToggleableDebugKeysInputProcessor
 import paintbox.input.DefaultFullscreenWindowedInputProcessor
 import paintbox.input.IFullscreenWindowedInputProcessor
 import paintbox.registry.AssetRegistry
+import paintbox.transition.FadeToOpaque
+import paintbox.transition.FadeToTransparent
+import paintbox.transition.TransitionScreen
 
 typealias GdxPreferences = com.badlogic.gdx.Preferences
 
@@ -88,7 +92,15 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
             onAssetLoadingComplete = {
             }
             nextScreenProducer = {
-                MainGameScreen(this@SolitaireGame)
+                val nextScreen = MainGameScreen(this@SolitaireGame)
+                val black = Color(0f, 0f, 0f, 1f)
+                TransitionScreen(
+                    this@SolitaireGame,
+                    this@SolitaireGame.getScreen(),
+                    nextScreen,
+                    FadeToOpaque(0.125f, black),
+                    FadeToTransparent(0.175f, black)
+                )
             }
         })
     }
