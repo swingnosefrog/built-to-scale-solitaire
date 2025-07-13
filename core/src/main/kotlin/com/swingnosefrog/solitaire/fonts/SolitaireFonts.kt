@@ -84,9 +84,28 @@ class SolitaireFonts(private val game: SolitaireGame) {
             additionalMappings = getAdditionalMarkupFontMappings(),
         )
     }
+    val uiMainSansSerifBoldMarkup: Markup by lazy {
+        Markup.createWithBoldItalic(
+            uiMainSansSerifFontBold,
+            uiMainSansSerifFont,
+            uiMainSansSerifFontBoldItalic,
+            uiMainSansSerifFontItalic,
+            additionalMappings = getAdditionalMarkupFontMappings(),
+        )
+    }
 
     fun getAdditionalMarkupFontMappings(): Map<String, PaintboxFont> = mapOf(
-        "promptfont" to uiPromptFont
+        "promptfont" to uiPromptFont,
+        
+        "ui_heading" to uiHeadingFont,
+        "ui_main_serif" to uiMainSerifFont,
+        "ui_main_serif_bold" to uiMainSerifFontBold,
+        "ui_main_serif_italic" to uiMainSerifFontItalic,
+        "ui_main_serif_bold_italic" to uiMainSerifFontBoldItalic,
+        "ui_main_sansserif" to uiMainSansSerifFont,
+        "ui_main_sansserif_bold" to uiMainSansSerifFontBold,
+        "ui_main_sansserif_italic" to uiMainSansSerifFontItalic,
+        "ui_main_sansserif_bold_italic" to uiMainSansSerifFontBoldItalic,
     )
 
     fun registerFonts() {

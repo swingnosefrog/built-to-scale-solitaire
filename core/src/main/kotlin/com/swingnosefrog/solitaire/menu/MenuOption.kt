@@ -9,7 +9,6 @@ import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 import paintbox.ui.StringVarConverter
 import paintbox.util.MathHelper
-import java.awt.SystemColor.text
 
 
 sealed class MenuOption(
@@ -141,6 +140,8 @@ sealed class MenuOption(
         override fun onSelect(controller: MenuController, menuInput: MenuInput) {
             if (!isSelected.get()) {
                 isSelected.set(true)
+            } else {
+                isSelected.set(false)
             }
         }
 

@@ -42,6 +42,7 @@ class MainGameMenuPane(
     private val mainSerifMarkup: Markup get() = fonts.uiMainSerifMarkup
     private val mainSerifBoldMarkup: Markup get() = fonts.uiMainSerifBoldMarkup
     private val mainSansSerifMarkup: Markup get() = fonts.uiMainSansSerifMarkup
+    private val mainSansSerifBoldMarkup: Markup get() = fonts.uiMainSansSerifBoldMarkup
 
     private val currentMenu: ReadOnlyVar<AbstractMenu?> = Var { menuController.currentMenu.use() }
     private val currentHighlightedMenuOption: ReadOnlyVar<MenuOption?> =
@@ -191,9 +192,11 @@ class MainGameMenuPane(
             when (option) {
                 is MenuOption.OptionWidget.Checkbox -> {
                     pane += TextLabel(binding = {
-                        if (option.selectedState.use()) "\\[[opacity=1.0]X[]]" else "\\[[opacity=0.0]X[]]"
+                        val xSymbol = "X"
+                        val opacity = if (option.selectedState.use()) 1f else 0f
+                        "\\[[opacity=${opacity}] $xSymbol []\\]"
                     }).apply {
-                        this.markup.set(mainSerifBoldMarkup)
+                        this.markup.set(mainSansSerifBoldMarkup)
                         this.disabled.bind(option.disabled)
                         this.textColor.set(Color.WHITE)
                         this.textAlign.set(TextAlign.RIGHT)

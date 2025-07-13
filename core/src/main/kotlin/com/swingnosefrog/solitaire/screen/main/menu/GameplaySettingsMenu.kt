@@ -7,7 +7,7 @@ import paintbox.binding.ReadOnlyVar
 
 class GameplaySettingsMenu(
     id: String
-) : AbstractMenu(id) {
+) : AbstractSettingsMenu(id) {
     
     override val headingText: ReadOnlyVar<String> = Localization["game.menu.gameplaySettings.heading"]
 

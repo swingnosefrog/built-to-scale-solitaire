@@ -11,7 +11,7 @@ import paintbox.binding.Var
 
 class AudioSettingsMenu(
     id: String
-) : AbstractMenu(id) {
+) : AbstractSettingsMenu(id) {
     
     companion object {
 
@@ -49,7 +49,6 @@ class AudioSettingsMenu(
             )
         }
         
-        val settings = SolitaireGame.instance.settings
         options = listOf(
             createSliderOption(Localization["game.menu.audioSettings.option.masterVolume"], settings.masterVolume),
             createSliderOption(Localization["game.menu.audioSettings.option.musicVolume"], settings.musicVolume),

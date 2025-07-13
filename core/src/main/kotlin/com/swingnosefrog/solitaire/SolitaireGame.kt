@@ -48,7 +48,8 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
 
     val fonts: SolitaireFonts = SolitaireFonts(this)
     
-    private lateinit var fullscreenWindowedInputProcessor: IFullscreenWindowedInputProcessor
+    lateinit var fullscreenWindowedInputProcessor: IFullscreenWindowedInputProcessor
+        private set
     private var toggleableDebugKeysInputProcessor: ToggleableDebugKeysInputProcessor? = null
 
     override fun create() {
