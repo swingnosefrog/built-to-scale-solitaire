@@ -6,10 +6,12 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.Align
 import com.swingnosefrog.solitaire.Solitaire
+import com.swingnosefrog.solitaire.fonts.PromptFontConsts
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.menu.*
 import com.swingnosefrog.solitaire.screen.main.menu.AbstractMenu
 import com.swingnosefrog.solitaire.screen.main.menu.RootMenu
+import com.swingnosefrog.solitaire.steamworks.Steamworks
 import paintbox.binding.*
 import paintbox.font.Markup
 import paintbox.font.PaintboxFont
@@ -54,7 +56,16 @@ class MainGameMenuPane(
     init {
         val dark = Color(0f, 0f, 0f, 0.85f)
         this += NoInputPane().apply {
-            val versionLabel = TextLabel(Solitaire.VERSION.toMarkupString()).apply {
+            val versionLabel = TextLabel("").apply {
+                var textValue = Solitaire.VERSION.toMarkupString()
+                if (Steamworks.getSteamInterfaces() != null) {
+                    val icon = if (Steamworks.isRunningOnSteamDeck()) PromptFontConsts.STEAM_MENU
+                    else PromptFontConsts.ICON_STEAM
+
+                    textValue = "[font=promptfont]${icon}[]  " + textValue
+                }
+                this.text.set(textValue)
+                
                 Anchor.BottomRight.configure(this)
                 this.bindWidthToParent(multiplier = 0.3f)
                 this.bounds.height.set(32f)
