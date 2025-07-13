@@ -19,6 +19,7 @@ object Steamworks {
     private var deltaElapsed: Float = 0f
 
     private var steamInterfaces: SteamInterfaces? = null
+    private val isRunningOnSteamDeck: AtomicBoolean = AtomicBoolean(false)
 
     @Synchronized
     fun init() {
@@ -30,14 +31,17 @@ object Steamworks {
             if (!SteamAPI.init()) {
                 // Steamworks initialization error
             } else {
-                steamInterfaces = SteamInterfaces(
+                val steamInterfaces = SteamInterfaces(
                     SteamUtils(object : SteamUtilsCallback {
                         override fun onSteamShutdown() {
                         }
                     }),
                     SteamController()
                 )
+                setInitialSettings(steamInterfaces)
                 SteamAPI.runCallbacks()
+                isRunningOnSteamDeck.set(steamInterfaces.utils.isSteamRunningOnSteamDeck)
+                this.steamInterfaces = steamInterfaces
                 inited.set(true)
             }
         } catch (e: Exception) {
@@ -54,10 +58,8 @@ object Steamworks {
     fun isRunningOnSteamDeck(): Boolean {
         if (!initCalled.get())
             error("Steamworks.init() was not called")
-        if (failedToInitialize.get())
-            return false
         
-        return getSteamInterfaces()?.isRunningOnSteamDeck == true
+        return isRunningOnSteamDeck.get()
     }
 
     fun frameUpdate(deltaSec: Float) {
@@ -88,5 +90,9 @@ object Steamworks {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+    
+    private fun setInitialSettings(interfaces: SteamInterfaces) {
+        interfaces.utils.setOverlayNotificationPosition(SteamUtils.NotificationPosition.BottomLeft)
     }
 }
