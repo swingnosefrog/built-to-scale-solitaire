@@ -16,6 +16,7 @@ import paintbox.font.PaintboxFont
 import paintbox.font.TextAlign
 import paintbox.registry.AssetRegistry
 import paintbox.ui.*
+import paintbox.ui.animation.TransitioningFloatVar
 import paintbox.ui.area.Insets
 import paintbox.ui.control.Slider
 import paintbox.ui.control.TextLabel
@@ -51,6 +52,30 @@ class MainGameMenuPane(
 
     init {
         val dark = Color(0f, 0f, 0f, 0.85f)
+        this += NoInputPane().apply {
+            val versionLabel = TextLabel(Solitaire.VERSION.toMarkupString()).apply {
+                Anchor.BottomRight.configure(this)
+                this.bindWidthToParent(multiplier = 0.3f)
+                this.bounds.height.set(32f)
+                this.markup.set(mainSansSerifMarkup)
+                this.setScaleXY(0.675f)
+                this.textColor.set(Color.WHITE)
+                this.textAlign.set(TextAlign.RIGHT)
+                this.renderAlign.set(Align.bottomRight)
+                
+                this.backgroundColor.set(Color(0f, 0f, 0f, 0.65f))
+                this.bgPadding.set(Insets(6f))
+                this.renderBackground.set(true)
+
+                this.opacity.bind(TransitioningFloatVar(mainGameUi.animationHandler, {
+                    val menu = currentMenu.use()
+                    if (menu == null || menu is RootMenu) 1f else 0.5f
+                }, { currentValue, targetValue ->
+                    mainGameUi.createOpacityAnimation(currentValue, targetValue)
+                }))
+            }
+            this += versionLabel
+        }
         this += HBox().apply {
             this.temporarilyDisableLayouts {
                 this += RectElement(dark).apply {
@@ -93,23 +118,6 @@ class MainGameMenuPane(
                         }
                         this += bodyPane
                     }
-
-                    val versionLabel = TextLabel(Solitaire.VERSION.toMarkupString()).apply {
-                        this.bounds.height.set(24f)
-                        this.margin.set(Insets(4f))
-                        Anchor.BottomLeft.configure(this)
-                        this.markup.set(mainSansSerifMarkup)
-                        this.setScaleXY(0.675f)
-                        this.textColor.set(Color.WHITE)
-                        this.textAlign.set(TextAlign.LEFT)
-                        this.renderAlign.set(Align.bottomLeft)
-                        
-                        this.visible.bind {
-                            val menu = currentMenu.use()
-                            menu == null || menu is RootMenu
-                        }
-                    }
-                    this += versionLabel
                 }
                 this += QuadElement().apply {
                     this.leftRightGradient(dark, Color.CLEAR)
@@ -240,8 +248,13 @@ class MainGameMenuPane(
                                     option.disabled.use() || !option.isSelected.use()
                                 }
 
-                                (this.skin.getOrCompute() as Slider.SliderSkin).circleSizeMultiplier.bind {
-                                    if (option.isSelected.use()) 1f else 0.65f
+                                (this.skin.getOrCompute() as Slider.SliderSkin).let { skin ->
+                                    skin.circleSizeMultiplier.bind {
+                                        if (option.isSelected.use()) 1f else 0.65f
+                                    }
+                                    skin.barHeightMultiplier.bind {
+                                        if (option.isSelected.use()) 1f else 0.65f
+                                    }
                                 }
 
                                 this.minimum.bind(option.minimum)
