@@ -11,6 +11,7 @@ import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_MUSIC_VOLUME
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_SFX_VOLUME
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_VSYNC
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_WINDOWED_RESOLUTION
+import com.swingnosefrog.solitaire.util.WindowSizeUtils
 import paintbox.binding.BooleanVar
 import paintbox.binding.IntVar
 import paintbox.binding.Var
@@ -45,7 +46,9 @@ class SolitaireSettings(main: SolitaireGame, prefs: Preferences) : PaintboxPrefe
             vsyncEnabled = KeyValue.Bool(SETTINGS_VSYNC, false).add().value
             maxFramerate =
                 KeyValue.Int(SETTINGS_MAX_FPS, determineMaxRefreshRate(), min = 0, max = Int.MAX_VALUE).add().value
-            windowedResolution = KeyValue.WindowSize(SETTINGS_WINDOWED_RESOLUTION, Solitaire.DEFAULT_SIZE).add().value
+            windowedResolution =
+                KeyValue.WindowSize(SETTINGS_WINDOWED_RESOLUTION, WindowSizeUtils.DEFAULT_COMPUTED_WINDOWED_SIZE)
+                    .add().value
             fullscreen = KeyValue.Bool(SETTINGS_FULLSCREEN, true).add().value
             fullscreenMonitor = KeyValue.MonitorInfo(SETTINGS_FULLSCREEN_MONITOR, null).add().value
 

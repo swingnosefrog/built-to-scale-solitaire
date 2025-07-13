@@ -10,6 +10,7 @@ import paintbox.logging.Logger
 import com.swingnosefrog.solitaire.Solitaire
 import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.soundsystem.AudioDeviceSettings
+import com.swingnosefrog.solitaire.util.WindowSizeUtils
 import paintbox.IPaintboxSettings
 
 object DesktopLauncher {
@@ -63,7 +64,7 @@ object DesktopLauncher {
             this.setAutoIconify(true)
             val emulatedSize = app.paintboxSettings.emulatedSize
             this.setWindowedMode(emulatedSize.width, emulatedSize.height)
-            val minimumSize = Solitaire.MINIMUM_SIZE
+            val minimumSize = WindowSizeUtils.MINIMUM_WINDOWED_SIZE
             this.setWindowSizeLimits(minimumSize.width, minimumSize.height, -1, -1)
             this.setTitle(app.getWindowTitle())
             this.setResizable(true)

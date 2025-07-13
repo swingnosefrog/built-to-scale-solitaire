@@ -5,6 +5,11 @@ import kotlin.math.abs
 
 
 object WindowSizeUtils {
+    
+    val DEFAULT_WINDOWED_SIZE: WindowSize = WindowSize(1280, 720)
+    val DEFAULT_WINDOWED_SIZE_STEAM_DECK: WindowSize = WindowSize(1280, 800)
+    var DEFAULT_COMPUTED_WINDOWED_SIZE: WindowSize = DEFAULT_WINDOWED_SIZE
+    val MINIMUM_WINDOWED_SIZE: WindowSize = WindowSize(1152, 648)
 
     val commonAspectRatios: List<WindowSize> = listOf(
         WindowSize(16, 9),

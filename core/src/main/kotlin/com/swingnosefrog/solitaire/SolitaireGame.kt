@@ -10,6 +10,7 @@ import com.swingnosefrog.solitaire.assets.AssetRegistryAssetLoader
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.screen.main.MainGameScreen
 import com.swingnosefrog.solitaire.steamworks.Steamworks
+import com.swingnosefrog.solitaire.util.WindowSizeUtils
 import paintbox.IPaintboxSettings
 import paintbox.Paintbox
 import paintbox.PaintboxGame
@@ -40,8 +41,8 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
             loggerSettings: IPaintboxSettings.ILoggerSettings
         ): IPaintboxSettings =
             IPaintboxSettings.Impl(
-                launchArguments, loggerSettings, Solitaire.VERSION, Solitaire.DEFAULT_SIZE,
-                ResizeAction.ANY_SIZE, Solitaire.MINIMUM_SIZE
+                launchArguments, loggerSettings, Solitaire.VERSION, WindowSizeUtils.DEFAULT_WINDOWED_SIZE,
+                ResizeAction.ANY_SIZE, WindowSizeUtils.MINIMUM_WINDOWED_SIZE
             )
     }
     
@@ -62,6 +63,12 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
         
         AssetRegistry.addAssetLoader(AssetRegistryAssetLoader())
         GameAssets.addAssetLoader(GameAssetLoader())
+
+        Steamworks.init()
+        if (Steamworks.getSteamInterfaces()?.isRunningOnSteamDeck == true) {
+            Paintbox.LOGGER.info("Detected running on Steam Deck/SteamOS")
+            WindowSizeUtils.DEFAULT_COMPUTED_WINDOWED_SIZE = WindowSizeUtils.DEFAULT_WINDOWED_SIZE_STEAM_DECK
+        }
         
         gdxPrefs = Gdx.app.getPreferences("com.swingnosefrog.solitaire")
         settings = SolitaireSettings(this, gdxPrefs).apply {
@@ -73,17 +80,12 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
 
         fullscreenWindowedInputProcessor =
             DefaultFullscreenWindowedInputProcessor(
-                Solitaire.DEFAULT_SIZE,
+                WindowSizeUtils.DEFAULT_COMPUTED_WINDOWED_SIZE,
                 { this.settings },
                 { it.fullscreenMonitor },
                 { it.windowedResolution }
             )
         this.inputMultiplexer.addProcessor(fullscreenWindowedInputProcessor)
-        
-        Steamworks.init()
-        if (Steamworks.getSteamInterfaces()?.isRunningOnSteamDeck == true) {
-            Paintbox.LOGGER.info("Detected running on Steam Deck/SteamOS")
-        }
         
         (Gdx.graphics as Lwjgl3Graphics).window.setVisible(true)
 
