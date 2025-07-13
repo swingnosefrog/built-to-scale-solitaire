@@ -7,31 +7,17 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.Align
 import com.swingnosefrog.solitaire.Solitaire
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
-import com.swingnosefrog.solitaire.menu.MenuController
-import com.swingnosefrog.solitaire.menu.MenuInput
-import com.swingnosefrog.solitaire.menu.MenuInputSource
-import com.swingnosefrog.solitaire.menu.MenuInputType
-import com.swingnosefrog.solitaire.menu.MenuOption
+import com.swingnosefrog.solitaire.menu.*
 import com.swingnosefrog.solitaire.screen.main.menu.AbstractMenu
 import com.swingnosefrog.solitaire.screen.main.menu.RootMenu
-import paintbox.binding.BooleanVar
-import paintbox.binding.IntVar
-import paintbox.binding.ReadOnlyBooleanVar
-import paintbox.binding.ReadOnlyIntVar
-import paintbox.binding.ReadOnlyVar
-import paintbox.binding.Var
+import paintbox.binding.*
 import paintbox.font.Markup
 import paintbox.font.PaintboxFont
 import paintbox.font.TextAlign
 import paintbox.registry.AssetRegistry
-import paintbox.ui.Anchor
-import paintbox.ui.ClickPressed
-import paintbox.ui.ImageIcon
-import paintbox.ui.MouseEntered
-import paintbox.ui.Pane
-import paintbox.ui.StringVarConverter
-import paintbox.ui.UIElement
+import paintbox.ui.*
 import paintbox.ui.area.Insets
+import paintbox.ui.control.Slider
 import paintbox.ui.control.TextLabel
 import paintbox.ui.element.QuadElement
 import paintbox.ui.element.RectElement
@@ -133,44 +119,44 @@ class MainGameMenuPane(
     }
 
     private fun createUIElementFromMenuOption(option: MenuOption): UIElement {
+        val inputListener = InputEventListener { evt ->
+            if (option.disabled.get()) return@InputEventListener false
+
+            when (evt) {
+                is MouseEntered -> {
+                    menuController.setHighlightedMenuOption(option)
+                    true
+                }
+
+                is ClickPressed -> {
+                    menuController.setHighlightedMenuOption(option)
+
+                    if (menuController.currentHighlightedMenuOption.getOrCompute() == option) {
+                        // If the currently highlighted option isn't this one, it means someone else has focus
+                        if (evt.button == Input.Buttons.LEFT) {
+                            menuController.onMenuInput(MenuInput(MenuInputType.SELECT, MenuInputSource.MOUSE))
+                            true
+                        } else if (evt.button == Input.Buttons.RIGHT) {
+                            menuController.onMenuInput(MenuInput(MenuInputType.BACK, MenuInputSource.MOUSE))
+                            true
+                        } else false
+                    } else {
+                        if (evt.button == Input.Buttons.LEFT || evt.button == Input.Buttons.RIGHT) {
+                            // Attempt to unfocus the selected item
+                            menuController.onMenuInput(MenuInput(MenuInputType.BACK, MenuInputSource.MOUSE))
+                            true
+                        } else false
+                    }
+                }
+
+                else -> false
+            }
+        }
         val pane = Pane().apply {
             this.bounds.height.set(54f)
             
             this.opacity.bind { if (option.disabled.use()) 0.5f else 1f }
-
-            this.addInputEventListener { evt ->
-                if (option.disabled.get()) return@addInputEventListener false
-                
-                when (evt) {
-                    is MouseEntered -> {
-                        menuController.setHighlightedMenuOption(option)
-                        true
-                    }
-
-                    is ClickPressed -> {
-                        menuController.setHighlightedMenuOption(option)
-
-                        if (menuController.currentHighlightedMenuOption.getOrCompute() == option) {
-                            // If the currently highlighted option isn't this one, it means someone else has focus
-                            if (evt.button == Input.Buttons.LEFT) {
-                                menuController.onMenuInput(MenuInput(MenuInputType.SELECT, MenuInputSource.MOUSE))
-                                true
-                            } else if (evt.button == Input.Buttons.RIGHT) {
-                                menuController.onMenuInput(MenuInput(MenuInputType.BACK, MenuInputSource.MOUSE))
-                                true
-                            } else false
-                        } else {
-                            if (evt.button == Input.Buttons.LEFT || evt.button == Input.Buttons.RIGHT) {
-                                // Attempt to unfocus the selected item
-                                menuController.onMenuInput(MenuInput(MenuInputType.BACK, MenuInputSource.MOUSE))
-                                true
-                            } else false
-                        }
-                    }
-
-                    else -> false
-                }
-            }
+            this.addInputEventListener(inputListener)
         }
         val selectedIcon = ImageIcon(TextureRegion(AssetRegistry.get<Texture>("ui_nut_icon"))).apply {
             this.bounds.width.set(40f)
@@ -198,6 +184,7 @@ class MainGameMenuPane(
                     pane += TextLabel(binding = {
                         if (option.selectedState.use()) "[X]" else "[   ]"
                     }, font = fonts.uiMainSerifFontBold).apply {
+                        this.disabled.bind(option.disabled)
                         this.textColor.set(Color.WHITE)
                         this.textAlign.set(TextAlign.RIGHT)
                         this.renderAlign.set(Align.right)
@@ -214,6 +201,7 @@ class MainGameMenuPane(
                             val selectedOption = option.selectedOption.use()
                             (option.stringVarConverter as StringVarConverter<Any?>).toVar(selectedOption).use()
                         }, font = fonts.uiMainSerifFontBold).apply {
+                            this.disabled.bind(option.disabled)
                             this.textColor.bind { textColor.use() }
                             this.textAlign.set(TextAlign.CENTRE)
                             this.renderAlign.set(Align.center)
@@ -222,12 +210,58 @@ class MainGameMenuPane(
                             this.visible.bind { isSelected.use() }
                             val font = fonts.uiMainSansSerifFontBold
                             this += TextLabel("<", font = font).apply {
+                                this.disabled.bind(option.disabled)
                                 this.textColor.set(Color.WHITE)
                                 this.renderAlign.set(Align.left)
                             }
                             this += TextLabel(">", font = font).apply {
+                                this.disabled.bind(option.disabled)
                                 this.textColor.set(Color.WHITE)
                                 this.renderAlign.set(Align.right)
+                            }
+                        }
+                    }
+                }
+
+                is MenuOption.OptionWidget.Slider -> {
+                    textLabel.bindWidthToParent(multiplier = 0.5f)
+                    pane += Pane().apply {
+                        this.bindWidthToParent(multiplier = 0.5f)
+                        this.bindVarToSelfWidth(this.bounds.x)
+
+                        this += Pane().apply {
+                            this += Slider().apply {
+                                Anchor.Centre.configure(this)
+                                this.bindHeightToParent(multiplier = 0.75f)
+                                this.disabled.bind {
+                                    option.disabled.use() || !option.isSelected.use()
+                                }
+
+                                (this.skin.getOrCompute() as Slider.SliderSkin).circleSizeMultiplier.bind {
+                                    if (option.isSelected.use()) 1f else 0.65f
+                                }
+
+                                this.minimum.bind(option.minimum)
+                                this.maximum.bind(option.maximum)
+                                this.tickUnit.bind(option.tickUnit)
+                                this.setValue(option.value.get())
+
+                                this.value.addListener { v ->
+                                    if (!this.apparentDisabledState.get()) {
+                                        val newSliderValue = v.getOrCompute()
+                                        if (option.value.get() != newSliderValue) {
+                                            option.setValue(newSliderValue)
+                                        }
+                                    }
+                                }
+                                option.value.addListener(WeakVarChangedListener { v ->
+                                    if (!this.apparentDisabledState.get()) {
+                                        val newOptionValue = v.getOrCompute()
+                                        if (this.value.get() != newOptionValue) {
+                                            this.setValue(newOptionValue)
+                                        }
+                                    }
+                                })
                             }
                         }
                     }

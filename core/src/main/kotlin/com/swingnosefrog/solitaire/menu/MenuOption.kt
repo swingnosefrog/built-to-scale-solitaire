@@ -3,6 +3,8 @@ package com.swingnosefrog.solitaire.menu
 import com.swingnosefrog.solitaire.Localization
 import com.swingnosefrog.solitaire.screen.main.menu.AbstractMenu
 import paintbox.binding.BooleanVar
+import paintbox.binding.FloatVar
+import paintbox.binding.ReadOnlyFloatVar
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 import paintbox.ui.StringVarConverter
@@ -13,9 +15,9 @@ import java.awt.SystemColor.text
 sealed class MenuOption(
     val text: ReadOnlyVar<String>,
 ) {
-    
+
     companion object {
-        
+
         fun createNoOp(text: ReadOnlyVar<String>): MenuOption {
             return Simple(text) {}
         }
@@ -54,12 +56,12 @@ sealed class MenuOption(
     }
 
     sealed class OptionWidget(text: ReadOnlyVar<String>) : MenuOption(text) {
-        
+
         class Cycle<T>(
             text: ReadOnlyVar<String>,
             val options: ReadOnlyVar<List<T>>,
             val selectedOption: Var<T>,
-            val stringVarConverter: StringVarConverter<T> = StringVarConverter.createDefaultConverter()
+            val stringVarConverter: StringVarConverter<T> = StringVarConverter.createDefaultConverter(),
         ) : OptionWidget(text) {
 
             override fun onLeft(controller: MenuController, menuInput: MenuInput) {
@@ -73,7 +75,7 @@ sealed class MenuOption(
                     selectNext(+1)
                 }
             }
-            
+
             private fun selectNext(indexChange: Int) {
                 val list = options.getOrCompute()
                 if (list.size >= 2) {
@@ -98,6 +100,43 @@ sealed class MenuOption(
             }
         }
 
+        class Slider(
+            text: ReadOnlyVar<String>,
+            val minimum: ReadOnlyFloatVar,
+            val maximum: ReadOnlyFloatVar,
+            val tickUnit: ReadOnlyFloatVar,
+            val value: FloatVar,
+        ) : OptionWidget(text) {
+
+            fun setValue(value: Float) {
+                val tick = tickUnit.get().coerceAtLeast(0f)
+                val snapped = if (tick > 0f) {
+                    MathHelper.snapToNearest(value, tick)
+                } else value
+                this.value.set(snapped.coerceIn(minimum.get(), maximum.get()))
+            }
+
+            fun nudgeValue(direction: Int) {
+                if (direction < 0) {
+                    setValue(value.get() - tickUnit.get())
+                } else if (direction > 0) {
+                    setValue(value.get() + tickUnit.get())
+                }
+            }
+
+            override fun onLeft(controller: MenuController, menuInput: MenuInput) {
+                if (isSelected.get()) {
+                    nudgeValue(-1)
+                }
+            }
+
+            override fun onRight(controller: MenuController, menuInput: MenuInput) {
+                if (isSelected.get()) {
+                    nudgeValue(+1)
+                }
+            }
+        }
+
 
         override fun onSelect(controller: MenuController, menuInput: MenuInput) {
             if (!isSelected.get()) {
@@ -111,7 +150,7 @@ sealed class MenuOption(
             }
         }
     }
-    
+
 
     val isSelected: BooleanVar = BooleanVar(false)
     val disabled: BooleanVar = BooleanVar(false)

@@ -1,6 +1,7 @@
 package com.swingnosefrog.solitaire.screen.main.menu
 
 import com.swingnosefrog.solitaire.Localization
+import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.menu.MenuOption
 import paintbox.binding.ReadOnlyVar
 
@@ -21,6 +22,8 @@ class SettingsRootMenu(
         },
         MenuOption.SubMenu(Localization["game.menu.settings.option.audio"]) { audioSettingsMenu },
         MenuOption.SubMenu(Localization["game.menu.settings.option.video"]) { videoSettingsMenu },
-        MenuOption.Back(),
+        MenuOption.Back(callback = { menuController -> 
+            SolitaireGame.instance.settings.persist()
+        }),
     )
 }
