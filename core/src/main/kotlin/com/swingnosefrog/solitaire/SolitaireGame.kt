@@ -65,7 +65,7 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
         GameAssets.addAssetLoader(GameAssetLoader())
 
         Steamworks.init()
-        if (Steamworks.getSteamInterfaces()?.isRunningOnSteamDeck == true) {
+        if (Steamworks.isRunningOnSteamDeck()) {
             Paintbox.LOGGER.info("Detected running on Steam Deck/SteamOS")
             WindowSizeUtils.DEFAULT_COMPUTED_WINDOWED_SIZE = WindowSizeUtils.DEFAULT_WINDOWED_SIZE_STEAM_DECK
         }

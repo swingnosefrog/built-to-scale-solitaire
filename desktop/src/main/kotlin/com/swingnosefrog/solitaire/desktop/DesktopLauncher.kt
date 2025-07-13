@@ -63,6 +63,7 @@ object DesktopLauncher {
         
         // Early Steamworks SDK init
         Steamworks.init()
+        val isRunningOnSteamDeck = Steamworks.isRunningOnSteamDeck()
 
         PaintboxDesktopLauncher(app, arguments).editConfig {
             this.setAutoIconify(true)
@@ -90,6 +91,11 @@ object DesktopLauncher {
 
             val sizes: List<Int> = listOf(32, 24, 16)
             this.setWindowIcon(Files.FileType.Internal, *sizes.map { "icon/$it.png" }.toTypedArray())
+        }.editConfig { 
+            if (isRunningOnSteamDeck) {
+                // Fixes issue where the game starts iconified/minimized WITH fullscreen enabled on first Steam Deck boot, and then cannot get any inputs
+                this.setAutoIconify(false)
+            }
         }.launch()
     }
 

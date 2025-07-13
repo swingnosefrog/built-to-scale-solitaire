@@ -9,5 +9,7 @@ class SteamInterfaces(
     val input: SteamController,
 ) {
 
-    val isRunningOnSteamDeck: Boolean get() = utils.isSteamRunningOnSteamDeck
+    val isRunningOnSteamDeck: Boolean by lazy {
+        utils.isSteamRunningOnSteamDeck // Cache this result
+    }
 }

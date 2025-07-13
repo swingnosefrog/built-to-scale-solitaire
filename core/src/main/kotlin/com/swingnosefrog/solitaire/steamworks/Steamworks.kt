@@ -13,6 +13,7 @@ object Steamworks {
 
     private val initCalled: AtomicBoolean = AtomicBoolean(false)
     private val inited: AtomicBoolean = AtomicBoolean(false)
+    private val failedToInitialize: AtomicBoolean = AtomicBoolean(false)
     private val shutdownCalled: AtomicBoolean = AtomicBoolean(false)
 
     private var deltaElapsed: Float = 0f
@@ -36,9 +37,11 @@ object Steamworks {
                     }),
                     SteamController()
                 )
+                SteamAPI.runCallbacks()
                 inited.set(true)
             }
         } catch (e: Exception) {
+            failedToInitialize.set(true)
             e.printStackTrace()
         }
     }
@@ -46,6 +49,15 @@ object Steamworks {
     fun getSteamInterfaces(): SteamInterfaces? {
         if (!inited.get() || shutdownCalled.get()) return null
         return steamInterfaces
+    }
+    
+    fun isRunningOnSteamDeck(): Boolean {
+        if (!initCalled.get())
+            error("Steamworks.init() was not called")
+        if (failedToInitialize.get())
+            return false
+        
+        return getSteamInterfaces()?.isRunningOnSteamDeck == true
     }
 
     fun frameUpdate(deltaSec: Float) {
