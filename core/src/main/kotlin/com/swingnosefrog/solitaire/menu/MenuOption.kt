@@ -75,7 +75,7 @@ sealed class MenuOption(
                 }
             }
 
-            private fun selectNext(indexChange: Int) {
+            fun selectNext(indexChange: Int) {
                 val list = options.getOrCompute()
                 if (list.size >= 2) {
                     val currentIndex = list.indexOf(selectedOption.getOrCompute())
@@ -141,7 +141,10 @@ sealed class MenuOption(
             if (!isSelected.get()) {
                 isSelected.set(true)
             } else {
-                isSelected.set(false)
+                // Only deselect if not clicking on it (clicking has an action for cycle options)
+                if (menuInput.source != MenuInputSource.MOUSE) {
+                    isSelected.set(false)
+                }
             }
         }
 

@@ -219,8 +219,29 @@ class MainGameMenuPane(
                             this.textColor.bind { textColor.use() }
                             this.textAlign.set(TextAlign.CENTRE)
                             this.renderAlign.set(Align.center)
+                            
+                            fun createCycleZone(indexChange: Int): ActionablePane {
+                                return ActionablePane().apply {
+                                    this.bindWidthToParent(multiplier = 0.5f)
+                                    this.opacity.set(0f)
+                                    this.visible.bind(option.isSelected) // Prevents being able to start a click when not yet selected
+
+                                    this.onLeftClick = {
+                                        if (!option.disabled.get() && option.isSelected.get()) {
+                                            option.selectNext(indexChange)
+                                            true
+                                        } else false
+                                    }
+                                }
+                            }
+                            this += createCycleZone(-1).apply { 
+                                Anchor.TopLeft.configure(this)
+                            }
+                            this += createCycleZone(+1).apply { 
+                                Anchor.TopRight.configure(this)
+                            }
                         }
-                        this += Pane().apply {
+                        this += NoInputPane().apply {
                             this.visible.bind { isSelected.use() }
                             val font = fonts.uiMainSansSerifFontBold
                             this += TextLabel("<", font = font).apply {
