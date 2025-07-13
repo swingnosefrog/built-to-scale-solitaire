@@ -56,28 +56,13 @@ class MainGameMenuPane(
     init {
         val dark = Color(0f, 0f, 0f, 0.85f)
         this += NoInputPane().apply {
-            val versionLabel = TextLabel("").apply {
-                var textValue = Solitaire.VERSION.toMarkupString()
-                if (Steamworks.getSteamInterfaces() != null) {
-                    val icon = if (Steamworks.isRunningOnSteamDeck()) PromptFontConsts.STEAM_MENU
-                    else PromptFontConsts.ICON_STEAM
-
-                    textValue = "[font=promptfont]${icon}[]  " + textValue
-                }
-                this.text.set(textValue)
-                
+            this += VBox().apply {
                 Anchor.BottomRight.configure(this)
                 this.bindWidthToParent(multiplier = 0.3f)
-                this.bounds.height.set(32f)
-                this.markup.set(mainSansSerifMarkup)
-                this.setScaleXY(0.675f)
-                this.textColor.set(Color.WHITE)
-                this.textAlign.set(TextAlign.RIGHT)
-                this.renderAlign.set(Align.bottomRight)
                 
-                this.backgroundColor.set(Color(0f, 0f, 0f, 0.65f))
-                this.bgPadding.set(Insets(6f))
-                this.renderBackground.set(true)
+                this.spacing.set(0f)
+                this.bottomToTop.set(true)
+                this.align.set(VBox.Align.BOTTOM)
 
                 this.opacity.bind(TransitioningFloatVar(mainGameUi.animationHandler, {
                     val menu = currentMenu.use()
@@ -85,8 +70,42 @@ class MainGameMenuPane(
                 }, { currentValue, targetValue ->
                     mainGameUi.createOpacityAnimation(currentValue, targetValue)
                 }))
+
+                this.temporarilyDisableLayouts {
+                    val bgColor = Color(0f, 0f, 0f, 0.65f)
+                    
+                    fun createTextLabel(): TextLabel {
+                        return TextLabel("").apply {
+                            this.bounds.height.set(32f)
+                            this.markup.set(mainSansSerifMarkup)
+                            this.textColor.set(Color.WHITE)
+                            this.textAlign.set(TextAlign.RIGHT)
+                            this.renderAlign.set(Align.bottomRight)
+                            this.backgroundColor.set(bgColor)
+                            this.bgPadding.set(Insets(6f))
+                            this.renderBackground.set(true)
+                        }
+                    }
+
+                    val versionLabel = createTextLabel().apply {
+                        this.text.set(Solitaire.VERSION.toMarkupString())
+                        this.setScaleXY(0.8f)
+                    }
+                    this += versionLabel
+
+                    if (Steamworks.getSteamInterfaces() != null) {
+                        this += createTextLabel().apply {
+                            var textValue = "[font=promptfont]${PromptFontConsts.ICON_STEAM}[]"
+
+                            if (Steamworks.isRunningOnSteamDeck()) {
+                                textValue += " [scale=0.75]Deck[]"
+                            }
+
+                            this.text.set(textValue)
+                        }
+                    }
+                }
             }
-            this += versionLabel
         }
         this += HBox().apply {
             this.temporarilyDisableLayouts {
