@@ -12,8 +12,14 @@ class GameplaySettingsMenu(
     override val headingText: ReadOnlyVar<String> = Localization["game.menu.gameplaySettings.heading"]
 
     override val options: List<MenuOption> = listOf(
-        MenuOption.createNoOp(Localization["game.menu.gameplaySettings.option.1"]),
-        MenuOption.createNoOp(Localization["game.menu.gameplaySettings.option.2"]),
+        MenuOption.OptionWidget.Checkbox(
+            Localization["game.menu.gameplaySettings.option.showMoveCounter"],
+            settings.gameplayShowMoveCounter
+        ),
+        MenuOption.OptionWidget.Checkbox(
+            Localization["game.menu.gameplaySettings.option.showTimer"],
+            settings.gameplayShowTimer
+        ),
         MenuOption.Back(),
     )
 

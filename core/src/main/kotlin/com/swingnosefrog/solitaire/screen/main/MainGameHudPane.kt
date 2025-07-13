@@ -2,6 +2,8 @@ package com.swingnosefrog.solitaire.screen.main
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Interpolation
+import com.swingnosefrog.solitaire.SolitaireGame
+import com.swingnosefrog.solitaire.SolitaireSettings
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.game.GameContainer
 import paintbox.binding.ReadOnlyVar
@@ -31,10 +33,18 @@ class MainGameHudPane(
     private val fonts: SolitaireFonts get() = mainGameUi.mainGameScreen.main.fonts
     private val mainSansSerifMarkup: Markup get() = fonts.uiMainSansSerifMarkup
     
+    private val settings: SolitaireSettings get() = SolitaireGame.instance.settings
+    private val onAnyHudSettingsChanged: ReadOnlyVar<Unit>
+    
     private val elapsedTimeClock: ReadOnlyVar<String>
     private val movesMadeString: ReadOnlyVar<String>
 
     init {
+        onAnyHudSettingsChanged = Var.eagerBind {
+            settings.gameplayShowTimer.use()
+            settings.gameplayShowMoveCounter.use()
+        }
+        
         elapsedTimeClock = Var {
             val gameContainer = gameContainer.use()
             val gameStats = gameContainer.gameStats
@@ -108,60 +118,38 @@ class MainGameHudPane(
                 }
             }
 
-            this.temporarilyDisableLayouts {
-                this += createRoundedRect().apply {
-                    this.bounds.width.set(250f)
+            onAnyHudSettingsChanged.addListenerAndFire { v ->
+                v.getOrCompute() // Force it to be un-invalided
+                this.temporarilyDisableLayouts {
+                    this.removeAllChildren()
 
-                    this += createTextLabel().apply {
-                        this.text.bind {
-                            val movesMadePortion = movesMadeString.use()
-                            "Moves: ${movesMadePortion}"
+                    if (settings.gameplayShowMoveCounter.get()) {
+                        this += createRoundedRect().apply {
+                            this.bounds.width.set(250f)
+
+                            this += createTextLabel().apply {
+                                this.text.bind {
+                                    val movesMadePortion = movesMadeString.use()
+                                    "Moves: $movesMadePortion"
+                                }
+                            }
                         }
                     }
-                }
 
-                this += createRoundedRect().apply {
-                    this.bounds.width.set(300f)
+                    if (settings.gameplayShowTimer.get()) {
+                        this += createRoundedRect().apply {
+                            this.bounds.width.set(300f)
 
-                    this += createTextLabel().apply {
-                        this.text.bind {
-                            val clockPortion = elapsedTimeClock.use()
-                            "Time: ${clockPortion}"
+                            this += createTextLabel().apply {
+                                this.text.bind {
+                                    val clockPortion = elapsedTimeClock.use()
+                                    "Time: $clockPortion"
+                                }
+                            }
                         }
                     }
                 }
             }
         }
-//        this += TextLabel(binding = {
-//            val clockPortion = elapsedTimeClock.use()
-//            val movesMadePortion = movesMadeString.use()
-//
-//            "Time: $clockPortion | Moves: $movesMadePortion"
-//        }).apply {
-//            this.bindWidthToParent(multiplier = 0.4f)
-//            this.bounds.height.set(48f)
-//            Anchor.TopRight.configure(this)
-//            this.markup.set(mainSansSerifMarkup)
-//            this.renderAlign.set(RenderAlign.topRight)
-//            this.textColor.set(Color.WHITE)
-//            this.backgroundColor.set(dark)
-//            this.renderBackground.set(true)
-//            this.bgPadding.set(Insets(8f))
-//
-//            this.opacity.bind(
-//                TransitioningFloatVar(
-//                    mainGameUi.animationHandler,
-//                    {
-//                        if (gameContainer.use().gameLogic.isStillDealing.use()) 0.6f else 1f
-//                    }, { currentValue, targetValue ->
-//                        if (targetValue > currentValue) {
-//                            // Only animate if increasing in opacity, otherwise instant
-//                            Animation(Interpolation.exp5, 0.25f, currentValue, targetValue)
-//                        } else null
-//                    })
-//            )
-//        }
     }
-
-
 }

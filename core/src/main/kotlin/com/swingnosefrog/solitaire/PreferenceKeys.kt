@@ -11,8 +11,12 @@ object PreferenceKeys {
     val SETTINGS_WINDOWED_RESOLUTION = "settings_windowedResolution"
     val SETTINGS_FULLSCREEN = "settings_fullscreen"
     val SETTINGS_FULLSCREEN_MONITOR = "settings_fullscreen_monitor"
+    
     val SETTINGS_MASTER_VOLUME = "settings_volume_master"
     val SETTINGS_MUSIC_VOLUME = "settings_volume_music"
     val SETTINGS_SFX_VOLUME = "settings_volume_sfx"
+    
+    val SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER = "settings_gameplay_showMoveCounter"
+    val SETTINGS_GAMEPLAY_SHOW_TIMER = "settings_gameplay_showTimer"
 
 }

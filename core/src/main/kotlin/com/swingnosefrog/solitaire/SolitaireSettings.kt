@@ -3,6 +3,8 @@ package com.swingnosefrog.solitaire
 import com.badlogic.gdx.Preferences
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_FULLSCREEN
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_FULLSCREEN_MONITOR
+import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER
+import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_TIMER
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_MASTER_VOLUME
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_MAX_FPS
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_MUSIC_VOLUME
@@ -33,6 +35,9 @@ class SolitaireSettings(main: SolitaireGame, prefs: Preferences) : PaintboxPrefe
     val masterVolume: IntVar
     val musicVolume: IntVar
     val sfxVolume: IntVar
+    
+    val gameplayShowMoveCounter: BooleanVar
+    val gameplayShowTimer: BooleanVar
 
     init {
         val initScope = InitScope()
@@ -47,6 +52,9 @@ class SolitaireSettings(main: SolitaireGame, prefs: Preferences) : PaintboxPrefe
             masterVolume = KeyValue.Int(SETTINGS_MASTER_VOLUME, 50, min = 0, max = 100).add().value
             musicVolume = KeyValue.Int(SETTINGS_MUSIC_VOLUME, 100, min = 0, max = 100).add().value
             sfxVolume = KeyValue.Int(SETTINGS_SFX_VOLUME, 100, min = 0, max = 100).add().value
+            
+            gameplayShowMoveCounter = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER, true).add().value
+            gameplayShowTimer = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_TIMER, true).add().value
         }
 
         allKeyValues = initScope.allKeyValues.toList()
