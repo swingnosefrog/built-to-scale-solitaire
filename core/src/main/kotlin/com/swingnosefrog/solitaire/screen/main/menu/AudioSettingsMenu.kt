@@ -1,7 +1,6 @@
 package com.swingnosefrog.solitaire.screen.main.menu
 
 import com.swingnosefrog.solitaire.Localization
-import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.menu.MenuOption
 import paintbox.binding.FloatVar
 import paintbox.binding.IntVar
@@ -40,7 +39,7 @@ class AudioSettingsMenu(
             val volumePercentageString =
                 Localization["game.menu.audioSettings.option.volumePercentage", Var { listOf(intVolume.use()) }]
             val adjustedText: ReadOnlyVar<String> = Var {
-                "${localization.use()}   [scale=0.75]\\[${volumePercentageString.use()}\\][]"
+                "${localization.use()}  [font=ui_main_sansserif scale=0.75]\\[${volumePercentageString.use()}\\][]"
             }
             return MenuOption.OptionWidget.Slider(
                 adjustedText,
