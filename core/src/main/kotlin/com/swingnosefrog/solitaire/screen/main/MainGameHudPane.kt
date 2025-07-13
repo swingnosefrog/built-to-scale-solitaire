@@ -7,15 +7,19 @@ import com.swingnosefrog.solitaire.game.GameContainer
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 import paintbox.font.Markup
+import paintbox.font.TextAlign
 import paintbox.ui.Anchor
+import paintbox.ui.Corner
 import paintbox.ui.NoInputPane
-import paintbox.ui.Pane
 import paintbox.ui.RenderAlign
 import paintbox.ui.animation.Animation
 import paintbox.ui.animation.TransitioningFloatVar
 import paintbox.ui.area.Insets
 import paintbox.ui.control.TextLabel
+import paintbox.ui.element.RoundedRectElement
+import paintbox.ui.layout.HBox
 import paintbox.util.DecimalFormats
+import java.util.EnumSet
 
 
 class MainGameHudPane(
@@ -62,38 +66,101 @@ class MainGameHudPane(
             movesMadePortion
         }
         
-        val dark = Color(0f, 0f, 0f, 0.5f)
-        this += Pane().apply { 
-            this += TextLabel(binding = {
-                val clockPortion = elapsedTimeClock.use()
-                val movesMadePortion = movesMadeString.use()
-                
-                "Time: $clockPortion | Moves: $movesMadePortion"
-            }).apply { 
-                this.bindWidthToParent(multiplier = 0.4f)
-                this.bounds.height.set(48f)
-                Anchor.TopRight.configure(this)
-                this.markup.set(mainSansSerifMarkup)
-                this.renderAlign.set(RenderAlign.topRight)
-                this.textColor.set(Color.WHITE)
-                this.backgroundColor.set(dark)
-                this.renderBackground.set(true)
-                this.bgPadding.set(Insets(8f))
+        val dark = Color(0f, 0f, 0f, 0.4f)
+        this += HBox().apply {
+            Anchor.TopRight.configure(this)
+            this.bindWidthToParent(adjust = -128f)
+            this.bounds.height.set(48f)
+            this.margin.set(Insets(0f, 16f))
+            this.spacing.set(16f)
+            
+            this.rightToLeft.set(true)
+            this.align.set(HBox.Align.RIGHT)
 
-                this.opacity.bind(
-                    TransitioningFloatVar(
-                        mainGameUi.animationHandler,
-                        {
-                            if (gameContainer.use().gameLogic.isStillDealing.use()) 0.6f else 1f
-                        }, { currentValue, targetValue ->
-                            if (targetValue > currentValue) {
-                                // Only animate if increasing in opacity, otherwise instant
-                                Animation(Interpolation.exp5, 0.25f, currentValue, targetValue)
-                            } else null
-                        })
-                )
+            this.opacity.bind(
+                TransitioningFloatVar(
+                    mainGameUi.animationHandler,
+                    {
+                        if (gameContainer.use().gameLogic.isStillDealing.use()) 0.6f else 1f
+                    }, { currentValue, targetValue ->
+                        if (targetValue > currentValue) {
+                            // Only animate if increasing in opacity, otherwise instant
+                            Animation(Interpolation.exp5, 0.25f, currentValue, targetValue)
+                        } else null
+                    })
+            )
+
+            fun createRoundedRect(): RoundedRectElement {
+                return RoundedRectElement(dark).apply {
+                    this.padding.set(Insets(8f))
+
+                    this.roundedRadius.set(8)
+                    this.roundedCorners.set(EnumSet.of(Corner.BOTTOM_LEFT, Corner.BOTTOM_RIGHT))
+                }
+            }
+
+            fun createTextLabel(): TextLabel {
+                return TextLabel("").apply {
+                    this.markup.set(mainSansSerifMarkup)
+                    this.textColor.set(Color.WHITE)
+                    this.textAlign.set(TextAlign.CENTRE)
+                    this.renderAlign.set(RenderAlign.center)
+                }
+            }
+
+            this.temporarilyDisableLayouts {
+                this += createRoundedRect().apply {
+                    this.bounds.width.set(250f)
+
+                    this += createTextLabel().apply {
+                        this.text.bind {
+                            val movesMadePortion = movesMadeString.use()
+                            "Moves: ${movesMadePortion}"
+                        }
+                    }
+                }
+
+                this += createRoundedRect().apply {
+                    this.bounds.width.set(300f)
+
+                    this += createTextLabel().apply {
+                        this.text.bind {
+                            val clockPortion = elapsedTimeClock.use()
+                            "Time: ${clockPortion}"
+                        }
+                    }
+                }
             }
         }
+//        this += TextLabel(binding = {
+//            val clockPortion = elapsedTimeClock.use()
+//            val movesMadePortion = movesMadeString.use()
+//
+//            "Time: $clockPortion | Moves: $movesMadePortion"
+//        }).apply {
+//            this.bindWidthToParent(multiplier = 0.4f)
+//            this.bounds.height.set(48f)
+//            Anchor.TopRight.configure(this)
+//            this.markup.set(mainSansSerifMarkup)
+//            this.renderAlign.set(RenderAlign.topRight)
+//            this.textColor.set(Color.WHITE)
+//            this.backgroundColor.set(dark)
+//            this.renderBackground.set(true)
+//            this.bgPadding.set(Insets(8f))
+//
+//            this.opacity.bind(
+//                TransitioningFloatVar(
+//                    mainGameUi.animationHandler,
+//                    {
+//                        if (gameContainer.use().gameLogic.isStillDealing.use()) 0.6f else 1f
+//                    }, { currentValue, targetValue ->
+//                        if (targetValue > currentValue) {
+//                            // Only animate if increasing in opacity, otherwise instant
+//                            Animation(Interpolation.exp5, 0.25f, currentValue, targetValue)
+//                        } else null
+//                    })
+//            )
+//        }
     }
 
 
