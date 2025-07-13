@@ -24,6 +24,6 @@ class GameplaySettingsMenu(
     )
 
     init {
-        this.menuSizeAdjustment.set(2)
+        this.menuSizeAdjustment.set(1)
     }
 }
