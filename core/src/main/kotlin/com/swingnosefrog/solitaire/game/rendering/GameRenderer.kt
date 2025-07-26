@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.swingnosefrog.solitaire.game.Card
+import com.swingnosefrog.solitaire.game.animation.AnimationContainer
 import com.swingnosefrog.solitaire.game.animation.CardPlayingAnimation
 import com.swingnosefrog.solitaire.game.assets.CardAssetKey
 import com.swingnosefrog.solitaire.game.assets.GameAssets
@@ -24,8 +25,14 @@ open class GameRenderer(
     protected val logic: GameLogic,
     protected val batch: SpriteBatch,
 ) {
+    
+    companion object {
+        
+        val DEFAULT_CAMERA_POSITION: CameraPosition = CameraPosition(0f, 0.25f, 0.7875f)
+        val ZOOMED_OUT_CAMERA_POSITION: CameraPosition = CameraPosition(0f, 0f, 0.825f)
+    }
 
-    private val tableauColor: Color = Color.valueOf("125942")
+    protected val tableauColor: Color = Color.valueOf("125942")
 
     val viewportWidth: Float = 18f // 20f
     val viewportHeight: Float = 11.25f
@@ -34,8 +41,7 @@ open class GameRenderer(
         setToOrtho(false, this@GameRenderer.viewportWidth, this@GameRenderer.viewportHeight)
         this.position.set(0f, 0f, 0f)
 
-        this.zoom = 0.7875f
-        this.translate(0f, 0.25f)
+        DEFAULT_CAMERA_POSITION.applyToCamera(this)
     }
     val viewport: Viewport = ExtendViewport(18f, 11.25f, 20f, 11.25f, camera)
     
@@ -46,6 +52,7 @@ open class GameRenderer(
         val camWidth = cam.viewportWidth
         val camHeight = cam.viewportHeight
         
+        updateCameraPosition()
         cam.update()
         if (shouldApplyViewport.get()) {
             viewport.apply()
@@ -85,6 +92,10 @@ open class GameRenderer(
 
         batch.color = Color.WHITE
         batch.end()
+    }
+    
+    private fun updateCameraPosition() {
+        
     }
 
     protected open fun CardStack.render(x: Float, y: Float, isFlippedOver: Boolean, renderShadow: Boolean) {
