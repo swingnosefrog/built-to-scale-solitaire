@@ -3,12 +3,11 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 buildscript {
     repositories {
         mavenCentral()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        maven { url "https://plugins.gradle.org/m2/" }
+        gradlePluginPortal()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "com.gradleup.shadow:shadow-gradle-plugin:8.3.6"
+        classpath "com.gradleup.shadow:shadow-gradle-plugin:9.1.0"
     }
 }
 
@@ -34,7 +33,6 @@ allprojects {
         mavenCentral()
         mavenLocal()
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://clojars.org/repo/" }
         maven { url "https://jitpack.io/" }
         maven { url "https://repo.eclipse.org/content/groups/releases/" }
