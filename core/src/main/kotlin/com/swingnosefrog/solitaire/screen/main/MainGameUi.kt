@@ -17,8 +17,8 @@ import com.swingnosefrog.solitaire.menu.MenuInputSource
 import com.swingnosefrog.solitaire.menu.MenuInputType
 import com.swingnosefrog.solitaire.screen.main.menu.GameplaySettingsMenu
 import paintbox.Paintbox
-import paintbox.binding.BooleanVar
-import paintbox.binding.ReadOnlyBooleanVar
+import paintbox.binding.ReadOnlyVar
+import paintbox.binding.Var
 import paintbox.input.ToggleableInputProcessor
 import paintbox.ui.Pane
 import paintbox.ui.SceneRoot
@@ -28,6 +28,13 @@ import paintbox.ui.animation.TransitioningFloatVar
 
 
 class MainGameUi(val mainGameScreen: MainGameScreen) {
+    
+    enum class MenuState {
+        
+        NONE,
+        PAUSE_MENU,
+        HOW_TO_PLAY,
+    }
 
     private val uiCamera: OrthographicCamera = OrthographicCamera().apply {
         setToOrtho(false, 1f, 1f) // width and height controlled by uiViewport
@@ -39,8 +46,8 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
     private val uiInputHandler: UiInputHandler = this.UiInputHandler()
     val inputProcessor: InputProcessor
 
-    private val _isPauseMenuOpen: BooleanVar = BooleanVar(false)
-    val isPauseMenuOpen: ReadOnlyBooleanVar get() = _isPauseMenuOpen
+    private val _currentMenuState: Var<MenuState> = Var(MenuState.NONE)
+    val currentMenuState: ReadOnlyVar<MenuState> get() = _currentMenuState.asReadOnlyVar()
 
     private val menuController: MenuController = MenuController()
     
@@ -62,7 +69,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         val parentPane = Pane()
         parentPane += MainGameHudPane(this).apply {
             this.opacity.bind(TransitioningFloatVar(animationHandler, {
-                if (isPauseMenuOpen.use()) {
+                if (currentMenuState.use() != MenuState.NONE) {
                     if (menuController.currentMenu.use() is GameplaySettingsMenu)
                         1f
                     else 0.25f
@@ -71,10 +78,12 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
                 createOpacityAnimation(currentValue, targetValue)
             }))
         }
+        
+        // Clickable panes
         parentPane += Pane().apply {
             this += MainGameMenuPane(this@MainGameUi, menuController).apply {
                 this.opacity.bind(TransitioningFloatVar(animationHandler, {
-                    if (isPauseMenuOpen.use()) 1f else 0f
+                    if (currentMenuState.use() == MenuState.PAUSE_MENU) 1f else 0f
                 }, { currentValue, targetValue ->
                     createOpacityAnimation(currentValue, targetValue)
                 }))
@@ -82,10 +91,18 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
             }
             this += MainGameGameplayUiPane(this@MainGameUi, uiInputHandler).apply {
                 this.opacity.bind(TransitioningFloatVar(animationHandler, {
-                    if (isPauseMenuOpen.use()) 0f else 1f
+                    if (currentMenuState.use() != MenuState.NONE) 0f else 1f
                 }, { currentValue, targetValue ->
                     if (targetValue < currentValue) null
                     else createOpacityAnimation(currentValue, targetValue)
+                }))
+                this.visible.bind { opacity.use() > 0f }
+            }
+            this += MainGameHowToPlayPane(this@MainGameUi, uiInputHandler).apply {
+                this.opacity.bind(TransitioningFloatVar(animationHandler, {
+                    if (currentMenuState.use() != MenuState.HOW_TO_PLAY) 0f else 1f
+                }, { currentValue, targetValue ->
+                    createOpacityAnimation(currentValue, targetValue)
                 }))
                 this.visible.bind { opacity.use() > 0f }
             }
@@ -123,29 +140,51 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
 
         fun closePauseMenu()
         
+        fun openHowToPlayMenu()
+        
+        fun closeHowToPlayMenu()
+        
         fun startNewGame()
     }
 
     private inner class UiInputHandler : InputAdapter(), IUiInputHandler {
-
-        override fun openPauseMenu() {
-            _isPauseMenuOpen.set(true)
-            
+        
+        private fun cancelDragOnMenuOpen() {
             val gameContainer = mainGameScreen.gameContainer.getOrCompute()
-            if (!isPauseMenuOpen.get() && gameContainer.gameInput.isDragging()) {
+            if (gameContainer.gameInput.isDragging()) {
                 gameContainer.gameInput.cancelDrag()
             }
+        }
 
-            val menus = MainGameMenus(requestCloseMenu = { closePauseMenu() })
+        override fun openPauseMenu() {
+            _currentMenuState.set(MenuState.PAUSE_MENU)
+
+            cancelDragOnMenuOpen()
+
+            val menus = MainGameMenus(
+                requestCloseMenu = { closePauseMenu() },
+                requestOpenHowToPlayMenu = { openHowToPlayMenu() },
+            )
             menuController.clearMenuStack()
+
             val rootMenu = menus.rootMenu
             menuController.setNewMenu(rootMenu, rootMenu.getAutoHighlightedOption(menuController))
         }
 
         override fun closePauseMenu() {
-            _isPauseMenuOpen.set(false)
+            _currentMenuState.set(MenuState.NONE)
             menuController.clearMenuStack()
             menuController.setNewMenu(null, null)
+        }
+
+        override fun openHowToPlayMenu() {
+            closePauseMenu()
+            _currentMenuState.set(MenuState.HOW_TO_PLAY)
+            cancelDragOnMenuOpen()
+        }
+
+        override fun closeHowToPlayMenu() {
+            _currentMenuState.set(MenuState.NONE)
         }
 
         override fun startNewGame() {
@@ -162,48 +201,66 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
 
         override fun keyDown(keycode: Int): Boolean {
             // TODO don't hardcode keycodes
-            if (isPauseMenuOpen.get()) {
-                when (keycode) {
-                    Input.Keys.W, Input.Keys.UP -> {
-                        menuController.onMenuInput(MenuInputType.UP.toKeyboardInput())
-                        return true
-                    }
-                    Input.Keys.S, Input.Keys.DOWN -> {
-                        menuController.onMenuInput(MenuInputType.DOWN.toKeyboardInput())
-                        return true
-                    }
-                    Input.Keys.A, Input.Keys.LEFT -> {
-                        menuController.onMenuInput(MenuInputType.LEFT.toKeyboardInput())
-                        return true
-                    }
-                    Input.Keys.D, Input.Keys.RIGHT -> {
-                        menuController.onMenuInput(MenuInputType.RIGHT.toKeyboardInput())
-                        return true
-                    }
-                    Input.Keys.Z, Input.Keys.SPACE, Input.Keys.ENTER -> {
-                        menuController.onMenuInput(MenuInputType.SELECT.toKeyboardInput())
-                        return true
-                    }
-                    Input.Keys.X, Input.Keys.ESCAPE, Input.Keys.BACKSPACE -> {
-                        if (menuController.isAtRootMenu()) {
-                            closePauseMenu()
-                        } else {
-                            menuController.onMenuInput(MenuInputType.BACK.toKeyboardInput())
+            when (currentMenuState.getOrCompute()) {
+                MenuState.PAUSE_MENU -> {
+                    when (keycode) {
+                        Input.Keys.W, Input.Keys.UP -> {
+                            menuController.onMenuInput(MenuInputType.UP.toKeyboardInput())
+                            return true
                         }
+                        Input.Keys.S, Input.Keys.DOWN -> {
+                            menuController.onMenuInput(MenuInputType.DOWN.toKeyboardInput())
+                            return true
+                        }
+                        Input.Keys.A, Input.Keys.LEFT -> {
+                            menuController.onMenuInput(MenuInputType.LEFT.toKeyboardInput())
+                            return true
+                        }
+                        Input.Keys.D, Input.Keys.RIGHT -> {
+                            menuController.onMenuInput(MenuInputType.RIGHT.toKeyboardInput())
+                            return true
+                        }
+                        Input.Keys.Z, Input.Keys.SPACE, Input.Keys.ENTER -> {
+                            menuController.onMenuInput(MenuInputType.SELECT.toKeyboardInput())
+                            return true
+                        }
+                        Input.Keys.X, Input.Keys.ESCAPE, Input.Keys.BACKSPACE -> {
+                            if (menuController.isAtRootMenu()) {
+                                closePauseMenu()
+                            } else {
+                                menuController.onMenuInput(MenuInputType.BACK.toKeyboardInput())
+                            }
 
-                        return true
+                            return true
+                        }
                     }
                 }
-            } else {
-                when (keycode) {
-                    Input.Keys.X, Input.Keys.ESCAPE, Input.Keys.BACKSPACE -> {
-                        openPauseMenu()
-                        return true
+                
+                MenuState.HOW_TO_PLAY -> {
+                    when (keycode) {
+                        Input.Keys.F1, Input.Keys.X, Input.Keys.ESCAPE, Input.Keys.BACKSPACE -> {
+                            closeHowToPlayMenu()
+                            return true
+                        }
+                    }
+                }
+
+                MenuState.NONE -> {
+                    when (keycode) {
+                        Input.Keys.F1 -> {
+                            openHowToPlayMenu()
+                            return true
+                        }
+                        Input.Keys.X, Input.Keys.ESCAPE, Input.Keys.BACKSPACE -> {
+                            openPauseMenu()
+                            return true
+                        }
                     }
                 }
             }
 
-            if (isPauseMenuOpen.get() && Paintbox.debugMode.get() && keycode == Input.Keys.R) {
+            // TODO remove in future, debug only
+            if (currentMenuState.getOrCompute() == MenuState.PAUSE_MENU && Paintbox.debugMode.get() && keycode == Input.Keys.R) {
                 debugReinitSceneRoot()
                 return true
             }

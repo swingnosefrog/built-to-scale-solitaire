@@ -68,7 +68,7 @@ class MainGameScreen(
     private val toggleableGameInputProcessor: ToggleableInputProcessor = ToggleableInputProcessor(gameInputMultiplexer)
             
     init {
-        toggleableGameInputProcessor.enabled.bind { !ui.isPauseMenuOpen.use() }
+        toggleableGameInputProcessor.enabled.bind { ui.currentMenuState.use() == MainGameUi.MenuState.NONE }
         
         this.screenInputMultiplexer.addProcessor(ui.inputProcessor)
         
