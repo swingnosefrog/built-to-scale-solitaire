@@ -25,6 +25,9 @@ class MainGameMenus(
                     requestOpenHowToPlayMenu()
                 },
                 MenuOption.SubMenu(Localization["game.menu.root.option.settings"]) { settingsMenu },
+                MenuOption.createNoOp(Localization["game.menu.root.option.credits"]).apply { 
+                    this.disabled.set(true)
+                },
                 MenuOption.SubMenu(Localization["game.menu.root.option.quitGame"]) { quitConfirmationMenu },
             )
         )
