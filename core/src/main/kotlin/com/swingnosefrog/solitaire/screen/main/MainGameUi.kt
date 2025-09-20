@@ -43,7 +43,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
     private val uiSceneRoot: SceneRoot = SceneRoot(uiViewport)
     private val sceneRootInputProcessor: ToggleableInputProcessor = ToggleableInputProcessor(uiSceneRoot.inputSystem)
 
-    private val uiInputHandler: UiInputHandler = this.UiInputHandler()
+    val uiInputHandler: IUiInputHandler
     val inputProcessor: InputProcessor
 
     private val _currentMenuState: Var<MenuState> = Var(MenuState.NONE)
@@ -54,6 +54,8 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
     val animationHandler: AnimationHandler = AnimationHandler()
 
     init {
+        uiInputHandler = this.UiInputHandler()
+
         inputProcessor = InputMultiplexer()
         inputProcessor.addProcessor(sceneRootInputProcessor)
         inputProcessor.addProcessor(uiInputHandler)
@@ -133,6 +135,12 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
     fun createOpacityAnimation(currentValue: Float, targetValue: Float, duration: Float = 0.2f): Animation {
         return Animation(Interpolation.exp5, duration, currentValue, targetValue)
     }
+    
+    fun getDebugString(): String {
+        return """MenuState: ${currentMenuState.getOrCompute()}
+
+"""
+    }
 
     interface IUiInputHandler {
 
@@ -145,6 +153,10 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         fun closeHowToPlayMenu()
         
         fun startNewGame()
+        
+        fun skipDealingAnimation(): Boolean
+
+        fun debugReinitSceneRoot()
     }
 
     private inner class UiInputHandler : InputAdapter(), IUiInputHandler {
@@ -188,13 +200,25 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         }
 
         override fun startNewGame() {
-            // TODO This currently only exists for new game button
             mainGameScreen.startNewGame(DeckInitializer.RandomSeed())
         }
 
-        private fun debugReinitSceneRoot() {
+        override fun skipDealingAnimation(): Boolean {
+            val gameLogic = mainGameScreen.gameContainer.getOrCompute().gameLogic
+            if (gameLogic.isStillDealing.get()) {
+                val secondsToAdvance = 10f
+                gameLogic.animationContainer.renderUpdate(secondsToAdvance)
+                gameLogic.checkTableauAfterActivity()
+                return true
+            }
+            
+            return false
+        }
+
+        override fun debugReinitSceneRoot() {
             uiSceneRoot.removeAllChildren()
             initSceneRoot()
+            Paintbox.LOGGER.debug("Reinitialized UI scene root")
         }
         
         private fun MenuInputType.toKeyboardInput(): MenuInput = MenuInput(this, MenuInputSource.KEYBOARD)
@@ -224,7 +248,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
                             menuController.onMenuInput(MenuInputType.SELECT.toKeyboardInput())
                             return true
                         }
-                        Input.Keys.X, Input.Keys.ESCAPE, Input.Keys.BACKSPACE -> {
+                        Input.Keys.X, Input.Keys.ESCAPE -> {
                             if (menuController.isAtRootMenu()) {
                                 closePauseMenu()
                             } else {
@@ -238,7 +262,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
                 
                 MenuState.HOW_TO_PLAY -> {
                     when (keycode) {
-                        Input.Keys.F1, Input.Keys.X, Input.Keys.ESCAPE, Input.Keys.BACKSPACE -> {
+                        Input.Keys.F1, Input.Keys.X, Input.Keys.ESCAPE -> {
                             closeHowToPlayMenu()
                             return true
                         }
@@ -251,18 +275,19 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
                             openHowToPlayMenu()
                             return true
                         }
-                        Input.Keys.X, Input.Keys.ESCAPE, Input.Keys.BACKSPACE -> {
+                        Input.Keys.X, Input.Keys.ESCAPE -> {
                             openPauseMenu()
                             return true
                         }
+                        Input.Keys.R -> {
+                            startNewGame()
+                            return true
+                        }
+                        Input.Keys.Z, Input.Keys.SPACE, Input.Keys.ENTER -> {
+                            return skipDealingAnimation()
+                        }
                     }
                 }
-            }
-
-            // TODO remove in future, debug only
-            if (currentMenuState.getOrCompute() == MenuState.PAUSE_MENU && Paintbox.debugMode.get() && keycode == Input.Keys.R) {
-                debugReinitSceneRoot()
-                return true
             }
 
             return false

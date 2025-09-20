@@ -76,7 +76,7 @@ class MainGameScreen(
         
         soundSystem.startRealtime()
         
-        this.screenInputMultiplexer.addProcessor(DebugInputAdapter(this))
+        this.screenInputMultiplexer.addProcessor(DebugInputAdapter(this, this.ui))
         this.screenInputMultiplexer.addProcessor(toggleableGameInputProcessor)
     }
     
@@ -156,6 +156,12 @@ class MainGameScreen(
     override fun hide() {
         super.hide()
         main.inputMultiplexer.removeProcessor(this.screenInputMultiplexer)
+    }
+
+    override fun getDebugString(): String {
+        return """UI:
+${ui.getDebugString()}
+"""
     }
 
     override fun dispose() {
