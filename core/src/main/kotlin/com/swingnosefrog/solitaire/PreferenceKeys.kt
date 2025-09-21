@@ -18,5 +18,6 @@ object PreferenceKeys {
     
     val SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER = "settings_gameplay_showMoveCounter"
     val SETTINGS_GAMEPLAY_SHOW_TIMER = "settings_gameplay_showTimer"
+    val SETTINGS_GAMEPLAY_USE_CLASSIC_CARD_SKIN = "settings_gameplay_useClassicCardSkin"
 
 }

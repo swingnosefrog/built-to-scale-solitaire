@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.game.Card
 import com.swingnosefrog.solitaire.game.animation.AnimationContainer
 import com.swingnosefrog.solitaire.game.animation.CardPlayingAnimation
@@ -50,7 +51,9 @@ open class GameRenderer(
     
     val shouldApplyViewport: BooleanVar = BooleanVar(true)
     
-    private val currentCardSkin: ReadOnlyVar<CardSkin> = Var(CardSkin.MODERN)
+    val currentCardSkin: ReadOnlyVar<CardSkin> = Var { 
+        if (SolitaireGame.instance.settings.gameplayUseClassicCardSkin.use()) CardSkin.CLASSIC else CardSkin.MODERN
+    }
 
     open fun render(deltaSec: Float) {
         val cam = this.camera

@@ -20,6 +20,10 @@ class GameplaySettingsMenu(
             Localization["game.menu.gameplaySettings.option.showTimer"],
             settings.gameplayShowTimer
         ),
+        MenuOption.OptionWidget.Checkbox(
+            Localization["game.menu.gameplaySettings.option.useClassicCardSkin"],
+            settings.gameplayUseClassicCardSkin
+        ),
         MenuOption.Back(),
     )
 

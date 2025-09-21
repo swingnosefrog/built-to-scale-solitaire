@@ -5,6 +5,7 @@ import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_FULLSCREEN
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_FULLSCREEN_MONITOR
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_TIMER
+import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_GAMEPLAY_USE_CLASSIC_CARD_SKIN
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_MASTER_VOLUME
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_MAX_FPS
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_MUSIC_VOLUME
@@ -39,6 +40,7 @@ class SolitaireSettings(main: SolitaireGame, prefs: Preferences) : PaintboxPrefe
     
     val gameplayShowMoveCounter: BooleanVar
     val gameplayShowTimer: BooleanVar
+    val gameplayUseClassicCardSkin: BooleanVar
 
     init {
         val initScope = InitScope()
@@ -58,6 +60,7 @@ class SolitaireSettings(main: SolitaireGame, prefs: Preferences) : PaintboxPrefe
             
             gameplayShowMoveCounter = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER, true).add().value
             gameplayShowTimer = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_TIMER, true).add().value
+            gameplayUseClassicCardSkin = KeyValue.Bool(SETTINGS_GAMEPLAY_USE_CLASSIC_CARD_SKIN, false).add().value
         }
 
         allKeyValues = initScope.allKeyValues.toList()
