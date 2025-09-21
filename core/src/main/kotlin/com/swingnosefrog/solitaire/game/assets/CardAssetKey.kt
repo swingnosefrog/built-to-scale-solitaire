@@ -7,8 +7,8 @@ import com.swingnosefrog.solitaire.game.CardSymbol
 sealed class CardAssetKey {
 
     data class Front(val suit: CardSuit, val symbol: CardSymbol) : CardAssetKey() {
-        
-        override fun getAssetKey(): String = "${getSymbolKey()}_${getSuitKey()}_card"
+
+        override val skinlessAssetKey: String = "${getSymbolKey()}_${getSuitKey()}_card"
         
         private fun getSuitKey(): String = when (suit) {
             CardSuit.A -> "red"
@@ -32,19 +32,23 @@ sealed class CardAssetKey {
     
     data object Back : CardAssetKey() {
 
-        override fun getAssetKey(): String = "back_card"
+        override val skinlessAssetKey: String = "back_card"
     }
     
     data object Slot : CardAssetKey() {
-        
-        override fun getAssetKey(): String = "slot_card"
+
+        override val skinlessAssetKey: String = "slot_card"
     }
     
     data object Silhouette : CardAssetKey() {
         
-        override fun getAssetKey(): String = "card_silhouette"
+        override val skinlessAssetKey: String = "card_silhouette"
     }
     
-    abstract fun getAssetKey(): String
+    abstract val skinlessAssetKey: String
+    
+    private val assetKeysBySkin: MutableMap<CardSkin, String> = mutableMapOf()
+    
+    fun getAssetKey(skin: CardSkin): String = assetKeysBySkin.getOrPut(skin) { "${skin.prefix}_${skinlessAssetKey}"}
 }
 

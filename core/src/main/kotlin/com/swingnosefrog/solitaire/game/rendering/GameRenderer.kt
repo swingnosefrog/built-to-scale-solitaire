@@ -10,6 +10,7 @@ import com.swingnosefrog.solitaire.game.Card
 import com.swingnosefrog.solitaire.game.animation.AnimationContainer
 import com.swingnosefrog.solitaire.game.animation.CardPlayingAnimation
 import com.swingnosefrog.solitaire.game.assets.CardAssetKey
+import com.swingnosefrog.solitaire.game.assets.CardSkin
 import com.swingnosefrog.solitaire.game.assets.GameAssets
 import com.swingnosefrog.solitaire.game.logic.CardStack
 import com.swingnosefrog.solitaire.game.logic.GameLogic
@@ -17,6 +18,8 @@ import com.swingnosefrog.solitaire.game.logic.GameLogic.Companion.CARD_HEIGHT
 import com.swingnosefrog.solitaire.game.logic.GameLogic.Companion.CARD_WIDTH
 import com.swingnosefrog.solitaire.game.logic.StackDirection
 import paintbox.binding.BooleanVar
+import paintbox.binding.ReadOnlyVar
+import paintbox.binding.Var
 import paintbox.util.gdxutils.drawRect
 import paintbox.util.gdxutils.fillRect
 
@@ -46,6 +49,8 @@ open class GameRenderer(
     val viewport: Viewport = ExtendViewport(18f, 11.25f, 20f, 11.25f, camera)
     
     val shouldApplyViewport: BooleanVar = BooleanVar(true)
+    
+    private val currentCardSkin: ReadOnlyVar<CardSkin> = Var(CardSkin.MODERN)
 
     open fun render(deltaSec: Float) {
         val cam = this.camera
@@ -65,7 +70,7 @@ open class GameRenderer(
         batch.fillRect(-camWidth / 2f, -camHeight / 2f, camWidth, camHeight)
 
         batch.setColor(1f, 1f, 1f, 0.25f)
-        val slotCardTex = GameAssets.get<Texture>(CardAssetKey.Slot.getAssetKey())
+        val slotCardTex = GameAssets.get<Texture>(CardAssetKey.Slot.getAssetKey(currentCardSkin.getOrCompute()))
         for (zone in logic.zones.allCardZones) {
             if (!zone.isOutlineVisible) continue
             batch.draw(slotCardTex, zone.x.get(), - (zone.y.get() + CARD_HEIGHT), CARD_WIDTH, CARD_HEIGHT)
@@ -109,7 +114,7 @@ open class GameRenderer(
         if (renderShadow) {
             batch.setColor(0f, 0f, 0f, 0.35f)
             renderCardTex(CardAssetKey.Silhouette, x, y + 0.1f)
-        }
+        }   
         
         val cardAssetKey: CardAssetKey = if (flippedOver) CardAssetKey.Back else this.cardAssetKey
         batch.setColor(1f, 1f, 1f, 1f)
@@ -119,7 +124,7 @@ open class GameRenderer(
     }
     
     private fun renderCardTex(cardAssetKey: CardAssetKey, x: Float, y: Float) {
-        val tex = GameAssets.get<Texture>(cardAssetKey.getAssetKey())
+        val tex = GameAssets.get<Texture>(cardAssetKey.getAssetKey(currentCardSkin.getOrCompute()))
         batch.draw(tex, x, -(y + CARD_HEIGHT), CARD_WIDTH, CARD_HEIGHT)
     }
     

@@ -13,8 +13,8 @@ class GameAssetLoader : AssetLoaderBase<GameAssets>(GameAssets) {
 
         val registry = assetRegistryInstance
 
-        addCardTextures("modern", linearFiltering = true)
-//        addCardTextures("classic", linearFiltering = false)
+        addCardTextures(CardSkin.MODERN, "modern", linearFiltering = true)
+        addCardTextures(CardSkin.CLASSIC, "classic", linearFiltering = false)
 
         registry.loadAsset<BeadsSound>("sfx_game_dealing_loop", "sounds/game/dealing_loop.wav")
         registry.loadAsset<BeadsSound>("sfx_game_pickup1", "sounds/game/pickup1.wav")
@@ -43,10 +43,13 @@ class GameAssetLoader : AssetLoaderBase<GameAssets>(GameAssets) {
         registry.loadAsset<BeadsSound>("music_gameplay_stem_side", "music/gameplay/stem_side.ogg")
     }
 
-    private fun addCardTextures(subdir: String, linearFiltering: Boolean) {
+    private fun addCardTextures(skin: CardSkin, subdir: String, linearFiltering: Boolean) {
         fun CardAssetKey.loadTexture() {
-            val key = this.getAssetKey()
-            assetRegistryInstance.loadAsset(key, "textures/game/${subdir}/${key}.png", if (linearFiltering) linearTexture() else null)
+            assetRegistryInstance.loadAsset(
+                this.getAssetKey(skin),
+                "textures/game/${subdir}/${this.skinlessAssetKey}.png",
+                if (linearFiltering) linearTexture() else null
+            )
         }
 
         val allSuits = CardSuit.entries
