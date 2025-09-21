@@ -4,38 +4,79 @@ import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.swingnosefrog.solitaire.SolitaireGame
+import paintbox.binding.ReadOnlyVar
+import paintbox.binding.Var
 
 
 class GameInputProcessor(private val input: GameInput, private val viewport: Viewport) : InputProcessor {
+
+    val currentMouseMode: ReadOnlyVar<MouseMode> = Var {
+        SolitaireGame.instance.settings.gameplayMouseMode.use()
+    }
 
     private fun convertToWorldCoords(screenX: Int, screenY: Int): Vector2 {
         val unprojected = viewport.unproject(Vector2(screenX.toFloat(), screenY.toFloat()))
         unprojected.y = -unprojected.y
         return unprojected
     }
-    
+
     private fun updateDrag(screenX: Int, screenY: Int) {
         if (input.isDragging()) {
             val worldCoords = convertToWorldCoords(screenX, screenY)
             input.updateDrag(worldCoords.x, worldCoords.y)
         }
     }
-    
+
     private fun Int.isFirstPointer(): Boolean = this == 0
-    
+
     private fun areInputsDisabled(): Boolean = input.inputsDisabled.get()
-    
+
+    private fun attemptPickUpCards(screenX: Int, screenY: Int): Boolean {
+        val worldCoords = convertToWorldCoords(screenX, screenY)
+
+        val zoneCoords = input.logic.getSelectedZoneCoordinates(worldCoords.x, worldCoords.y)
+        if (zoneCoords != null) {
+            input.attemptStartDrag(zoneCoords)
+            return true
+        }
+
+        return false
+    }
+
+    private fun attemptPutDownCards(screenX: Int, screenY: Int) {
+        val worldCoords = convertToWorldCoords(screenX, screenY)
+        input.updateDrag(worldCoords.x, worldCoords.y)
+
+        val nearestZone = input.getNearestOverlappingDraggingZone()
+        if (nearestZone == null) {
+            input.cancelDrag()
+        } else {
+            input.endDrag(nearestZone)
+        }
+    }
+
+
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         if (areInputsDisabled()) return false
         if (!pointer.isFirstPointer()) return false
 
         if (button == Input.Buttons.LEFT) {
-            val worldCoords = convertToWorldCoords(screenX, screenY)
-            
-            val zoneCoords = input.logic.getSelectedZoneCoordinates(worldCoords.x, worldCoords.y)
-            if (zoneCoords != null) {
-                input.attemptStartDrag(zoneCoords)
-                return true
+            val mouseMode = currentMouseMode.getOrCompute()
+
+            when (mouseMode) {
+                MouseMode.CLICK_AND_DRAG -> {
+                    return attemptPickUpCards(screenX, screenY)
+                }
+
+                MouseMode.CLICK_THEN_CLICK -> {
+                    if (input.isDragging()) {
+                        attemptPutDownCards(screenX, screenY)
+                        return true
+                    } else {
+                        return attemptPickUpCards(screenX, screenY)
+                    }
+                }
             }
         } else if (button == Input.Buttons.RIGHT) {
             if (input.isDragging()) {
@@ -43,23 +84,18 @@ class GameInputProcessor(private val input: GameInput, private val viewport: Vie
                 return true
             }
         }
-        
+
         return false
     }
 
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         if (areInputsDisabled()) return false
         if (!pointer.isFirstPointer()) return false
-        
-        if (button == Input.Buttons.LEFT) {
-            val worldCoords = convertToWorldCoords(screenX, screenY)
-            input.updateDrag(worldCoords.x, worldCoords.y)
 
-            val nearestZone = input.getNearestOverlappingDraggingZone()
-            if (nearestZone == null) {
-                input.cancelDrag()
-            } else {
-                input.endDrag(nearestZone)
+        if (button == Input.Buttons.LEFT) {
+            val mouseMode = currentMouseMode.getOrCompute()
+            if (mouseMode == MouseMode.CLICK_AND_DRAG) {
+                attemptPutDownCards(screenX, screenY)
             }
         }
 
@@ -71,7 +107,7 @@ class GameInputProcessor(private val input: GameInput, private val viewport: Vie
         if (!pointer.isFirstPointer()) return false
 
         updateDrag(screenX, screenY)
-        
+
         return false
     }
 
@@ -87,6 +123,14 @@ class GameInputProcessor(private val input: GameInput, private val viewport: Vie
     }
 
     override fun mouseMoved(screenX: Int, screenY: Int): Boolean {
+        val mouseMode = currentMouseMode.getOrCompute()
+        
+        if (mouseMode == MouseMode.CLICK_THEN_CLICK) {
+            if (input.isDragging()) {
+                updateDrag(screenX, screenY)
+            }
+        }
+        
         return false
     }
 

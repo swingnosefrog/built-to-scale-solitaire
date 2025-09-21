@@ -89,13 +89,18 @@ open class GameRenderer(
             if (playingAnimation.secondsElapsed < 0f) continue
 
             if (playingAnimation is CardPlayingAnimation) {
-                playingAnimation.cardAnimation.card.render(playingAnimation.currentX, playingAnimation.currentY, false, true)
+                playingAnimation.cardAnimation.card.render(
+                    playingAnimation.currentX,
+                    playingAnimation.currentY,
+                    flippedOver = false,
+                    renderShadow = true
+                )
             }
         }
         batch.setColor(1f, 1f, 1f, 1f)
 
         logic.gameInput.getDraggingInfo()?.also { dragging ->
-            dragging.cardStack.render(dragging.x, dragging.y, false, true)
+            dragging.cardStack.render(dragging.x, dragging.y - 0.05f, isFlippedOver = false, renderShadow = true)
         }
 
         batch.color = Color.WHITE
