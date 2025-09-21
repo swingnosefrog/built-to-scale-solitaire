@@ -3,6 +3,7 @@ package com.swingnosefrog.solitaire
 import com.badlogic.gdx.Preferences
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_FULLSCREEN
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_FULLSCREEN_MONITOR
+import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_GAMEPLAY_MOUSE_MODE
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_TIMER
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_GAMEPLAY_USE_CLASSIC_CARD_SKIN
@@ -12,6 +13,7 @@ import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_MUSIC_VOLUME
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_SFX_VOLUME
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_VSYNC
 import com.swingnosefrog.solitaire.PreferenceKeys.SETTINGS_WINDOWED_RESOLUTION
+import com.swingnosefrog.solitaire.game.logic.MouseMode
 import com.swingnosefrog.solitaire.util.WindowSizeUtils
 import paintbox.binding.BooleanVar
 import paintbox.binding.IntVar
@@ -38,6 +40,7 @@ class SolitaireSettings(main: SolitaireGame, prefs: Preferences) : PaintboxPrefe
     val musicVolume: IntVar
     val sfxVolume: IntVar
     
+    val gameplayMouseMode: Var<MouseMode>
     val gameplayShowMoveCounter: BooleanVar
     val gameplayShowTimer: BooleanVar
     val gameplayUseClassicCardSkin: BooleanVar
@@ -58,6 +61,7 @@ class SolitaireSettings(main: SolitaireGame, prefs: Preferences) : PaintboxPrefe
             musicVolume = KeyValue.Int(SETTINGS_MUSIC_VOLUME, 100, min = 0, max = 100).add().value
             sfxVolume = KeyValue.Int(SETTINGS_SFX_VOLUME, 100, min = 0, max = 100).add().value
             
+            gameplayMouseMode = KeyValue.Enum<MouseMode>(SETTINGS_GAMEPLAY_MOUSE_MODE, MouseMode.CLICK_AND_DRAG).add().value
             gameplayShowMoveCounter = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER, true).add().value
             gameplayShowTimer = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_TIMER, true).add().value
             gameplayUseClassicCardSkin = KeyValue.Bool(SETTINGS_GAMEPLAY_USE_CLASSIC_CARD_SKIN, false).add().value
