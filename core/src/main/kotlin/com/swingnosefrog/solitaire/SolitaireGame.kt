@@ -120,7 +120,15 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
         return processor
     }
 
-    override fun getWindowTitle(): String = "${Solitaire.TITLE} ${Solitaire.VERSION}"
+    override fun getWindowTitle(): String {
+        return buildString { 
+            append(Solitaire.TITLE)
+            if (Solitaire.isNonProductionVersion) {
+                append(' ')
+                append(Solitaire.VERSION.toString())
+            }
+        }
+    }
     
     override fun preRender() {
         super.preRender()

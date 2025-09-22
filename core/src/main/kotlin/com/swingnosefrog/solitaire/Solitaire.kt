@@ -11,10 +11,11 @@ object Solitaire {
 
         var logMissingLocalizations: Boolean = false
         var audioDeviceSettings: AudioDeviceSettings? = null
+
     }
 
     const val TITLE: String = "Built to Scale Solitaire"
-    val VERSION: Version = Version(0, 2, 0, "dev_20250921a")
+    val VERSION: Version = Version(0, 3, 0, "dev_20250922a")
 
     const val DOT_DIRECTORY_NAME: String = ".built-to-scale-solitaire"
     val DOT_DIRECTORY: File by lazy {
@@ -26,6 +27,6 @@ object Solitaire {
     val isDevVersion: Boolean = VERSION.suffix.startsWith("dev")
     val isPrereleaseVersion: Boolean =
         listOf("beta", "alpha", "rc").any { VERSION.suffix.startsWith(it, ignoreCase = true) }
-    val enableEarlyAccessMessage: Boolean = (isDevVersion || isPrereleaseVersion)
+    val isNonProductionVersion: Boolean = (isDevVersion || isPrereleaseVersion)
 
 }
