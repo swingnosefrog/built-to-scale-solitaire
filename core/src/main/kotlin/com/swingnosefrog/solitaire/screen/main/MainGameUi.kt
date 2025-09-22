@@ -34,6 +34,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         NONE,
         PAUSE_MENU,
         HOW_TO_PLAY,
+        CREDITS,
     }
 
     private val uiCamera: OrthographicCamera = OrthographicCamera().apply {
@@ -108,6 +109,14 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
                 }))
                 this.visible.bind { opacity.use() > 0f }
             }
+            this += MainGameCreditsPane(this@MainGameUi, uiInputHandler).apply {
+                this.opacity.bind(TransitioningFloatVar(animationHandler, {
+                    if (currentMenuState.use() != MenuState.CREDITS) 0f else 1f
+                }, { currentValue, targetValue ->
+                    createOpacityAnimation(currentValue, targetValue)
+                }))
+                this.visible.bind { opacity.use() > 0f }
+            }
         }
         
         uiSceneRoot += parentPane
@@ -152,6 +161,10 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         
         fun closeHowToPlayMenu()
         
+        fun openCreditsMenu()
+        
+        fun closeCreditsMenu()
+        
         fun startNewGame()
         
         fun skipDealingAnimation(): Boolean
@@ -176,6 +189,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
             val menus = MainGameMenus(
                 requestCloseMenu = { closePauseMenu() },
                 requestOpenHowToPlayMenu = { openHowToPlayMenu() },
+                requestOpenCreditsMenu = { openCreditsMenu() },
             )
             menuController.clearMenuStack()
 
@@ -196,6 +210,16 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         }
 
         override fun closeHowToPlayMenu() {
+            _currentMenuState.set(MenuState.NONE)
+        }
+
+        override fun openCreditsMenu() {
+            closePauseMenu()
+            _currentMenuState.set(MenuState.CREDITS)
+            cancelDragOnMenuOpen()
+        }
+
+        override fun closeCreditsMenu() {
             _currentMenuState.set(MenuState.NONE)
         }
 
@@ -264,6 +288,15 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
                     when (keycode) {
                         Input.Keys.F1, Input.Keys.X, Input.Keys.ESCAPE -> {
                             closeHowToPlayMenu()
+                            return true
+                        }
+                    }
+                }
+                
+                MenuState.CREDITS -> {
+                    when (keycode) {
+                            Input.Keys.X, Input.Keys.ESCAPE -> {
+                            closeCreditsMenu()
                             return true
                         }
                     }

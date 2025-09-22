@@ -6,6 +6,7 @@ import com.swingnosefrog.solitaire.menu.MenuOption
 class MainGameMenus(
     private val requestCloseMenu: () -> Unit,
     private val requestOpenHowToPlayMenu: () -> Unit,
+    private val requestOpenCreditsMenu: () -> Unit,
 ) {
 
     val rootMenu: RootMenu
@@ -25,8 +26,8 @@ class MainGameMenus(
                     requestOpenHowToPlayMenu()
                 },
                 MenuOption.SubMenu(Localization["game.menu.root.option.settings"]) { settingsMenu },
-                MenuOption.createNoOp(Localization["game.menu.root.option.credits"]).apply { 
-                    this.disabled.set(true)
+                MenuOption.Simple(Localization["game.menu.root.option.credits"]) {
+                    requestOpenCreditsMenu()
                 },
                 MenuOption.SubMenu(Localization["game.menu.root.option.quitGame"]) { quitConfirmationMenu },
             )
