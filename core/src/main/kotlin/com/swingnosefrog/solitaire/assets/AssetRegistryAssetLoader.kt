@@ -16,6 +16,8 @@ class AssetRegistryAssetLoader : AssetLoaderBase<AssetRegistry>(AssetRegistry) {
         val assetRegistry = assetRegistryInstance
         
         assetRegistry.loadAsset<Texture>("ui_nut_icon", "textures/ui/nut_icon.png", linearTexture())
+        assetRegistry.loadAsset<Texture>("ui_x", "textures/ui/x.png", linearTexture())
+        assetRegistry.loadAsset<Texture>("ui_x_bordered", "textures/ui/x_bordered.png", linearTexture())
     }
 
     override fun addUnmanagedAssets(assets: MutableMap<String, Any>) {

@@ -1,29 +1,24 @@
 package com.swingnosefrog.solitaire.screen.main
 
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.math.Interpolation
-import com.swingnosefrog.solitaire.SolitaireGame
-import com.swingnosefrog.solitaire.SolitaireSettings
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.utils.Align
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.game.GameContainer
 import paintbox.binding.ReadOnlyVar
-import paintbox.binding.Var
 import paintbox.font.Markup
 import paintbox.font.TextAlign
+import paintbox.registry.AssetRegistry
 import paintbox.ui.Anchor
 import paintbox.ui.Corner
-import paintbox.ui.NoInputPane
+import paintbox.ui.ImageIcon
 import paintbox.ui.Pane
-import paintbox.ui.RenderAlign
-import paintbox.ui.animation.Animation
-import paintbox.ui.animation.TransitioningFloatVar
 import paintbox.ui.area.Insets
-import paintbox.ui.control.TextLabel
+import paintbox.ui.control.Button
+import paintbox.ui.control.ButtonSkin
 import paintbox.ui.element.RectElement
 import paintbox.ui.element.RoundedRectElement
-import paintbox.ui.layout.HBox
-import paintbox.util.DecimalFormats
-import java.util.EnumSet
 
 
 class MainGameHowToPlayPane(
@@ -38,29 +33,57 @@ class MainGameHowToPlayPane(
     
 
     init {
-        this.margin.set(Insets(48f, 24f, 64f, 64f))
-        
         val dark = Color(0f, 0f, 0f, 0.8f)
-        this += RoundedRectElement(dark).apply {
-            this.roundedRadius.set(16)
-            this.padding.set(Insets(16f))
-            this.bindHeightToParent(adjust = -(48f + 24f))
 
-            this += FourPane().apply {
-//                this[Corner.TOP_LEFT] += RectElement(Color.RED)
-//                this[Corner.TOP_RIGHT] += RectElement(Color.GREEN)
-//                this[Corner.BOTTOM_LEFT] += RectElement(Color.BLUE)
-//                this[Corner.BOTTOM_RIGHT] += RectElement(Color.YELLOW)
+        fun Button.applyStyle() {
+            this.textAlign.set(TextAlign.CENTRE)
+            this.renderAlign.set(Align.center)
+            this.setScaleXY(0.75f)
+            (this.skin.getOrCompute() as ButtonSkin).apply {
+                this.roundedRadius.set(10)
+                this.defaultBgColor.set(dark)
+                this.defaultTextColor.set(Color.WHITE)
+            }
+        }
+
+        this += Button("").apply {
+            Anchor.TopRight.configure(this, offsetX = -8f, offsetY = 8f)
+            this.bounds.width.set(48f)
+            this.bounds.height.set(48f)
+            this.padding.set(Insets(8f))
+            this.applyStyle()
+            
+            this += ImageIcon(TextureRegion(AssetRegistry.get<Texture>("ui_x_bordered")))
+
+            this.setOnAction {
+                uiInputHandler.closeHowToPlayMenu()
             }
         }
         
         this += Pane().apply {
-            Anchor.BottomLeft.configure(this)
-            this.bounds.height.set(56f)
+            this.margin.set(Insets(48f, 24f, 64f, 64f))
             
-            this += RoundedRectElement(dark).apply { 
-                this.roundedRadius.set(12)
-                this.padding.set(Insets(12f))
+            this += RoundedRectElement(dark).apply {
+                this.roundedRadius.set(16)
+                this.padding.set(Insets(16f))
+                this.bindHeightToParent(adjust = -(48f + 24f))
+
+                this += FourPane().apply {
+//                this[Corner.TOP_LEFT] += RectElement(Color.RED)
+//                this[Corner.TOP_RIGHT] += RectElement(Color.GREEN)
+//                this[Corner.BOTTOM_LEFT] += RectElement(Color.BLUE)
+//                this[Corner.BOTTOM_RIGHT] += RectElement(Color.YELLOW)
+                }
+            }
+
+            this += Pane().apply {
+                Anchor.BottomLeft.configure(this)
+                this.bounds.height.set(56f)
+
+                this += RoundedRectElement(dark).apply {
+                    this.roundedRadius.set(12)
+                    this.padding.set(Insets(12f))
+                }
             }
         }
     }
