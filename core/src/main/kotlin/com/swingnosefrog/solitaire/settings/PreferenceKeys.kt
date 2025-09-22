@@ -1,4 +1,4 @@
-package com.swingnosefrog.solitaire
+package com.swingnosefrog.solitaire.settings
 
 
 @Suppress("MayBeConstant")

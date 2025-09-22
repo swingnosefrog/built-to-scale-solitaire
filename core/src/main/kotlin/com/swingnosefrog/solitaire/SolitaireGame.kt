@@ -1,17 +1,16 @@
 package com.swingnosefrog.solitaire
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input
-import com.badlogic.gdx.Input.Buttons
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.Cursor
 import com.swingnosefrog.solitaire.assets.AssetRegistryLoadingScreen
 import com.swingnosefrog.solitaire.game.assets.GameAssetLoader
 import com.swingnosefrog.solitaire.game.assets.GameAssets
 import com.swingnosefrog.solitaire.assets.AssetRegistryAssetLoader
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.screen.main.MainGameScreen
+import com.swingnosefrog.solitaire.settings.SolitaireSettings
+import com.swingnosefrog.solitaire.settings.VolumeGain
 import com.swingnosefrog.solitaire.steamworks.Steamworks
 import com.swingnosefrog.solitaire.util.WindowSizeUtils
 import paintbox.IPaintboxSettings

@@ -3,7 +3,7 @@ package com.swingnosefrog.solitaire.screen.main
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Interpolation
 import com.swingnosefrog.solitaire.SolitaireGame
-import com.swingnosefrog.solitaire.SolitaireSettings
+import com.swingnosefrog.solitaire.settings.SolitaireSettings
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.game.GameContainer
 import paintbox.binding.ReadOnlyVar

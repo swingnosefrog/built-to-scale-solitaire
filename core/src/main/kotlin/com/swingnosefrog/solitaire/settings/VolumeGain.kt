@@ -1,4 +1,4 @@
-package com.swingnosefrog.solitaire
+package com.swingnosefrog.solitaire.settings
 
 import paintbox.binding.FloatVar
 import paintbox.binding.ReadOnlyFloatVar
