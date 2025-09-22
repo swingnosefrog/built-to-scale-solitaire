@@ -1,8 +1,11 @@
 package com.swingnosefrog.solitaire
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
+import com.badlogic.gdx.Input.Buttons
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.Cursor
 import com.swingnosefrog.solitaire.assets.AssetRegistryLoadingScreen
 import com.swingnosefrog.solitaire.game.assets.GameAssetLoader
 import com.swingnosefrog.solitaire.game.assets.GameAssets
@@ -119,6 +122,12 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
     }
 
     override fun getWindowTitle(): String = "${Solitaire.TITLE} ${Solitaire.VERSION}"
+    
+    override fun preRender() {
+        super.preRender()
+
+        CursorState.preRender()
+    }
 
     override fun postRender() {
         super.postRender()
