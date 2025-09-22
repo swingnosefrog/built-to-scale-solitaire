@@ -42,12 +42,12 @@ class MainGameCreditsPane(
                         this.bounds.height.set(64f)
                     }
                     this += RoundedRectElement(Color.WHITE).apply {
-                        this.margin.set(Insets(4f, 8f))
+                        this.margin.set(Insets(6f, 8f))
                         this.bounds.y.set(64f)
-                        this.bounds.height.set(10f)
+                        this.bounds.height.set(14f)
                     }
                     this += Pane().apply {
-                        this.bounds.y.set(64f + 10f)
+                        this.bounds.y.set(64f + 14f)
                         this.bindHeightToParent(adjustBinding = { -bounds.y.use() })
                         this.margin.set(Insets(16f, 8f))
                     }

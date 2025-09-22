@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.viewport.ScalingViewport
 import com.badlogic.gdx.utils.viewport.StretchViewport
-import com.swingnosefrog.solitaire.AbstractGameScreen
+import com.swingnosefrog.solitaire.screen.AbstractGameScreen
 import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.game.GameContainer
 import com.swingnosefrog.solitaire.game.audio.GameMusic

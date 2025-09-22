@@ -15,7 +15,7 @@ import paintbox.ui.area.Insets
 import paintbox.ui.border.SolidBorder
 import paintbox.ui.element.RectElement
 import com.swingnosefrog.solitaire.SolitaireGame
-import com.swingnosefrog.solitaire.AbstractGameScreen
+import com.swingnosefrog.solitaire.screen.AbstractGameScreen
 import paintbox.registry.AssetRegistry
 import paintbox.registry.AssetRegistryInstance
 

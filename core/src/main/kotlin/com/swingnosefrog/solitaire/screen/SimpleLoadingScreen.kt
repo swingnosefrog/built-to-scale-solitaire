@@ -16,7 +16,7 @@ import paintbox.ui.control.TextLabel
 import paintbox.util.gdxutils.grey
 import com.swingnosefrog.solitaire.Localization
 import com.swingnosefrog.solitaire.SolitaireGame
-import com.swingnosefrog.solitaire.AbstractGameScreen
+import com.swingnosefrog.solitaire.screen.AbstractGameScreen
 
 
 /**

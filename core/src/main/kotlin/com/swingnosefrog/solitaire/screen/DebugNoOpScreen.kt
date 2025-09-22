@@ -13,7 +13,7 @@ import paintbox.ui.SceneRoot
 import paintbox.ui.area.Insets
 import paintbox.ui.control.TextLabel
 import com.swingnosefrog.solitaire.SolitaireGame
-import com.swingnosefrog.solitaire.AbstractGameScreen
+import com.swingnosefrog.solitaire.screen.AbstractGameScreen
 
 
 class DebugNoOpScreen(main: SolitaireGame) : AbstractGameScreen(main) {
