@@ -2,16 +2,14 @@ package com.swingnosefrog.solitaire.screen.main
 
 import com.badlogic.gdx.graphics.Color
 import com.swingnosefrog.solitaire.Localization
+import com.swingnosefrog.solitaire.credits.CreditsInfo
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
-import com.swingnosefrog.solitaire.game.GameContainer
-import paintbox.binding.ReadOnlyVar
 import paintbox.font.Markup
 import paintbox.font.PaintboxFont
 import paintbox.ui.Pane
 import paintbox.ui.RenderAlign
 import paintbox.ui.area.Insets
 import paintbox.ui.control.TextLabel
-import paintbox.ui.element.RectElement
 import paintbox.ui.element.RoundedRectElement
 
 
@@ -26,6 +24,7 @@ class MainGameCreditsPane(
     private val mainSansSerifMarkup: Markup get() = fonts.uiMainSansSerifMarkup
     private val mainSerifMarkup: Markup get() = fonts.uiMainSerifMarkup
     
+    private val creditsInfo: CreditsInfo = CreditsInfo()
 
     init {
         val darker = dark.cpy().apply { a = 0.9f }
