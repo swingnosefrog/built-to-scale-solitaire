@@ -11,7 +11,7 @@ data class AudioDeviceSettings(val bufferSize: Int, val bufferCount: Int) {
         const val MINIMUM_BUFFER_COUNT: Int = 3
 
         const val DEFAULT_BUFFER_SIZE: Int = 1024
-        const val DEFAULT_BUFFER_COUNT: Int = 11
+        const val DEFAULT_BUFFER_COUNT: Int = 10
 
         const val DEFAULT_BUFFER_SIZE_WINDOWS: Int = 1024
         const val DEFAULT_BUFFER_COUNT_WINDOWS: Int = 9
