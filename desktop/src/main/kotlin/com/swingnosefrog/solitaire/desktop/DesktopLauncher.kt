@@ -75,7 +75,7 @@ object DesktopLauncher {
             this.setResizable(true)
             this.setInitialVisible(false)
             this.setInitialBackgroundColor(Color(0f, 0f, 0f, 1f))
-            // Note: the audio buffer size and count here are largely ignored since we don't use Gdx.audio.newAudioDevice
+            // Note: the audio buffer size and count here are largely irrelevant since we don't use `Gdx.audio.newAudioDevice`, we directly create an AudioDevice instance
             val audioDeviceSettings = Solitaire.CommandLineArguments.audioDeviceSettings
             this.setAudioConfig(
                 100,
