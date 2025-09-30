@@ -16,8 +16,8 @@ import java.util.concurrent.atomic.AtomicLong
  */
 class SoundSystem(
     val realtimeOutput: RealtimeOutput,
-    initCtxBufferSize: Int = AudioContext.DEFAULT_BUFFER_SIZE,
-    val settings: SoundSystemSettings = SoundSystemSettings(),
+    audioContextBufferSizeFrames: Int,
+    val settings: SoundSystemSettings,
 ) : Disposable {
 
     companion object {
@@ -28,10 +28,10 @@ class SoundSystem(
         val DEFAULT_AUDIO_FORMAT: IOAudioFormat = AUDIO_FORMAT_48000
 
         fun createDefaultSoundSystem(
-            initCtxBufferSize: Int = AudioContext.DEFAULT_BUFFER_SIZE,
+            audioContextBufferSizeFrames: Int = AudioContext.DEFAULT_BUFFER_SIZE,
             settings: SoundSystemSettings = SoundSystemSettings(),
         ): SoundSystem {
-            return SoundSystem(RealtimeOutput.OpenAL(AudioDeviceSettings.DEFAULT_SETTINGS), initCtxBufferSize, settings)
+            return SoundSystem(RealtimeOutput.OpenAL(AudioDeviceSettings.DEFAULT_SETTINGS), audioContextBufferSizeFrames, settings)
         }
     }
 
@@ -41,7 +41,7 @@ class SoundSystem(
     private val isDisposed: AtomicBoolean = AtomicBoolean(false)
 
     val audioContext: AudioContext =
-        AudioContext(realtimeOutput.createAudioIO(), initCtxBufferSize, settings.ioAudioFormat)
+        AudioContext(realtimeOutput.createAudioIO(), audioContextBufferSizeFrames, settings.ioAudioFormat)
 
     val isPaused: Boolean
         get() = audioContext.out.isPaused
