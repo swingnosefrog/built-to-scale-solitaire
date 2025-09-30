@@ -4,13 +4,17 @@ import com.badlogic.gdx.graphics.Color
 import com.swingnosefrog.solitaire.Localization
 import com.swingnosefrog.solitaire.credits.CreditsInfo
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
+import paintbox.binding.ReadOnlyVar
+import paintbox.binding.VarContext
 import paintbox.font.Markup
 import paintbox.font.PaintboxFont
+import paintbox.font.TextAlign
 import paintbox.ui.Pane
 import paintbox.ui.RenderAlign
 import paintbox.ui.area.Insets
 import paintbox.ui.control.TextLabel
 import paintbox.ui.element.RoundedRectElement
+import paintbox.ui.layout.ColumnarPane
 
 
 class MainGameCreditsPane(
@@ -28,6 +32,41 @@ class MainGameCreditsPane(
 
     init {
         val darker = dark.cpy().apply { a = 0.9f }
+
+        val creditsHeadingTextColor: Color = Color.valueOf("FFE97F")
+        val nameTextColor: Color = Color.valueOf("D8D8D8")
+
+        val contentPane = Pane().apply {
+
+            fun createTextLabel(creditsList: List<Pair<ReadOnlyVar<String>, List<ReadOnlyVar<String>>>>): TextLabel {
+                fun VarContext.addPair(pair: Pair<ReadOnlyVar<String>, List<ReadOnlyVar<String>>>): String {
+                    return "[color=#${creditsHeadingTextColor} lineheight=0.8]${Markup.escape(pair.first.use())}\n[][scale=0.8]${
+                        pair.second.joinToString(
+                            separator = "\n"
+                        ) { Markup.escape(it.use()) }
+                    }\n[]"
+                }
+                return TextLabel("").apply {
+                    this.markup.set(mainSansSerifMarkup)
+                    this.renderAlign.set(RenderAlign.top)
+                    this.textAlign.set(TextAlign.LEFT)
+                    this.textColor.set(nameTextColor)
+                    this.text.bind {
+                        creditsList.joinToString(separator = "\n") { addPair(it) }
+                    }
+                }
+            }
+
+            val credits = creditsInfo.credits.toList()
+            this += ColumnarPane(3, useRows = false).apply { 
+                this.spacing.set(32f)
+                
+                this[0] += createTextLabel(listOf(credits[0], credits[1], credits[2], credits[3]))
+                this[1] += createTextLabel(listOf(credits[4]))
+                this[2] += createTextLabel(listOf(credits[5], credits[6]))
+            }
+        }
+        
         containingPane.apply {
             this += RoundedRectElement(darker).apply {
                 this.roundedRadius.set(16)
@@ -45,7 +84,7 @@ class MainGameCreditsPane(
                         this.bounds.y.set(64f)
                         this.bounds.height.set(14f)
                     }
-                    this += Pane().apply {
+                    this += contentPane.apply {
                         this.bounds.y.set(64f + 14f)
                         this.bindHeightToParent(adjustBinding = { -bounds.y.use() })
                         this.margin.set(Insets(16f, 8f))

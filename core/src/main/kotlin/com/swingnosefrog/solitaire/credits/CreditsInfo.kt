@@ -51,7 +51,6 @@ class CreditsInfo {
             "PromptFont",
             "Radio Canada Big",
             "Open Sans",
-            "Unifont",
         ).toVars(),
     )
 
