@@ -9,9 +9,11 @@ import paintbox.binding.VarContext
 import paintbox.font.Markup
 import paintbox.font.PaintboxFont
 import paintbox.font.TextAlign
+import paintbox.ui.Anchor
 import paintbox.ui.Pane
 import paintbox.ui.RenderAlign
 import paintbox.ui.area.Insets
+import paintbox.ui.control.ScrollPane
 import paintbox.ui.control.TextLabel
 import paintbox.ui.element.RoundedRectElement
 import paintbox.ui.layout.ColumnarPane
@@ -29,7 +31,7 @@ class MainGameCreditsPane(
     private val mainSerifMarkup: Markup get() = fonts.uiMainSerifMarkup
     
     private val creditsInfo: CreditsInfo = CreditsInfo()
-
+    
     init {
         val darker = dark.cpy().apply { a = 0.9f }
 
@@ -58,17 +60,24 @@ class MainGameCreditsPane(
             }
 
             val credits = creditsInfo.credits.toList()
-            this += ColumnarPane(3, useRows = false).apply { 
-                this.spacing.set(32f)
-                
-                this[0] += createTextLabel(listOf(credits[0], credits[1], credits[2], credits[3]))
-                this[1] += createTextLabel(listOf(credits[4]))
-                this[2] += createTextLabel(listOf(credits[5], credits[6]))
+            
+            this += ScrollPane().apply { 
+                this.setContent(createTextLabel(credits).apply { 
+                    this@MainGameCreditsPane.visible.addListenerAndFire { v -> 
+                        if (v.getOrCompute()) {
+                            this.resizeBoundsToContent(affectWidth = false)
+                        }
+                    }
+                })
+                this.vBarPolicy.set(ScrollPane.ScrollBarPolicy.ALWAYS)
+                this.hBarPolicy.set(ScrollPane.ScrollBarPolicy.NEVER)
             }
         }
         
         containingPane.apply {
             this += RoundedRectElement(darker).apply {
+                this.bindHeightToSelfWidth(multiplier = 648f / 1152f)
+                Anchor.Centre.configure(this)
                 this.roundedRadius.set(16)
                 this.padding.set(Insets(16f * 2))
 
