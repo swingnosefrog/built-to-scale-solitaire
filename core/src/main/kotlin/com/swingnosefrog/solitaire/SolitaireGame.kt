@@ -91,8 +91,6 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
             )
         this.inputMultiplexer.addProcessor(fullscreenWindowedInputProcessor)
 
-        GameSaveLocationHelper.saveDirectory.resolve("lastUpdated.sav").appendText("\n${LocalDateTime.now()}")
-        
         (Gdx.graphics as Lwjgl3Graphics).window.setVisible(true)
 
         setScreen(AssetRegistryLoadingScreen(this, AssetRegistry, GameAssets).apply {
