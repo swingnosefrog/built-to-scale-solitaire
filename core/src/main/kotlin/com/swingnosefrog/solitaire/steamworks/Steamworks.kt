@@ -1,6 +1,7 @@
 package com.swingnosefrog.solitaire.steamworks
 
 import com.codedisaster.steamworks.SteamAPI
+import com.codedisaster.steamworks.SteamApps
 import com.codedisaster.steamworks.SteamController
 import com.codedisaster.steamworks.SteamUtils
 import com.codedisaster.steamworks.SteamUtilsCallback
@@ -32,11 +33,9 @@ object Steamworks {
                 // Steamworks initialization error
             } else {
                 val steamInterfaces = SteamInterfaces(
-                    SteamUtils(object : SteamUtilsCallback {
-                        override fun onSteamShutdown() {
-                        }
-                    }),
-                    SteamController()
+                    SteamUtils(fun() {}),
+                    SteamController(),
+                    SteamApps(),
                 )
                 setInitialSettings(steamInterfaces)
                 SteamAPI.runCallbacks()

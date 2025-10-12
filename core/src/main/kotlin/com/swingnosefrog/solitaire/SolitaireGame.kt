@@ -8,6 +8,7 @@ import com.swingnosefrog.solitaire.game.assets.GameAssetLoader
 import com.swingnosefrog.solitaire.game.assets.GameAssets
 import com.swingnosefrog.solitaire.assets.AssetRegistryAssetLoader
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
+import com.swingnosefrog.solitaire.persistence.GameSaveLocationHelper
 import com.swingnosefrog.solitaire.screen.main.MainGameScreen
 import com.swingnosefrog.solitaire.settings.SolitaireSettings
 import com.swingnosefrog.solitaire.settings.VolumeGain
@@ -25,6 +26,7 @@ import paintbox.registry.AssetRegistry
 import paintbox.transition.FadeToOpaque
 import paintbox.transition.FadeToTransparent
 import paintbox.transition.TransitionScreen
+import java.time.LocalDateTime
 
 typealias GdxPreferences = com.badlogic.gdx.Preferences
 
@@ -88,6 +90,8 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
                 { it.windowedResolution }
             )
         this.inputMultiplexer.addProcessor(fullscreenWindowedInputProcessor)
+
+        GameSaveLocationHelper.saveDirectory.resolve("lastUpdated.sav").writeText("${LocalDateTime.now()}")
         
         (Gdx.graphics as Lwjgl3Graphics).window.setVisible(true)
 

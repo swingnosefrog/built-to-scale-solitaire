@@ -12,7 +12,7 @@ import kotlin.time.toJavaDuration
 
 object TempFileUtils {
 
-    // The temp folder is always relative to the user home, regardless of portable mode
+    // The temp folder is always relative to the *user home*, regardless of portable mode (which may change DOT_DIRECTORY's actual location)
     val TEMP_FOLDER: File = File(System.getProperty("user.home") + "/${Solitaire.DOT_DIRECTORY_NAME}/tmp/").apply {
         mkdirs()
     }
