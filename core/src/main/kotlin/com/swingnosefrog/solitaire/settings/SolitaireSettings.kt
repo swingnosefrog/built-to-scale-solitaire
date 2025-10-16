@@ -26,7 +26,11 @@ import paintbox.util.MonitorInfo
 import paintbox.util.WindowSize
 
 
-class SolitaireSettings(main: SolitaireGame, prefs: Preferences) : PaintboxPreferences<SolitaireGame>(main, prefs) {
+class SolitaireSettings(
+    main: SolitaireGame,
+    prefs: Preferences,
+    isRunningOnSteamDeckHint: Boolean?,
+) : PaintboxPreferences<SolitaireGame>(main, prefs) {
 
     override val allKeyValues: List<KeyValue<*>>
     override val allNewIndicators: List<NewIndicator>
@@ -47,6 +51,8 @@ class SolitaireSettings(main: SolitaireGame, prefs: Preferences) : PaintboxPrefe
     val gameplayUseClassicCardSkin: BooleanVar
 
     init {
+        val definitelyOnSteamDeck = isRunningOnSteamDeckHint == true
+        
         val initScope = InitScope()
         with(initScope) {
             vsyncEnabled = KeyValue.Bool(SETTINGS_VSYNC, false).add().value
@@ -62,7 +68,10 @@ class SolitaireSettings(main: SolitaireGame, prefs: Preferences) : PaintboxPrefe
             musicVolume = KeyValue.Int(SETTINGS_MUSIC_VOLUME, 100, min = 0, max = 100).add().value
             sfxVolume = KeyValue.Int(SETTINGS_SFX_VOLUME, 100, min = 0, max = 100).add().value
             
-            gameplayMouseMode = KeyValue.Enum<MouseMode>(SETTINGS_GAMEPLAY_MOUSE_MODE, MouseMode.CLICK_AND_DRAG).add().value
+            gameplayMouseMode = KeyValue.Enum<MouseMode>(SETTINGS_GAMEPLAY_MOUSE_MODE,
+                if (definitelyOnSteamDeck) // Prefer toggle-based card movement for Steam Deck
+                    MouseMode.CLICK_THEN_CLICK
+                else MouseMode.CLICK_AND_DRAG).add().value
             gameplayShowMoveCounter = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER, true).add().value
             gameplayShowTimer = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_TIMER, true).add().value
             gameplayUseClassicCardSkin = KeyValue.Bool(SETTINGS_GAMEPLAY_USE_CLASSIC_CARD_SKIN, false).add().value
