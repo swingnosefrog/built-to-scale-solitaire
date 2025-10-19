@@ -137,13 +137,13 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
         super.preRender()
 
         CursorState.preRender()
+
+        val deltaSec = Gdx.graphics.deltaTime
+        Steamworks.frameUpdate(deltaSec)
     }
 
     override fun postRender() {
         super.postRender()
-
-        val deltaSec = Gdx.graphics.deltaTime
-        Steamworks.frameUpdate(deltaSec)
     }
 
     override fun dispose() {
