@@ -37,6 +37,9 @@
     {
         "english"
         {
+            "Title_OfficialConfig" "Official Configuration"
+            "Description_OfficialConfig" "This config was created by the developers."
+
             "actionSet_General" "General Controls"
 
             "button_General_DirectionUp" "Up"
