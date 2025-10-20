@@ -242,6 +242,7 @@ class MainGameMenuPane(
 
                         this += TextLabel(binding = {
                             val selectedOption = option.selectedOption.use()
+                            @Suppress("UNCHECKED_CAST")
                             (option.stringVarConverter as StringVarConverter<Any?>).toVar(selectedOption).use()
                         }).apply {
                             this.markup.set(mainSerifBoldMarkup)
