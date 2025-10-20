@@ -22,6 +22,7 @@ import paintbox.binding.Var
 import paintbox.input.ToggleableInputProcessor
 import paintbox.ui.Pane
 import paintbox.ui.SceneRoot
+import paintbox.ui.UIElement
 import paintbox.ui.animation.Animation
 import paintbox.ui.animation.AnimationHandler
 import paintbox.ui.animation.TransitioningFloatVar
@@ -84,13 +85,16 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         
         // Clickable panes
         parentPane += Pane().apply {
+            fun UIElement.bindVisibleIfNotZeroOpacity() {
+                this.visible.bind { opacity.use() > 0f }
+            }
             this += MainGameMenuPane(this@MainGameUi, menuController).apply {
                 this.opacity.bind(TransitioningFloatVar(animationHandler, {
                     if (currentMenuState.use() == MenuState.PAUSE_MENU) 1f else 0f
                 }, { currentValue, targetValue ->
                     createOpacityAnimation(currentValue, targetValue)
                 }))
-                this.visible.bind { opacity.use() > 0f }
+                this.bindVisibleIfNotZeroOpacity()
             }
             this += MainGameGameplayUiPane(this@MainGameUi, uiInputHandler).apply {
                 this.opacity.bind(TransitioningFloatVar(animationHandler, {
@@ -99,7 +103,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
                     if (targetValue < currentValue) null
                     else createOpacityAnimation(currentValue, targetValue)
                 }))
-                this.visible.bind { opacity.use() > 0f }
+                this.bindVisibleIfNotZeroOpacity()
             }
             this += MainGameHowToPlayPane(this@MainGameUi, uiInputHandler).apply {
                 this.opacity.bind(TransitioningFloatVar(animationHandler, {
@@ -107,7 +111,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
                 }, { currentValue, targetValue ->
                     createOpacityAnimation(currentValue, targetValue)
                 }))
-                this.visible.bind { opacity.use() > 0f }
+                this.bindVisibleIfNotZeroOpacity()
             }
             this += MainGameCreditsPane(this@MainGameUi, uiInputHandler).apply {
                 this.opacity.bind(TransitioningFloatVar(animationHandler, {
@@ -115,7 +119,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
                 }, { currentValue, targetValue ->
                     createOpacityAnimation(currentValue, targetValue)
                 }))
-                this.visible.bind { opacity.use() > 0f }
+                this.bindVisibleIfNotZeroOpacity()
             }
         }
         
@@ -295,7 +299,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
                 
                 MenuState.CREDITS -> {
                     when (keycode) {
-                            Input.Keys.X, Input.Keys.ESCAPE -> {
+                        Input.Keys.X, Input.Keys.ESCAPE -> {
                             closeCreditsMenu()
                             return true
                         }
