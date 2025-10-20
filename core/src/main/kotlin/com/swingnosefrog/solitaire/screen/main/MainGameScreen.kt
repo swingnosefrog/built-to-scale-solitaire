@@ -51,12 +51,11 @@ class MainGameScreen(
         toggleableGameInputProcessor = ToggleableInputProcessor(backingGameContainer)
         toggleableGameInputProcessor.enabled.bind { ui.currentMenuState.use() == MainGameUi.MenuState.NONE }
         
-        this.screenInputMultiplexer.addProcessor(ui.inputProcessor)
-        
         startNewGame(DeckInitializer.RandomSeed())
         
         soundSystem.startRealtime()
         
+        this.screenInputMultiplexer.addProcessor(ui.inputProcessor)
         if (Solitaire.isNonProductionVersion) {
             this.screenInputMultiplexer.addProcessor(DebugInputAdapter(this, this.ui))
         }
