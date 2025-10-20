@@ -1,0 +1,54 @@
+"In Game Actions"
+{
+    "configurations"
+    {
+        "controller_ps5"
+        {
+            "0"
+            {
+                "path" "controller_ps5.vdf"
+            }
+        }
+    }
+
+    "actions"
+    {
+        "actionSet_General"
+        {
+            "title" "#actionSet_General"
+
+            "Button"
+            {
+                "button_General_DirectionUp" "#button_General_DirectionUp"
+                "button_General_DirectionDown" "#button_General_DirectionDown"
+                "button_General_DirectionLeft" "#button_General_DirectionLeft"
+                "button_General_DirectionRight" "#button_General_DirectionRight"
+                "button_General_Select" "#button_General_Select"
+                "button_General_Back" "#button_General_Back"
+                "button_General_Menu" "#button_General_Menu"
+
+                "button_General_NewGame" "#button_General_NewGame"
+                "button_General_HowToPlay" "#button_General_HowToPlay"
+            }
+        }
+    }
+
+    "localization"
+    {
+        "english"
+        {
+            "actionSet_General" "General Controls"
+
+            "button_General_DirectionUp" "Up"
+            "button_General_DirectionDown" "Down"
+            "button_General_DirectionLeft" "Left"
+            "button_General_DirectionRight" "Right"
+            "button_General_Select" "Select/Accept"
+            "button_General_Back" "Back/Cancel"
+            "button_General_Menu" "Menu"
+
+            "button_General_NewGame" "New Game"
+            "button_General_HowToPlay" "Open 'How to Play'"
+        }
+    }
+}
