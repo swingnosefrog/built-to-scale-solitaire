@@ -1,5 +1,7 @@
 package com.swingnosefrog.solitaire.fonts
 
+import com.badlogic.gdx.Input
+
 /**
  * PromptFont by Yukari "Shinmera" Hafner, accessible at https://shinmera.com/promptfont
  */
@@ -690,6 +692,8 @@ object PromptFontConsts {
     const val ICON_9_INT: Int = 0x024FD
     const val ICON_0: String = "⓿"
     const val ICON_0_INT: Int = 0x024FF
+    const val ICON_SUN: String = "☀"
+    const val ICON_SUN_INT: Int = 0x02600
     const val ICON_STAR: String = "★"
     const val ICON_STAR_INT: Int = 0x02605
     const val ICON_EMPTY_STAR: String = "☆"
@@ -746,6 +750,8 @@ object PromptFontConsts {
     const val ICON_GEARS_INT: Int = 0x02699
     const val ICON_CROSS: String = "✗"
     const val ICON_CROSS_INT: Int = 0x02717
+    const val ICON_SPARK: String = "✦"
+    const val ICON_SPARK_INT: Int = 0x02726
     const val ICON_QUESTION: String = "❓"
     const val ICON_QUESTION_INT: Int = 0x02753
     const val ICON_BANG: String = "❗"
@@ -778,12 +784,20 @@ object PromptFontConsts {
     const val MOUSE_RIGHT_INT: Int = 0x027F6
     const val MOUSE_MIDDLE: String = "⟷"
     const val MOUSE_MIDDLE_INT: Int = 0x027F7
+    const val MOUSE_MOVE_LEFT: String = "⟸"
+    const val MOUSE_MOVE_LEFT_INT: Int = 0x027F8
+    const val MOUSE_MOVE_UP: String = "⟹"
+    const val MOUSE_MOVE_UP_INT: Int = 0x027F9
     const val MOUSE_LEFT_RIGHT: String = "⟺"
     const val MOUSE_LEFT_RIGHT_INT: Int = 0x027FA
     const val MOUSE_UP_DOWN: String = "⟻"
     const val MOUSE_UP_DOWN_INT: Int = 0x027FB
     const val MOUSE_ANY: String = "⟼"
     const val MOUSE_ANY_INT: Int = 0x027FC
+    const val MOUSE_MOVE_RIGHT: String = "⟽"
+    const val MOUSE_MOVE_RIGHT_INT: Int = 0x027FD
+    const val MOUSE_MOVE_DOWN: String = "⟾"
+    const val MOUSE_MOVE_DOWN_INT: Int = 0x027FE
     const val ICON_BOX: String = "⬛"
     const val ICON_BOX_INT: Int = 0x02B1B
     const val ICON_PLAYSTATION: String = ""
@@ -822,6 +836,38 @@ object PromptFontConsts {
     const val MSI_CLAW_CENTER_INT: Int = 0x0E010
     const val MSI_CLAW_QUICK: String = ""
     const val MSI_CLAW_QUICK_INT: Int = 0x0E011
+    const val ICON_META: String = ""
+    const val ICON_META_INT: Int = 0x0E012
+    const val KEYBOARD_EXCLAMATION: String = "！"
+    const val KEYBOARD_EXCLAMATION_INT: Int = 0x0FF01
+    const val KEYBOARD_DOUBLEQUOTE: String = "＂"
+    const val KEYBOARD_DOUBLEQUOTE_INT: Int = 0x0FF02
+    const val KEYBOARD_POUND: String = "＃"
+    const val KEYBOARD_POUND_INT: Int = 0x0FF03
+    const val KEYBOARD_DOLLAR: String = "＄"
+    const val KEYBOARD_DOLLAR_INT: Int = 0x0FF04
+    const val KEYBOARD_PERCENT: String = "％"
+    const val KEYBOARD_PERCENT_INT: Int = 0x0FF05
+    const val KEYBOARD_AMPERSAND: String = "＆"
+    const val KEYBOARD_AMPERSAND_INT: Int = 0x0FF06
+    const val KEYBOARD_QUOTE: String = "＇"
+    const val KEYBOARD_QUOTE_INT: Int = 0x0FF07
+    const val KEYBOARD_OPEN_PARENTHESIS: String = "（"
+    const val KEYBOARD_OPEN_PARENTHESIS_INT: Int = 0x0FF08
+    const val KEYBOARD_CLOSE_PARENTHESIS: String = "）"
+    const val KEYBOARD_CLOSE_PARENTHESIS_INT: Int = 0x0FF09
+    const val KEYBOARD_STAR: String = "＊"
+    const val KEYBOARD_STAR_INT: Int = 0x0FF0A
+    const val KEYBOARD_PLUS: String = "＋"
+    const val KEYBOARD_PLUS_INT: Int = 0x0FF0B
+    const val KEYBOARD_COMMA: String = "，"
+    const val KEYBOARD_COMMA_INT: Int = 0x0FF0C
+    const val KEYBOARD_DASH: String = "－"
+    const val KEYBOARD_DASH_INT: Int = 0x0FF0D
+    const val KEYBOARD_PERIOD: String = "．"
+    const val KEYBOARD_PERIOD_INT: Int = 0x0FF0E
+    const val KEYBOARD_SLASH: String = "／"
+    const val KEYBOARD_SLASH_INT: Int = 0x0FF0F
     const val KEYBOARD_0: String = "０"
     const val KEYBOARD_0_INT: Int = 0x0FF10
     const val KEYBOARD_1: String = "１"
@@ -842,6 +888,20 @@ object PromptFontConsts {
     const val KEYBOARD_8_INT: Int = 0x0FF18
     const val KEYBOARD_9: String = "９"
     const val KEYBOARD_9_INT: Int = 0x0FF19
+    const val KEYBOARD_COLON: String = "："
+    const val KEYBOARD_COLON_INT: Int = 0x0FF1A
+    const val KEYBOARD_SEMICOLON: String = "；"
+    const val KEYBOARD_SEMICOLON_INT: Int = 0x0FF1B
+    const val KEYBOARD_OPEN_CARET: String = "＜"
+    const val KEYBOARD_OPEN_CARET_INT: Int = 0x0FF1C
+    const val KEYBOARD_EQUALS: String = "＝"
+    const val KEYBOARD_EQUALS_INT: Int = 0x0FF1D
+    const val KEYBOARD_CLOSE_CARET: String = "＞"
+    const val KEYBOARD_CLOSE_CARET_INT: Int = 0x0FF1E
+    const val KEYBOARD_QUESTION_MARK: String = "？"
+    const val KEYBOARD_QUESTION_MARK_INT: Int = 0x0FF1F
+    const val KEYBOARD_AT: String = "＠"
+    const val KEYBOARD_AT_INT: Int = 0x0FF20
     const val KEYBOARD_A: String = "Ａ"
     const val KEYBOARD_A_INT: Int = 0x0FF21
     const val KEYBOARD_B: String = "Ｂ"
@@ -894,6 +954,28 @@ object PromptFontConsts {
     const val KEYBOARD_Y_INT: Int = 0x0FF39
     const val KEYBOARD_Z: String = "Ｚ"
     const val KEYBOARD_Z_INT: Int = 0x0FF3A
+    const val KEYBOARD_OPEN_BRACKET: String = "［"
+    const val KEYBOARD_OPEN_BRACKET_INT: Int = 0x0FF3B
+    const val KEYBOARD_BACKSLASH: String = "＼"
+    const val KEYBOARD_BACKSLASH_INT: Int = 0x0FF3C
+    const val KEYBOARD_CLOSE_BRACKET: String = "］"
+    const val KEYBOARD_CLOSE_BRACKET_INT: Int = 0x0FF3D
+    const val KEYBOARD_CARET: String = "＾"
+    const val KEYBOARD_CARET_INT: Int = 0x0FF3E
+    const val KEYBOARD_UNDERSCORE: String = "＿"
+    const val KEYBOARD_UNDERSCORE_INT: Int = 0x0FF3F
+    const val KEYBOARD_BACKTICK: String = "｀"
+    const val KEYBOARD_BACKTICK_INT: Int = 0x0FF40
+    const val KEYBOARD_OPEN_BRACE: String = "｛"
+    const val KEYBOARD_OPEN_BRACE_INT: Int = 0x0FF5B
+    const val KEYBOARD_BAR: String = "｜"
+    const val KEYBOARD_BAR_INT: Int = 0x0FF5C
+    const val KEYBOARD_CLOSE_BRACE: String = "｝"
+    const val KEYBOARD_CLOSE_BRACE_INT: Int = 0x0FF5D
+    const val KEYBOARD_TILDE: String = "～"
+    const val KEYBOARD_TILDE_INT: Int = 0x0FF5E
+    const val ICON_MOON: String = "🌙"
+    const val ICON_MOON_INT: Int = 0x1F319
     const val ICON_HEADPHONES: String = "🎧"
     const val ICON_HEADPHONES_INT: Int = 0x1F3A7
     const val ICON_MUSIC: String = "🎶"
@@ -910,8 +992,10 @@ object PromptFontConsts {
     const val ICON_WRITE_INT: Int = 0x1F4DD
     const val DEVICE_PHONE: String = "📱"
     const val DEVICE_PHONE_INT: Int = 0x1F4F1
-    const val ICON_CAMERA: String = "📷"
-    const val ICON_CAMERA_INT: Int = 0x1F4F7
+    const val ICON_WEBCAM: String = "📷"
+    const val ICON_WEBCAM_INT: Int = 0x1F4F7
+    const val ICON_CAMERA: String = "📸"
+    const val ICON_CAMERA_INT: Int = 0x1F4F8
     const val ICON_SPEAKER: String = "🔈"
     const val ICON_SPEAKER_INT: Int = 0x1F508
     const val DEVICE_LIGHT_GUN: String = "🔫"
@@ -946,6 +1030,8 @@ object PromptFontConsts {
     const val ICON_SCREEN_INT: Int = 0x1F5B5
     const val ICON_TEXT_ENTRY: String = "🖹"
     const val ICON_TEXT_ENTRY_INT: Int = 0x1F5B9
+    const val ICON_IMAGE: String = "🖼"
+    const val ICON_IMAGE_INT: Int = 0x1F5BC
     const val ICON_SPEAK: String = "🗣"
     const val ICON_SPEAK_INT: Int = 0x1F5E3
     const val ICON_LANGUAGE: String = "🗩"
@@ -956,4 +1042,61 @@ object PromptFontConsts {
     const val ICON_INFORMATION_INT: Int = 0x1F6C8
     const val ICON_SHOPPING_CART: String = "🛒"
     const val ICON_SHOPPING_CART_INT: Int = 0x1F6D2
+    const val ICON_APERTURE: String = "🞉"
+    const val ICON_APERTURE_INT: Int = 0x1F789
+
+
+    fun attemptMapGdxKeyToPromptFont(gdxKey: Int): String {
+        // Note: Not comprehensive
+        return when (gdxKey) {
+            in Input.Keys.NUM_0..Input.Keys.NUM_9 -> 
+                Character.toChars(gdxKey - Input.Keys.NUM_0 + KEYBOARD_0_INT).concatToString()
+
+            in Input.Keys.A..Input.Keys.Z -> 
+                Character.toChars(gdxKey - Input.Keys.A + KEYBOARD_A_INT).concatToString()
+
+            in Input.Keys.F1..Input.Keys.F12 -> 
+                Character.toChars(gdxKey - Input.Keys.F1 + KEYBOARD_F1_INT).concatToString()
+            
+            Input.Keys.UP -> KEYBOARD_UP
+            Input.Keys.DOWN -> KEYBOARD_DOWN
+            Input.Keys.LEFT -> KEYBOARD_LEFT
+            Input.Keys.RIGHT -> KEYBOARD_RIGHT
+
+            Input.Keys.ESCAPE -> KEYBOARD_ESCAPE
+            Input.Keys.SPACE -> KEYBOARD_SPACE
+            Input.Keys.ENTER -> KEYBOARD_ENTER
+            Input.Keys.TAB -> KEYBOARD_TAB
+            Input.Keys.CAPS_LOCK -> KEYBOARD_CAPS
+            Input.Keys.BACKSPACE -> KEYBOARD_BACKSPACE
+            Input.Keys.FORWARD_DEL -> KEYBOARD_DELETE
+            Input.Keys.PAGE_UP -> KEYBOARD_PAGE_UP
+            Input.Keys.PAGE_DOWN -> KEYBOARD_PAGE_DOWN
+            Input.Keys.INSERT -> KEYBOARD_INSERT
+            Input.Keys.HOME -> KEYBOARD_HOME
+            Input.Keys.END -> KEYBOARD_END
+            Input.Keys.PAUSE -> KEYBOARD_PAUSE
+            
+            Input.Keys.CONTROL_LEFT -> KEYBOARD_CONTROL_L
+            Input.Keys.CONTROL_RIGHT -> KEYBOARD_CONTROL_R
+            Input.Keys.SHIFT_LEFT -> KEYBOARD_SHIFT_L
+            Input.Keys.SHIFT_RIGHT -> KEYBOARD_SHIFT_R
+            Input.Keys.ALT_LEFT -> KEYBOARD_ALT_L
+            Input.Keys.ALT_RIGHT -> KEYBOARD_ALT_R
+            
+            Input.Keys.MINUS -> KEYBOARD_DASH
+            Input.Keys.EQUALS -> KEYBOARD_EQUALS
+            Input.Keys.COMMA -> KEYBOARD_COMMA
+            Input.Keys.PERIOD -> KEYBOARD_PERIOD
+            Input.Keys.SLASH -> KEYBOARD_SLASH
+            Input.Keys.SEMICOLON -> KEYBOARD_SEMICOLON
+            Input.Keys.APOSTROPHE -> KEYBOARD_QUOTE
+            Input.Keys.LEFT_BRACKET -> KEYBOARD_OPEN_BRACKET
+            Input.Keys.RIGHT_BRACKET -> KEYBOARD_CLOSE_BRACKET
+            Input.Keys.BACKSLASH -> KEYBOARD_BACKSLASH
+            Input.Keys.GRAVE -> KEYBOARD_BACKTICK
+            
+            else -> ICON_QUESTION // Unknown
+        }
+    }
 }
