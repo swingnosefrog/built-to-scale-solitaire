@@ -10,4 +10,6 @@ abstract class ActionSource(protected val actions: List<IInputAction>) {
     abstract fun frameUpdate()
     
     abstract fun isDigitalActionPressed(action: IDigitalInputAction): Boolean
+    
+    abstract fun isAnyInputActive(): Boolean
 }

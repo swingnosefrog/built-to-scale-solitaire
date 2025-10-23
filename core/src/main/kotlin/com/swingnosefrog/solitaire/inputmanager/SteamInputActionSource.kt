@@ -16,4 +16,9 @@ class SteamInputActionSource(actions: List<IInputAction>) : ActionSource(actions
         // TODO
         return false
     }
+
+    override fun isAnyInputActive(): Boolean {
+        // TODO
+        return false
+    }
 }

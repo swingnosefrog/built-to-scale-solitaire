@@ -39,7 +39,11 @@ abstract class GdxActionSource(actions: List<IInputAction>) : ActionSource(actio
     override fun isDigitalActionPressed(action: IDigitalInputAction): Boolean {
         return digitalActionsState[action] == true
     }
-    
+
+    override fun isAnyInputActive(): Boolean {
+        return digitalActionsState.values.any()
+    }
+
     data class DigitalActionInputGlyph(
         override val glyphName: String,
         override val promptFontText: String,
