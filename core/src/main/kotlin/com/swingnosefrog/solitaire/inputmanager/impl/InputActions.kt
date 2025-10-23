@@ -3,7 +3,7 @@ package com.swingnosefrog.solitaire.inputmanager.impl
 import com.swingnosefrog.solitaire.inputmanager.IDigitalInputAction
 
 
-enum class InputActions(override val actionName: String) : IDigitalInputAction {
+enum class InputActions(override val actionId: String) : IDigitalInputAction {
 
     DirectionUp("button_General_DirectionUp"),
     DirectionDown("button_General_DirectionDown"),
@@ -19,5 +19,5 @@ enum class InputActions(override val actionName: String) : IDigitalInputAction {
     HowToPlay("button_General_HowToPlay"),
     ;
 
-    override val actionId: String = this.name
+    override val actionName: String = this.name
 }
