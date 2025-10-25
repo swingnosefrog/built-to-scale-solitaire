@@ -3,21 +3,24 @@ package com.swingnosefrog.solitaire.inputmanager
 
 interface InputActionListener {
     
-    fun onDigitalActionPressed(actionSource: ActionSource, action: IDigitalInputAction)
+    fun handleDigitalActionPressed(actionSource: ActionSource, action: IDigitalInputAction): Boolean
     
-    fun onDigitalActionReleased(actionSource: ActionSource, action: IDigitalInputAction)
+    fun handleDigitalActionReleased(actionSource: ActionSource, action: IDigitalInputAction): Boolean
     
-    fun onActionSourceChanged(oldSource: ActionSource, newSource: ActionSource)
+    fun handleActionSourceChanged(oldSource: ActionSource, newSource: ActionSource): Boolean
     
     open class Adapter : InputActionListener {
 
-        override fun onDigitalActionPressed(actionSource: ActionSource, action: IDigitalInputAction) {
+        override fun handleDigitalActionPressed(actionSource: ActionSource, action: IDigitalInputAction): Boolean {
+            return false
         }
 
-        override fun onDigitalActionReleased(actionSource: ActionSource, action: IDigitalInputAction) {
+        override fun handleDigitalActionReleased(actionSource: ActionSource, action: IDigitalInputAction): Boolean {
+            return false
         }
 
-        override fun onActionSourceChanged(oldSource: ActionSource, newSource: ActionSource) {
+        override fun handleActionSourceChanged(oldSource: ActionSource, newSource: ActionSource): Boolean {
+            return false
         }
     }
 }

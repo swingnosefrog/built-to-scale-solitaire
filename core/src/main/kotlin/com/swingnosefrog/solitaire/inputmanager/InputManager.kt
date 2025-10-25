@@ -50,8 +50,9 @@ class InputManager(
                     src != mostRecentSource && actionsTrackers.getValue(src).differencesReturnMap.isNotEmpty()
                 }
                 _mostRecentSource.set(newSource)
-                listeners.forEach { listener ->
-                    listener.onActionSourceChanged(mostRecentSource, newSource)
+                for (listener in listeners) {
+                    val handled = listener.handleActionSourceChanged(mostRecentSource, newSource)
+                    if (handled) break
                 }
             }
 
@@ -63,12 +64,13 @@ class InputManager(
                 }
 
                 diff.forEach { (digitalAction, value) ->
-                    listeners.forEach { l ->
-                        if (value) {
-                            l.onDigitalActionPressed(src, digitalAction)
+                    for (l in listeners) {
+                        val handled = if (value) {
+                            l.handleDigitalActionPressed(src, digitalAction)
                         } else {
-                            l.onDigitalActionReleased(src, digitalAction)
+                            l.handleDigitalActionReleased(src, digitalAction)
                         }
+                        if (handled) break
                     }
                 }
             }
