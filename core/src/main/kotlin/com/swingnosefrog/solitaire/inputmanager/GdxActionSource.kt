@@ -27,14 +27,14 @@ abstract class GdxActionSource(actions: List<IInputAction>) : ActionSource(actio
     }
     protected val keysToDigitalActions: Map<Int, List<DigitalActionMetadata>> by lazy {
         val allActions = digitalActionsMetadata.values.toList()
-        val maxKeysAssigned = allActions.maxOf { it.keys.size }
+        val maxKeysAssigned = allActions.maxOf { it.keycodes.size }
         
-        val map: Map<Int, MutableList<DigitalActionMetadata>> = allActions.flatMap { it.keys }.toSet()
+        val map: Map<Int, MutableList<DigitalActionMetadata>> = allActions.flatMap { it.keycodes }.toSet()
             .associateWith { mutableListOf() }
         
         repeat(maxKeysAssigned) { layer ->
             for (actionMetadata in allActions) {
-                val keys = actionMetadata.keys
+                val keys = actionMetadata.keycodes
                 if (layer >= keys.size) continue
                 
                 val key = keys[layer]
@@ -45,9 +45,7 @@ abstract class GdxActionSource(actions: List<IInputAction>) : ActionSource(actio
         map
     }
     
-    private val digitalActionsState: MutableMap<IDigitalInputAction, Boolean> =
-        digitalActions.associateWith { false }.toMutableMap()
-    private val keyStates: MutableMap<Int, IDigitalInputAction> = HashMap()
+    private val keycodesToAction: MutableMap<Int, DigitalActionMetadata> = HashMap()
 
     protected abstract fun IDigitalInputAction.mapToKeys(): LinkedHashSet<Int>
 
@@ -59,34 +57,31 @@ abstract class GdxActionSource(actions: List<IInputAction>) : ActionSource(actio
         val input = Gdx.input
         
         keysToDigitalActions.forEach { (keycode, actionMetadatas) ->
-            val alreadyDown: IDigitalInputAction? = keyStates[keycode]
+            val alreadyDown: DigitalActionMetadata? = keycodesToAction[keycode]
             
             if (input.isKeyPressed(keycode)) {
                 if (alreadyDown == null) {
-                    val firstAvailableAction = actionMetadatas.firstOrNull { a ->
-                        digitalActionsState[a.action] == true
-                    }
-                    if (firstAvailableAction != null) {
-                        val action = firstAvailableAction.action
-                        digitalActionsState[action] = true
-                        keyStates[keycode] = action
-                    }
+                    val firstAvailableActionMetadata = actionMetadatas.minBy { it.pressedKeys.size }
+
+                    firstAvailableActionMetadata.pressedKeys.add(keycode)
+                    keycodesToAction[keycode] = firstAvailableActionMetadata
                 }
             } else {
                 if (alreadyDown != null) {
-                    digitalActionsState[alreadyDown] = false
-                    keyStates.remove(keycode)
+                    alreadyDown.pressedKeys.remove(keycode)
+                    keycodesToAction.remove(keycode)
                 }
             }
         }
     }
 
     override fun isDigitalActionPressed(action: IDigitalInputAction): Boolean {
-        return digitalActionsState[action] == true
+        val metadata = digitalActionsMetadata[action] ?: return false
+        return metadata.pressedKeys.isNotEmpty()
     }
 
     override fun isAnyInputActive(): Boolean {
-        return digitalActionsState.values.any()
+        return digitalActionsMetadata.values.any { it.pressedKeys.isNotEmpty() }
     }
 
     protected data class DigitalActionInputGlyph(
@@ -96,7 +91,9 @@ abstract class GdxActionSource(actions: List<IInputAction>) : ActionSource(actio
 
     protected data class DigitalActionMetadata(
         val action: IDigitalInputAction,
-        val keys: List<Int>,
+        val keycodes: List<Int>,
         val glyphs: List<DigitalActionInputGlyph>,
-    )
+    ) {
+        val pressedKeys: LinkedHashSet<Int> = LinkedHashSet()
+    }
 }
