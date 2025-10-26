@@ -38,7 +38,7 @@ sealed class MenuOption(
     ) : MenuOption(text) {
 
         override fun onSelect(controller: MenuController, menuInput: MenuInput) {
-            val useDefaultNextMenuOption = menuInput.source == MenuInputSource.KEYBOARD
+            val useDefaultNextMenuOption = menuInput.source == MenuInputSource.KEYBOARD_OR_BUTTON
             controller.goToNextMenu(nextMenuGetter(controller), useDefaultNextMenuOption)
         }
     }

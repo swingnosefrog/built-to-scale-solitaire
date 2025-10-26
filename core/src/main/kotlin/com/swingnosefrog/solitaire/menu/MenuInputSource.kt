@@ -3,6 +3,6 @@ package com.swingnosefrog.solitaire.menu
 
 enum class MenuInputSource {
 
-    KEYBOARD,
+    KEYBOARD_OR_BUTTON,
     MOUSE,
 }

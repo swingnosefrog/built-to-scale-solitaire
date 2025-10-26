@@ -17,7 +17,12 @@ import com.swingnosefrog.solitaire.game.GameContainer
 import com.swingnosefrog.solitaire.game.audio.GameMusic
 import com.swingnosefrog.solitaire.game.logic.DeckInitializer
 import com.swingnosefrog.solitaire.game.logic.GameLogic
+import com.swingnosefrog.solitaire.inputmanager.ActionSource
+import com.swingnosefrog.solitaire.inputmanager.IDigitalInputAction
+import com.swingnosefrog.solitaire.inputmanager.InputActionListener
+import com.swingnosefrog.solitaire.inputmanager.InputManager
 import com.swingnosefrog.solitaire.soundsystem.SoundSystem
+import paintbox.Paintbox
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 import paintbox.framebuffer.FrameBufferManager
@@ -46,6 +51,8 @@ class MainGameScreen(
     private val ui: MainGameUi = MainGameUi(this)
     
     private val gameFrameBuffer: GameFrameBuffer = GameFrameBuffer()
+    
+    private val inputManager: InputManager = main.inputManagerFactory.create()
 
     init {
         toggleableGameInputProcessor = ToggleableInputProcessor(backingGameContainer)
@@ -60,6 +67,8 @@ class MainGameScreen(
             this.screenInputMultiplexer.addProcessor(DebugInputAdapter(this, this.ui))
         }
         this.screenInputMultiplexer.addProcessor(toggleableGameInputProcessor)
+        
+        inputManager.addInputActionListener(ui.inputActionListener)
     }
     
     fun startNewGame(deckInitializer: DeckInitializer) {
@@ -68,8 +77,11 @@ class MainGameScreen(
         
         gameMusic.transitionToStemMix(GameMusic.StemMixes.ALL, 1f)
     }
+    
 
     override fun render(delta: Float) {
+        inputManager.frameUpdate()
+        
         super.render(delta)
 
         gameFrameBuffer.fbManager.frameUpdate()

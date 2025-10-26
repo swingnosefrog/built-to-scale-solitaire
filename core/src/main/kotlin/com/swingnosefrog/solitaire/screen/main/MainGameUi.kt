@@ -1,7 +1,5 @@
 package com.swingnosefrog.solitaire.screen.main
 
-import com.badlogic.gdx.Input
-import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -10,12 +8,16 @@ import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.swingnosefrog.solitaire.game.logic.DeckInitializer
-import com.swingnosefrog.solitaire.screen.main.menu.MainGameMenus
+import com.swingnosefrog.solitaire.inputmanager.ActionSource
+import com.swingnosefrog.solitaire.inputmanager.IDigitalInputAction
+import com.swingnosefrog.solitaire.inputmanager.InputActionListener
+import com.swingnosefrog.solitaire.inputmanager.impl.InputActions
 import com.swingnosefrog.solitaire.menu.MenuController
 import com.swingnosefrog.solitaire.menu.MenuInput
 import com.swingnosefrog.solitaire.menu.MenuInputSource
 import com.swingnosefrog.solitaire.menu.MenuInputType
 import com.swingnosefrog.solitaire.screen.main.menu.GameplaySettingsMenu
+import com.swingnosefrog.solitaire.screen.main.menu.MainGameMenus
 import paintbox.Paintbox
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
@@ -29,9 +31,9 @@ import paintbox.ui.animation.TransitioningFloatVar
 
 
 class MainGameUi(val mainGameScreen: MainGameScreen) {
-    
+
     enum class MenuState {
-        
+
         NONE,
         PAUSE_MENU,
         HOW_TO_PLAY,
@@ -47,12 +49,13 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
 
     val uiInputHandler: IUiInputHandler
     val inputProcessor: InputProcessor
+    val inputActionListener: InputActionListener
 
     private val _currentMenuState: Var<MenuState> = Var(MenuState.NONE)
     val currentMenuState: ReadOnlyVar<MenuState> get() = _currentMenuState.asReadOnlyVar()
 
     private val menuController: MenuController = MenuController()
-    
+
     val animationHandler: AnimationHandler = AnimationHandler()
 
     init {
@@ -60,7 +63,8 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
 
         inputProcessor = InputMultiplexer()
         inputProcessor.addProcessor(sceneRootInputProcessor)
-        inputProcessor.addProcessor(uiInputHandler)
+
+        inputActionListener = uiInputHandler
     }
 
     init {
@@ -69,7 +73,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
 
     private fun initSceneRoot() {
         animationHandler.cancelAllAnimations()
-        
+
         val parentPane = Pane()
         parentPane += MainGameHudPane(this).apply {
             this.opacity.bind(TransitioningFloatVar(animationHandler, {
@@ -82,7 +86,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
                 createOpacityAnimation(currentValue, targetValue)
             }))
         }
-        
+
         // Clickable panes
         parentPane += Pane().apply {
             fun UIElement.bindVisibleIfNotZeroOpacity() {
@@ -122,7 +126,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
                 this.bindVisibleIfNotZeroOpacity()
             }
         }
-        
+
         uiSceneRoot += parentPane
     }
 
@@ -136,7 +140,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         uiSceneRoot.renderAsRoot(batch)
 
         batch.end()
-        
+
         mainGameScreen.main.resetViewportToScreen()
     }
 
@@ -144,11 +148,11 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         uiViewport.update(width, height, true)
         uiSceneRoot.resize(uiViewport.worldWidth, uiViewport.worldHeight)
     }
-    
+
     fun createOpacityAnimation(currentValue: Float, targetValue: Float, duration: Float = 0.2f): Animation {
         return Animation(Interpolation.exp5, duration, currentValue, targetValue)
     }
-    
+
     fun getDebugString(): String {
         return """MenuState: ${currentMenuState.getOrCompute()}
 
@@ -160,30 +164,34 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         fun openPauseMenu()
 
         fun closePauseMenu()
-        
+
         fun openHowToPlayMenu()
-        
+
         fun closeHowToPlayMenu()
-        
+
         fun openCreditsMenu()
-        
+
         fun closeCreditsMenu()
-        
+
         fun startNewGame()
-        
+
         fun skipDealingAnimation(): Boolean
 
         fun debugReinitSceneRoot()
     }
 
-    private inner class UiInputHandler : InputAdapter(), IUiInputHandler {
-        
+    private inner class UiInputHandler : InputActionListener, IUiInputHandler {
+
         private fun cancelDragOnMenuOpen() {
             val gameContainer = mainGameScreen.gameContainer.getOrCompute()
             if (gameContainer.gameInput.isDragging()) {
                 gameContainer.gameInput.cancelDrag()
             }
         }
+
+        private fun MenuInputType.toKeyOrButtonInput(): MenuInput = MenuInput(this, MenuInputSource.KEYBOARD_OR_BUTTON)
+
+        //region IUiInputHandler
 
         override fun openPauseMenu() {
             _currentMenuState.set(MenuState.PAUSE_MENU)
@@ -239,7 +247,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
                 gameLogic.checkTableauAfterActivity()
                 return true
             }
-            
+
             return false
         }
 
@@ -248,86 +256,115 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
             initSceneRoot()
             Paintbox.LOGGER.debug("Reinitialized UI scene root")
         }
-        
-        private fun MenuInputType.toKeyboardInput(): MenuInput = MenuInput(this, MenuInputSource.KEYBOARD)
 
-        override fun keyDown(keycode: Int): Boolean {
-            // TODO don't hardcode keycodes
+        //endregion
+
+        //region InputActionListener
+
+        override fun handleDigitalActionPressed(actionSource: ActionSource, action: IDigitalInputAction): Boolean {
+            if (action !is InputActions) return false
+
             when (currentMenuState.getOrCompute()) {
                 MenuState.PAUSE_MENU -> {
-                    when (keycode) {
-                        Input.Keys.W, Input.Keys.UP -> {
-                            menuController.onMenuInput(MenuInputType.UP.toKeyboardInput())
+                    when (action) {
+                        InputActions.DirectionUp -> {
+                            menuController.onMenuInput(MenuInputType.UP.toKeyOrButtonInput())
                             return true
                         }
-                        Input.Keys.S, Input.Keys.DOWN -> {
-                            menuController.onMenuInput(MenuInputType.DOWN.toKeyboardInput())
+
+                        InputActions.DirectionDown -> {
+                            menuController.onMenuInput(MenuInputType.DOWN.toKeyOrButtonInput())
                             return true
                         }
-                        Input.Keys.A, Input.Keys.LEFT -> {
-                            menuController.onMenuInput(MenuInputType.LEFT.toKeyboardInput())
+
+                        InputActions.DirectionLeft -> {
+                            menuController.onMenuInput(MenuInputType.LEFT.toKeyOrButtonInput())
                             return true
                         }
-                        Input.Keys.D, Input.Keys.RIGHT -> {
-                            menuController.onMenuInput(MenuInputType.RIGHT.toKeyboardInput())
+
+                        InputActions.DirectionRight -> {
+                            menuController.onMenuInput(MenuInputType.RIGHT.toKeyOrButtonInput())
                             return true
                         }
-                        Input.Keys.Z, Input.Keys.SPACE, Input.Keys.ENTER -> {
-                            menuController.onMenuInput(MenuInputType.SELECT.toKeyboardInput())
+
+                        InputActions.Select -> {
+                            menuController.onMenuInput(MenuInputType.SELECT.toKeyOrButtonInput())
                             return true
                         }
-                        Input.Keys.X, Input.Keys.ESCAPE -> {
+
+                        InputActions.Back, InputActions.Menu -> {
                             if (menuController.isAtRootMenu()) {
                                 closePauseMenu()
                             } else {
-                                menuController.onMenuInput(MenuInputType.BACK.toKeyboardInput())
+                                menuController.onMenuInput(MenuInputType.BACK.toKeyOrButtonInput())
                             }
 
                             return true
                         }
+
+                        else -> {}
                     }
                 }
-                
+
                 MenuState.HOW_TO_PLAY -> {
-                    when (keycode) {
-                        Input.Keys.F1, Input.Keys.X, Input.Keys.ESCAPE -> {
+                    when (action) {
+                        InputActions.HowToPlay, InputActions.Back, InputActions.Menu -> {
                             closeHowToPlayMenu()
                             return true
                         }
+
+                        else -> {}
                     }
                 }
-                
+
                 MenuState.CREDITS -> {
-                    when (keycode) {
-                        Input.Keys.X, Input.Keys.ESCAPE -> {
+                    when (action) {
+                        InputActions.Back, InputActions.Menu -> {
                             closeCreditsMenu()
                             return true
                         }
+
+                        else -> {}
                     }
                 }
 
                 MenuState.NONE -> {
-                    when (keycode) {
-                        Input.Keys.F1 -> {
+                    when (action) {
+                        InputActions.HowToPlay -> {
                             openHowToPlayMenu()
                             return true
                         }
-                        Input.Keys.X, Input.Keys.ESCAPE -> {
+
+                        InputActions.Back, InputActions.Menu -> {
                             openPauseMenu()
                             return true
                         }
-                        Input.Keys.R -> {
+
+                        InputActions.NewGame -> {
                             startNewGame()
                             return true
                         }
-                        Input.Keys.Z, Input.Keys.SPACE, Input.Keys.ENTER -> {
+
+                        InputActions.Select -> {
                             return skipDealingAnimation()
                         }
+
+                        else -> {}
                     }
                 }
             }
 
             return false
         }
+
+        override fun handleDigitalActionReleased(actionSource: ActionSource, action: IDigitalInputAction): Boolean {
+            return false
+        }
+
+        override fun handleActionSourceChanged(oldSource: ActionSource, newSource: ActionSource): Boolean {
+            return false
+        }
+
+        //endregion
     }
 }
