@@ -89,7 +89,7 @@ object DesktopLauncher {
                 Files.FileType.External
             )
 
-            val sizes: List<Int> = listOf(32, 24, 16)
+            val sizes: List<Int> = listOf(64, 32, 24, 16)
             this.setWindowIcon(Files.FileType.Internal, *sizes.map { "icon/$it.png" }.toTypedArray())
         }.editConfig { 
             if (isRunningOnSteamDeck) {
