@@ -151,6 +151,9 @@ class MainGameScreen(
     override fun getDebugString(): String {
         return """UI:
 ${ui.getDebugString()}
+
+InputManager:
+src: ${inputManager.mostRecentActionSource.getOrCompute().sourceName}
 """
     }
 

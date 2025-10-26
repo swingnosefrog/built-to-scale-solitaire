@@ -33,7 +33,7 @@ object Steamworks {
             } else {
                 val steamInterfaces = SteamInterfaces(
                     SteamUtils(fun() {}),
-                    SteamController(),
+                    SteamController().apply { this.init() },
                     SteamApps(),
                 )
                 setInitialSettings(steamInterfaces)

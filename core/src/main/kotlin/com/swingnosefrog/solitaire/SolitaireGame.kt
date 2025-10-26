@@ -94,7 +94,8 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
             )
         this.inputMultiplexer.addProcessor(fullscreenWindowedInputProcessor)
         
-        inputManagerFactory = InputManagerFactory(prioritizeController = isRunningOnSteamDeck)
+        inputManagerFactory =
+            InputManagerFactory(prioritizeController = isRunningOnSteamDeck, Steamworks.getSteamInterfaces())
 
         (Gdx.graphics as Lwjgl3Graphics).window.setVisible(true)
 

@@ -2,10 +2,12 @@ package com.swingnosefrog.solitaire.inputmanager.impl
 
 import com.swingnosefrog.solitaire.inputmanager.ActionSource
 import com.swingnosefrog.solitaire.inputmanager.InputManager
+import com.swingnosefrog.solitaire.steamworks.SteamInterfaces
 
 
 class InputManagerFactory(
     val prioritizeController: Boolean,
+    private val steamInterfaces: SteamInterfaces?
 ) {
     
     fun create(): InputManager {
@@ -17,13 +19,17 @@ class InputManagerFactory(
     }
     
     private fun createSources(actions: List<InputActions>): List<ActionSource> {
-        var list = listOf(
+        val list = mutableListOf<ActionSource>(
             GdxActionSourceImpl(actions),
-            SteamInputActionSourceImpl(actions)
         )
         
-        if (prioritizeController) {
-            list = list.reversed()
+        if (steamInterfaces != null) {
+            val steamInputSource = SteamInputActionSourceImpl(actions, steamInterfaces)
+            if (prioritizeController) {
+                list.addFirst(steamInputSource)
+            } else {
+                list.add(steamInputSource)
+            }
         }
         
         return list

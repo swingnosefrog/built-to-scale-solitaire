@@ -155,7 +155,6 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
 
     fun getDebugString(): String {
         return """MenuState: ${currentMenuState.getOrCompute()}
-
 """
     }
 
