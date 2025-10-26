@@ -1,7 +1,5 @@
 package com.swingnosefrog.solitaire.fonts
 
-import com.badlogic.gdx.Input
-
 /**
  * PromptFont by Yukari "Shinmera" Hafner, accessible at https://shinmera.com/promptfont
  */
@@ -1044,59 +1042,5 @@ object PromptFontConsts {
     const val ICON_SHOPPING_CART_INT: Int = 0x1F6D2
     const val ICON_APERTURE: String = "🞉"
     const val ICON_APERTURE_INT: Int = 0x1F789
-
-
-    fun attemptMapGdxKeyToPromptFont(gdxKey: Int): String {
-        // Note: Not comprehensive
-        return when (gdxKey) {
-            in Input.Keys.NUM_0..Input.Keys.NUM_9 -> 
-                Character.toChars(gdxKey - Input.Keys.NUM_0 + KEYBOARD_0_INT).concatToString()
-
-            in Input.Keys.A..Input.Keys.Z -> 
-                Character.toChars(gdxKey - Input.Keys.A + KEYBOARD_A_INT).concatToString()
-
-            in Input.Keys.F1..Input.Keys.F12 -> 
-                Character.toChars(gdxKey - Input.Keys.F1 + KEYBOARD_F1_INT).concatToString()
-            
-            Input.Keys.UP -> KEYBOARD_UP
-            Input.Keys.DOWN -> KEYBOARD_DOWN
-            Input.Keys.LEFT -> KEYBOARD_LEFT
-            Input.Keys.RIGHT -> KEYBOARD_RIGHT
-
-            Input.Keys.ESCAPE -> KEYBOARD_ESCAPE
-            Input.Keys.SPACE -> KEYBOARD_SPACE
-            Input.Keys.ENTER -> KEYBOARD_ENTER
-            Input.Keys.TAB -> KEYBOARD_TAB
-            Input.Keys.CAPS_LOCK -> KEYBOARD_CAPS
-            Input.Keys.BACKSPACE -> KEYBOARD_BACKSPACE
-            Input.Keys.FORWARD_DEL -> KEYBOARD_DELETE
-            Input.Keys.PAGE_UP -> KEYBOARD_PAGE_UP
-            Input.Keys.PAGE_DOWN -> KEYBOARD_PAGE_DOWN
-            Input.Keys.INSERT -> KEYBOARD_INSERT
-            Input.Keys.HOME -> KEYBOARD_HOME
-            Input.Keys.END -> KEYBOARD_END
-            Input.Keys.PAUSE -> KEYBOARD_PAUSE
-            
-            Input.Keys.CONTROL_LEFT -> KEYBOARD_CONTROL_L
-            Input.Keys.CONTROL_RIGHT -> KEYBOARD_CONTROL_R
-            Input.Keys.SHIFT_LEFT -> KEYBOARD_SHIFT_L
-            Input.Keys.SHIFT_RIGHT -> KEYBOARD_SHIFT_R
-            Input.Keys.ALT_LEFT -> KEYBOARD_ALT_L
-            Input.Keys.ALT_RIGHT -> KEYBOARD_ALT_R
-            
-            Input.Keys.MINUS -> KEYBOARD_DASH
-            Input.Keys.EQUALS -> KEYBOARD_EQUALS
-            Input.Keys.COMMA -> KEYBOARD_COMMA
-            Input.Keys.PERIOD -> KEYBOARD_PERIOD
-            Input.Keys.SLASH -> KEYBOARD_SLASH
-            Input.Keys.SEMICOLON -> KEYBOARD_SEMICOLON
-            Input.Keys.APOSTROPHE -> KEYBOARD_QUOTE
-            Input.Keys.LEFT_BRACKET -> KEYBOARD_OPEN_BRACKET
-            Input.Keys.RIGHT_BRACKET -> KEYBOARD_CLOSE_BRACKET
-            Input.Keys.BACKSLASH -> KEYBOARD_BACKSLASH
-            Input.Keys.GRAVE -> KEYBOARD_BACKTICK
-            
-            else -> ICON_QUESTION // Unknown
-        }
-    }
+    
 }
