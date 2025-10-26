@@ -1,7 +1,7 @@
 package com.swingnosefrog.solitaire
 
-import paintbox.util.Version
 import com.swingnosefrog.solitaire.soundsystem.AudioDeviceSettings
+import paintbox.util.Version
 import java.io.File
 
 

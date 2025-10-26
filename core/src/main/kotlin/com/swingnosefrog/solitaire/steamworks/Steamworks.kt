@@ -4,7 +4,6 @@ import com.codedisaster.steamworks.SteamAPI
 import com.codedisaster.steamworks.SteamApps
 import com.codedisaster.steamworks.SteamController
 import com.codedisaster.steamworks.SteamUtils
-import com.codedisaster.steamworks.SteamUtilsCallback
 import java.util.concurrent.atomic.AtomicBoolean
 
 

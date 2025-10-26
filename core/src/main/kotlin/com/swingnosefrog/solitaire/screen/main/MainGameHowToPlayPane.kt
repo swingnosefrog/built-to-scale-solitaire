@@ -7,10 +7,8 @@ import com.swingnosefrog.solitaire.ui.FourPane
 import paintbox.binding.ReadOnlyVar
 import paintbox.font.Markup
 import paintbox.ui.Anchor
-import paintbox.ui.Corner
 import paintbox.ui.Pane
 import paintbox.ui.area.Insets
-import paintbox.ui.element.RectElement
 import paintbox.ui.element.RoundedRectElement
 
 

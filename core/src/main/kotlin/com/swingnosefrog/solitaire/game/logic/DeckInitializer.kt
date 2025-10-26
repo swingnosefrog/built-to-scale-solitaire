@@ -3,7 +3,7 @@ package com.swingnosefrog.solitaire.game.logic
 import com.swingnosefrog.solitaire.game.Card
 import com.swingnosefrog.solitaire.game.CardSuit
 import com.swingnosefrog.solitaire.game.CardSymbol
-import java.util.Random
+import java.util.*
 
 
 sealed class DeckInitializer {

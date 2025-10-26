@@ -7,17 +7,17 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.swingnosefrog.solitaire.SolitaireGame
+import com.swingnosefrog.solitaire.screen.AbstractGameScreen
 import paintbox.binding.FloatVar
+import paintbox.registry.AssetRegistry
+import paintbox.registry.AssetRegistryInstance
 import paintbox.ui.Anchor
 import paintbox.ui.Pane
 import paintbox.ui.SceneRoot
 import paintbox.ui.area.Insets
 import paintbox.ui.border.SolidBorder
 import paintbox.ui.element.RectElement
-import com.swingnosefrog.solitaire.SolitaireGame
-import com.swingnosefrog.solitaire.screen.AbstractGameScreen
-import paintbox.registry.AssetRegistry
-import paintbox.registry.AssetRegistryInstance
 
 class AssetRegistryLoadingScreen(
     main: SolitaireGame,

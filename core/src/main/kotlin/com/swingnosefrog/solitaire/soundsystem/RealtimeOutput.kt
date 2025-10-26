@@ -3,7 +3,6 @@ package com.swingnosefrog.solitaire.soundsystem
 import com.swingnosefrog.solitaire.soundsystem.beads.OpenALAudioIO
 import net.beadsproject.beads.core.AudioIO
 import paintbox.binding.ReadOnlyVar
-import paintbox.binding.Var
 import paintbox.binding.toConstVar
 
 

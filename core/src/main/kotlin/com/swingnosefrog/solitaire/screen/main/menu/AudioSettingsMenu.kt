@@ -2,11 +2,7 @@ package com.swingnosefrog.solitaire.screen.main.menu
 
 import com.swingnosefrog.solitaire.Localization
 import com.swingnosefrog.solitaire.menu.MenuOption
-import paintbox.binding.FloatVar
-import paintbox.binding.IntVar
-import paintbox.binding.ReadOnlyFloatVar
-import paintbox.binding.ReadOnlyVar
-import paintbox.binding.Var
+import paintbox.binding.*
 
 class AudioSettingsMenu(
     id: String

@@ -8,12 +8,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.swingnosefrog.solitaire.SolitaireGame
 import paintbox.ui.Pane
 import paintbox.ui.SceneRoot
 import paintbox.ui.area.Insets
 import paintbox.ui.control.TextLabel
-import com.swingnosefrog.solitaire.SolitaireGame
-import com.swingnosefrog.solitaire.screen.AbstractGameScreen
 
 
 class DebugNoOpScreen(main: SolitaireGame) : AbstractGameScreen(main) {

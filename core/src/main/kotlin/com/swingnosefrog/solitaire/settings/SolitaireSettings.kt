@@ -2,6 +2,7 @@ package com.swingnosefrog.solitaire.settings
 
 import com.badlogic.gdx.Preferences
 import com.swingnosefrog.solitaire.SolitaireGame
+import com.swingnosefrog.solitaire.game.logic.MouseMode
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_FULLSCREEN
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_FULLSCREEN_MONITOR
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_MOUSE_MODE
@@ -14,7 +15,6 @@ import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_MUSIC_VOLUME
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_SFX_VOLUME
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_VSYNC
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_WINDOWED_RESOLUTION
-import com.swingnosefrog.solitaire.game.logic.MouseMode
 import com.swingnosefrog.solitaire.util.WindowSizeUtils
 import paintbox.binding.BooleanVar
 import paintbox.binding.IntVar

@@ -1,10 +1,10 @@
 package com.swingnosefrog.solitaire.soundsystem.beads.ugen
 
 import com.badlogic.gdx.Gdx
-import net.beadsproject.beads.core.AudioContext
-import net.beadsproject.beads.core.UGen
 import com.swingnosefrog.solitaire.soundsystem.TimingListener
 import com.swingnosefrog.solitaire.soundsystem.TimingProvider
+import net.beadsproject.beads.core.AudioContext
+import net.beadsproject.beads.core.UGen
 import java.util.concurrent.CopyOnWriteArrayList
 
 

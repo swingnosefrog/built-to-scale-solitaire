@@ -7,12 +7,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.Hinting
 import com.swingnosefrog.solitaire.SolitaireGame
-import paintbox.font.FontCache
-import paintbox.font.FreeTypeFontAfterLoad
-import paintbox.font.Markup
-import paintbox.font.PaintboxFont
-import paintbox.font.PaintboxFontFreeType
-import paintbox.font.PaintboxFontParams
+import paintbox.font.*
 import paintbox.util.WindowSize
 import kotlin.reflect.KProperty
 

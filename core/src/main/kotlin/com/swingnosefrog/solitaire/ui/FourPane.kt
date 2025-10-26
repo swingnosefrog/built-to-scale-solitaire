@@ -5,7 +5,6 @@ import paintbox.ui.Anchor
 import paintbox.ui.Corner
 import paintbox.ui.Pane
 import paintbox.ui.element.RectElement
-import kotlin.collections.forEach
 
 
 open class FourPane(

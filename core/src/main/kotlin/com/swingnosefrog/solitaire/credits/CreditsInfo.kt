@@ -2,7 +2,7 @@ package com.swingnosefrog.solitaire.credits
 
 import com.swingnosefrog.solitaire.Localization
 import paintbox.binding.ReadOnlyVar
-import java.util.Locale
+import java.util.*
 
 
 class CreditsInfo {

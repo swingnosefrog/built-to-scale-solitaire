@@ -8,7 +8,6 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.game.Card
-import com.swingnosefrog.solitaire.game.animation.AnimationContainer
 import com.swingnosefrog.solitaire.game.animation.CardPlayingAnimation
 import com.swingnosefrog.solitaire.game.assets.CardAssetKey
 import com.swingnosefrog.solitaire.game.assets.CardSkin
@@ -21,7 +20,6 @@ import com.swingnosefrog.solitaire.game.logic.StackDirection
 import paintbox.binding.BooleanVar
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
-import paintbox.util.gdxutils.drawRect
 import paintbox.util.gdxutils.fillRect
 
 

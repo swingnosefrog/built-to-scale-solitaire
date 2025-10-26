@@ -3,11 +3,11 @@ package com.swingnosefrog.solitaire
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics
 import com.badlogic.gdx.graphics.Color
+import com.swingnosefrog.solitaire.assets.AssetRegistryAssetLoader
 import com.swingnosefrog.solitaire.assets.AssetRegistryLoadingScreen
+import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.game.assets.GameAssetLoader
 import com.swingnosefrog.solitaire.game.assets.GameAssets
-import com.swingnosefrog.solitaire.assets.AssetRegistryAssetLoader
-import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.inputmanager.impl.InputManagerFactory
 import com.swingnosefrog.solitaire.screen.main.MainGameScreen
 import com.swingnosefrog.solitaire.settings.SolitaireSettings
@@ -26,7 +26,6 @@ import paintbox.registry.AssetRegistry
 import paintbox.transition.FadeToOpaque
 import paintbox.transition.FadeToTransparent
 import paintbox.transition.TransitionScreen
-import java.time.LocalDateTime
 
 typealias GdxPreferences = com.badlogic.gdx.Preferences
 

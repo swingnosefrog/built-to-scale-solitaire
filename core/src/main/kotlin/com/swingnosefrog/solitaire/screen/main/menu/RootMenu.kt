@@ -1,10 +1,6 @@
 package com.swingnosefrog.solitaire.screen.main.menu
 
-import com.swingnosefrog.solitaire.menu.Menu
-import com.swingnosefrog.solitaire.menu.MenuController
-import com.swingnosefrog.solitaire.menu.MenuInput
-import com.swingnosefrog.solitaire.menu.MenuInputType
-import com.swingnosefrog.solitaire.menu.MenuOption
+import com.swingnosefrog.solitaire.menu.*
 import paintbox.binding.ReadOnlyVar
 
 

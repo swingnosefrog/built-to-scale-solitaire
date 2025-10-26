@@ -3,9 +3,9 @@ package com.swingnosefrog.solitaire.screen.main
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Interpolation
 import com.swingnosefrog.solitaire.SolitaireGame
-import com.swingnosefrog.solitaire.settings.SolitaireSettings
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.game.GameContainer
+import com.swingnosefrog.solitaire.settings.SolitaireSettings
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 import paintbox.font.Markup
@@ -21,7 +21,7 @@ import paintbox.ui.control.TextLabel
 import paintbox.ui.element.RoundedRectElement
 import paintbox.ui.layout.HBox
 import paintbox.util.DecimalFormats
-import java.util.EnumSet
+import java.util.*
 
 
 class MainGameHudPane(

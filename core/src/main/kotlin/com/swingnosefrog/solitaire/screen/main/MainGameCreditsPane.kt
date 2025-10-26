@@ -16,7 +16,6 @@ import paintbox.ui.area.Insets
 import paintbox.ui.control.ScrollPane
 import paintbox.ui.control.TextLabel
 import paintbox.ui.element.RoundedRectElement
-import paintbox.ui.layout.ColumnarPane
 
 
 class MainGameCreditsPane(

@@ -5,11 +5,11 @@ import com.badlogic.gdx.audio.AudioDevice
 import com.badlogic.gdx.backends.lwjgl3.audio.OpenALAudioDevice
 import com.badlogic.gdx.backends.lwjgl3.audio.OpenALLwjgl3Audio
 import com.badlogic.gdx.utils.Disposable
+import com.swingnosefrog.solitaire.soundsystem.AudioDeviceSettings
 import net.beadsproject.beads.core.AudioContext
 import net.beadsproject.beads.core.AudioIO
 import net.beadsproject.beads.core.UGen
 import paintbox.util.gdxutils.disposeQuietly
-import com.swingnosefrog.solitaire.soundsystem.AudioDeviceSettings
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.concurrent.thread
 import kotlin.math.roundToInt
