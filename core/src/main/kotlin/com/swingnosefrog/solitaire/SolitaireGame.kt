@@ -8,7 +8,7 @@ import com.swingnosefrog.solitaire.game.assets.GameAssetLoader
 import com.swingnosefrog.solitaire.game.assets.GameAssets
 import com.swingnosefrog.solitaire.assets.AssetRegistryAssetLoader
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
-import com.swingnosefrog.solitaire.persistence.GameSaveLocationHelper
+import com.swingnosefrog.solitaire.inputmanager.impl.InputManagerFactory
 import com.swingnosefrog.solitaire.screen.main.MainGameScreen
 import com.swingnosefrog.solitaire.settings.SolitaireSettings
 import com.swingnosefrog.solitaire.settings.VolumeGain
@@ -60,6 +60,9 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
     lateinit var fullscreenWindowedInputProcessor: IFullscreenWindowedInputProcessor
         private set
     private var toggleableDebugKeysInputProcessor: ToggleableDebugKeysInputProcessor? = null
+    
+    lateinit var inputManagerFactory: InputManagerFactory
+        private set
 
     override fun create() {
         super.create()
@@ -91,6 +94,8 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
                 { it.windowedResolution }
             )
         this.inputMultiplexer.addProcessor(fullscreenWindowedInputProcessor)
+        
+        inputManagerFactory = InputManagerFactory(prioritizeController = isRunningOnSteamDeck)
 
         (Gdx.graphics as Lwjgl3Graphics).window.setVisible(true)
 

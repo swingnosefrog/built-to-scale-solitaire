@@ -1,6 +1,6 @@
 package com.swingnosefrog.solitaire.inputmanager
 
-class SteamInputActionSource(actions: List<IInputAction>) : ActionSource(actions) {
+open class SteamInputActionSource(actions: List<IInputAction>) : ActionSource(actions) {
 
     override val sourceName: String = "SteamInput"
 
