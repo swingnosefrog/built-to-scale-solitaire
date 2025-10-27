@@ -1,9 +1,12 @@
 package com.swingnosefrog.solitaire.screen.main
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.swingnosefrog.solitaire.Localization
 import com.swingnosefrog.solitaire.credits.CreditsInfo
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
+import com.swingnosefrog.solitaire.inputmanager.impl.InputActions
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.VarContext
 import paintbox.font.Markup
@@ -31,6 +34,8 @@ class MainGameCreditsPane(
     
     private val creditsInfo: CreditsInfo = CreditsInfo()
     
+    private val scrollPane: ScrollPane
+    
     init {
         val darker = dark.cpy().apply { a = 0.9f }
 
@@ -50,7 +55,7 @@ class MainGameCreditsPane(
                 return TextLabel("").apply {
                     this.markup.set(mainSansSerifMarkup)
                     this.renderAlign.set(RenderAlign.top)
-                    this.textAlign.set(TextAlign.LEFT)
+                    this.textAlign.set(TextAlign.CENTRE)
                     this.textColor.set(nameTextColor)
                     this.text.bind {
                         creditsList.joinToString(separator = "\n") { addPair(it) }
@@ -59,10 +64,9 @@ class MainGameCreditsPane(
             }
 
             val credits = creditsInfo.credits.toList()
-            
-            this += ScrollPane().apply { 
-                this.setContent(createTextLabel(credits).apply { 
-                    this@MainGameCreditsPane.visible.addListenerAndFire { v -> 
+            scrollPane = ScrollPane().apply {
+                this.setContent(createTextLabel(credits).apply {
+                    this@MainGameCreditsPane.visible.addListenerAndFire { v ->
                         if (v.getOrCompute()) {
                             this.resizeBoundsToContent(affectWidth = false)
                         }
@@ -71,6 +75,7 @@ class MainGameCreditsPane(
                 this.vBarPolicy.set(ScrollPane.ScrollBarPolicy.ALWAYS)
                 this.hBarPolicy.set(ScrollPane.ScrollBarPolicy.NEVER)
             }
+            this += scrollPane
         }
         
         containingPane.apply {
@@ -100,6 +105,30 @@ class MainGameCreditsPane(
                 }
             }
         }
+    }
+
+    override fun renderSelf(
+        originX: Float,
+        originY: Float,
+        batch: SpriteBatch,
+    ) {
+        // HACK -- this is the only pane with a clickable scroll bar. We need to support keyboard/controllers though
+        if (this.opacity.get() == 1f) {
+            val input = mainGameUi.mainGameScreen.inputManager
+            val deltaTime = Gdx.graphics.deltaTime
+            val speed = 400f
+            val vBar = scrollPane.vBar
+
+            if (input.isDigitalActionPressed(InputActions.DirectionUp)) {
+                vBar.setValue(vBar.value.get() - speed * deltaTime)
+            }
+
+            if (input.isDigitalActionPressed(InputActions.DirectionDown)) {
+                vBar.setValue(vBar.value.get() + speed * deltaTime)
+            }
+        }
+        
+        super.renderSelf(originX, originY, batch)
     }
 
     override fun onClosePressed() {
