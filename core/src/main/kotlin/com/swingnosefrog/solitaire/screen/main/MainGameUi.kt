@@ -198,6 +198,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
             cancelDragOnMenuOpen()
 
             val menus = MainGameMenus(
+                this@MainGameUi,
                 requestCloseMenu = { closePauseMenu() },
                 requestOpenHowToPlayMenu = { openHowToPlayMenu() },
                 requestOpenCreditsMenu = { openCreditsMenu() },
