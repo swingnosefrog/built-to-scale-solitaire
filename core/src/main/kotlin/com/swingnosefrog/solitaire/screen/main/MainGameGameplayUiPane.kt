@@ -2,10 +2,14 @@ package com.swingnosefrog.solitaire.screen.main
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
-import com.swingnosefrog.solitaire.fonts.PromptFontConsts
+import com.swingnosefrog.solitaire.Localization
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.game.GameContainer
+import com.swingnosefrog.solitaire.inputmanager.IActionInputGlyph
+import com.swingnosefrog.solitaire.inputmanager.InputManager
+import com.swingnosefrog.solitaire.inputmanager.impl.InputActions
 import paintbox.binding.ReadOnlyVar
+import paintbox.binding.Var
 import paintbox.font.Markup
 import paintbox.font.TextAlign
 import paintbox.ui.Corner
@@ -24,6 +28,11 @@ class MainGameGameplayUiPane(
 
     private val fonts: SolitaireFonts get() = mainGameUi.mainGameScreen.main.fonts
     private val mainSerifMarkup: Markup get() = fonts.uiMainSerifMarkup
+    
+    private val inputManager: InputManager get() = mainGameUi.mainGameScreen.inputManager
+    
+    private val menuGlyph: ReadOnlyVar<List<IActionInputGlyph>> = inputManager.getGlyphsVarForAction(InputActions.Menu)
+    private val newGameGlyph: ReadOnlyVar<List<IActionInputGlyph>> = inputManager.getGlyphsVarForAction(InputActions.NewGame)
 
     init {
         val dark = Color(0f, 0f, 0f, 0.85f)
@@ -47,7 +56,7 @@ class MainGameGameplayUiPane(
                         }
                     }
                     
-                    this += Button("[lineheight=0.8]Menu[]\n[font=promptfont]${PromptFontConsts.KEYBOARD_ESCAPE}[]").apply {
+                    this += Button(Localization["game.gameplay.button.menu", Var { listOf(menuGlyph.use().firstOrNull()?.promptFontText ?: "") }]).apply {
                         this.bindHeightToSelfWidth(multiplier = 1.25f)
                         this.applyStyle(Corner.TOP_RIGHT)
                         
@@ -55,7 +64,7 @@ class MainGameGameplayUiPane(
                             uiInputHandler.openPauseMenu()
                         }
                     }
-                    this += Button("[lineheight=0.8]New\nGame[]\n[font=promptfont]${PromptFontConsts.KEYBOARD_R}[]").apply {
+                    this += Button(Localization["game.gameplay.button.newGame", Var { listOf(newGameGlyph.use().firstOrNull()?.promptFontText ?: "") }]).apply {
                         this.bindHeightToSelfWidth(multiplier = 1.25f)
                         this.applyStyle(Corner.BOTTOM_RIGHT)
                         

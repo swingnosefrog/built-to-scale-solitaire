@@ -38,6 +38,8 @@ class MainGameScreen(
     private val screenInputMultiplexer: InputMultiplexer = InputMultiplexer()
     private val toggleableGameInputProcessor: ToggleableInputProcessor
 
+    val inputManager: InputManager = main.inputManagerFactory.create()
+
     private val soundSystem: SoundSystem = SoundSystem.createDefaultSoundSystem()
     private val gameMusic: GameMusic = GameMusic(soundSystem)
 
@@ -47,8 +49,6 @@ class MainGameScreen(
     private val ui: MainGameUi = MainGameUi(this)
     
     private val gameFrameBuffer: GameFrameBuffer = GameFrameBuffer()
-    
-    private val inputManager: InputManager = main.inputManagerFactory.create()
 
     init {
         toggleableGameInputProcessor = ToggleableInputProcessor(backingGameContainer)

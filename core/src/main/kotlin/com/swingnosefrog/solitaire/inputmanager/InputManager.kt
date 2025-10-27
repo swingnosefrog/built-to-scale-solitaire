@@ -23,6 +23,11 @@ class InputManager(
 
     private val _mostRecentSource: Var<ActionSource> = Var(sources.first())
     val mostRecentActionSource: ReadOnlyVar<ActionSource> = Var { _mostRecentSource.use() }
+    
+    private val glyphVarEmpty: ReadOnlyVar<List<IActionInputGlyph>> = ReadOnlyVar.const(emptyList())
+    private val actionsToGlyphsVars: Map<IInputAction, Var<List<IActionInputGlyph>>> = actions.associateWith {
+        Var(emptyList())
+    }
 
     fun frameUpdate() {
         val mostRecentSource = _mostRecentSource.getOrCompute()
@@ -75,6 +80,10 @@ class InputManager(
                 }
             }
         }
+        
+        actions.forEach { action ->
+            actionsToGlyphsVars.getValue(action).set(getCurrentGlyphsForAction(action))
+        }
     }
 
     fun isDigitalActionPressed(action: IDigitalInputAction): Boolean {
@@ -83,6 +92,10 @@ class InputManager(
 
     fun getCurrentGlyphsForAction(action: IInputAction): List<IActionInputGlyph> {
         return _mostRecentSource.getOrCompute().getGlyphsForAction(action)
+    }
+
+    fun getGlyphsVarForAction(action: IInputAction): ReadOnlyVar<List<IActionInputGlyph>> {
+        return actionsToGlyphsVars[action] ?: glyphVarEmpty
     }
 
     fun addInputActionListener(listener: InputActionListener) {
