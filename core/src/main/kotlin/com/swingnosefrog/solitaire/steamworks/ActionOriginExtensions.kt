@@ -10,7 +10,7 @@ private val actionOriginToGlyph: MutableMap<SteamController.ActionOrigin, SteamA
 /**
  * Returns cached instance of [IActionInputGlyph].
  */
-fun SteamController.ActionOrigin.getActionInputGlyph(): IActionInputGlyph {
+fun SteamController.ActionOrigin.getActionInputGlyph(): SteamActionInputGlyph {
     return actionOriginToGlyph.getOrPut(this) { this.toSteamActionInputGlyph() }
 }
 
@@ -397,9 +397,3 @@ private fun SteamController.ActionOrigin.toSteamActionInputGlyph(): SteamActionI
     }
     return SteamActionInputGlyph(this, promptFontText)
 }
-
-private data class SteamActionInputGlyph(
-    val actionOrigin: SteamController.ActionOrigin,
-    override val promptFontText: String,
-    override val glyphName: String = actionOrigin.name,
-) : IActionInputGlyph 

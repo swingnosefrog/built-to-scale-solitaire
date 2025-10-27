@@ -2,7 +2,7 @@ package com.swingnosefrog.solitaire.inputmanager
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
-import com.swingnosefrog.solitaire.fonts.PromptFontConsts
+import com.swingnosefrog.solitaire.util.attemptMapGdxKeyToPromptFont
 
 abstract class GdxActionSource(actions: List<IInputAction>) : ActionSource(actions) {
 
@@ -20,7 +20,7 @@ abstract class GdxActionSource(actions: List<IInputAction>) : ActionSource(actio
                 mappedKeys.toList(),
                 mappedKeys.map { k ->
                     val keyName = Input.Keys.toString(k)
-                    DigitalActionInputGlyph(keyName, PromptFontConsts.attemptMapGdxKeyToPromptFont(k))
+                    DigitalActionInputGlyph(keyName, attemptMapGdxKeyToPromptFont(k))
                 }
             )
         }

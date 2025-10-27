@@ -4,13 +4,17 @@ import com.codedisaster.steamworks.SteamController
 import com.codedisaster.steamworks.SteamControllerDigitalActionData
 import com.codedisaster.steamworks.SteamControllerDigitalActionHandle
 import com.codedisaster.steamworks.SteamControllerHandle
+import com.swingnosefrog.solitaire.steamworks.SteamActionInputGlyph
 import com.swingnosefrog.solitaire.steamworks.SteamInterfaces
+import com.swingnosefrog.solitaire.steamworks.getActionInputGlyph
 import com.swingnosefrog.solitaire.steamworks.getConnectedControllers
 
 open class SteamInputActionSource(
     actions: List<IInputAction>,
     protected val steamInterfaces: SteamInterfaces
 ) : ActionSource(actions) {
+    
+    private val actionOriginsTmp: Array<SteamController.ActionOrigin> = Array(SteamController.STEAM_CONTROLLER_MAX_ORIGINS) { SteamController.ActionOrigin.None }
     
     private val digitalActionDataObj: SteamControllerDigitalActionData = SteamControllerDigitalActionData()
             
@@ -29,8 +33,36 @@ open class SteamInputActionSource(
     override val sourceName: String = "SteamInput"
     
     override fun getGlyphsForAction(action: IInputAction): List<IActionInputGlyph> {
-        // TODO
-        return emptyList()
+        if (action !is IDigitalInputAction) return emptyList()
+        
+        val digitalState = digitalStates[action] ?: return emptyList()
+
+        val actionOriginsArray = actionOriginsTmp
+        
+        val handle = digitalState.handle
+        val input = steamInterfaces.input
+        val controller = firstControllerHandle
+        val num = input.getDigitalActionOrigins(controller, input.getCurrentActionSet(controller), handle,
+            actionOriginsArray
+        )
+        
+        val currentlyCached = digitalState.cachedGlyphs
+        var isDirty = currentlyCached.size != num
+        if (!isDirty) {
+            // This method will be called multiple times every frame -- should try to be allocation-less normally
+            for (i in 0 until currentlyCached.size) {
+                if (currentlyCached[i].actionOrigin != actionOriginsArray[i]) {
+                    isDirty = true
+                    break
+                }
+            }
+        }
+        
+        if (isDirty){
+            digitalState.cachedGlyphs = (0 until num).map { actionOriginsArray[it].getActionInputGlyph() }
+        }
+        
+        return digitalState.cachedGlyphs
     }
 
     override fun frameUpdate() {
@@ -58,5 +90,7 @@ open class SteamInputActionSource(
         val handle: SteamControllerDigitalActionHandle,
     ) {
         var isActive: Boolean = false
+        
+        var cachedGlyphs: List<SteamActionInputGlyph> = emptyList()
     }
 }
