@@ -9,6 +9,13 @@
                 "path" "controller_ps5.vdf"
             }
         }
+        "controller_neptune"
+        {
+            "0"
+            {
+                "path" "controller_steam_deck.vdf"
+            }
+        }
     }
 
     "actions"
