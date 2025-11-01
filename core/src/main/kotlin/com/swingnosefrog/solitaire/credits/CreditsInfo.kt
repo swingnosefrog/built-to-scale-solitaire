@@ -17,13 +17,13 @@ class CreditsInfo {
             "garbo",
         ).toVars(),
         Localization["credits.category.music"] to abcSorted(
-            "GENERIC",
+            "GenericArrangements",
         ).toVars(),
         Localization["credits.category.sfx"] to abcSorted(
-            "GENERIC", "Kievit", "Merch_Andise",
+            "GenericArrangements", "Kievit", "Merch_Andise",
         ).toVars(),
         Localization["credits.category.testing"] to abcSorted(
-            "GENERIC",
+            "GenericArrangements",
             "Luxury",
             "spoopster",
             "Conn",
