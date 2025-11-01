@@ -22,8 +22,6 @@ class MainGameMenus(
 
 
     private val inputManager: InputManager get() = ui.mainGameScreen.inputManager
-
-    private val howToPlayGlyph: ReadOnlyVar<List<IActionInputGlyph>> = inputManager.getGlyphsVarForAction(InputActions.HowToPlay)
     
     init {
         rootMenu = RootMenu(
@@ -33,11 +31,7 @@ class MainGameMenus(
                 MenuOption.Simple(Localization["game.menu.root.option.resume"]) {
                     requestCloseMenu()
                 },
-                MenuOption.Simple(Localization["game.menu.root.option.howToPlay", Var {
-                    listOf(
-                        howToPlayGlyph.use().firstOrNull()?.promptFontText ?: ""
-                    )
-                }]) {
+                MenuOption.Simple(Localization["game.menu.root.option.howToPlay"]) {
                     requestOpenHowToPlayMenu()
                 },
                 MenuOption.SubMenu(Localization["game.menu.root.option.settings"]) { settingsMenu },
