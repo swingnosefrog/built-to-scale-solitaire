@@ -89,7 +89,6 @@ class MainGameHowToPlayPane(
                             this.bounds.height.set(72f)
                             this.margin.set(Insets(13f, 0f, 9f, 0f))
                         }
-
                     }
                     this += Pane().apply {
                         Anchor.BottomLeft.configure(this)

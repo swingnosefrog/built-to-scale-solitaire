@@ -9,6 +9,7 @@ object WindowSizeUtils {
     val DEFAULT_WINDOWED_SIZE: WindowSize = WindowSize(1280, 720)
     val DEFAULT_WINDOWED_SIZE_STEAM_DECK: WindowSize = WindowSize(1280, 800)
     var DEFAULT_COMPUTED_WINDOWED_SIZE: WindowSize = DEFAULT_WINDOWED_SIZE
+        private set
     val MINIMUM_WINDOWED_SIZE: WindowSize = WindowSize(1152, 648)
 
     val commonAspectRatios: List<WindowSize> = listOf(
@@ -45,5 +46,9 @@ object WindowSizeUtils {
         }
 
         return windowSize
+    }
+    
+    fun setDefaultComputedWindowedSizeToSteamDeck() {
+        DEFAULT_COMPUTED_WINDOWED_SIZE = DEFAULT_WINDOWED_SIZE_STEAM_DECK
     }
 }
