@@ -105,6 +105,12 @@ class MainGameCreditsPane(
                 }
             }
         }
+        
+        this.visible.addListener { v ->
+            if (!v.getOrCompute()) {
+                scrollPane.vBar.setValue(0f)
+            }
+        }
     }
 
     override fun renderSelf(
