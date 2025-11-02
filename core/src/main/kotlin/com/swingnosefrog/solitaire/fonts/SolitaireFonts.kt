@@ -32,6 +32,11 @@ class SolitaireFonts(private val game: SolitaireGame) {
 
     var uiHeadingFont: PaintboxFont by bind(FontKeys.UI_HEADING)
         private set
+    var uiHeadingFontBordered: PaintboxFont by bind(FontKeys.UI_HEADING_BORDERED)
+        private set
+    
+    var uiOutfitFont: PaintboxFont by bind(FontKeys.UI_OUTFIT)
+        private set
     
     var uiMainSerifFont: PaintboxFont by bind(uiMainSerifFamily[FontWeight.MEDIUM, FontStyle.REGULAR])
         private set
@@ -93,6 +98,8 @@ class SolitaireFonts(private val game: SolitaireGame) {
         "promptfont" to uiPromptFont,
         
         "ui_heading" to uiHeadingFont,
+        "ui_heading_bold" to uiHeadingFontBordered,
+        "ui_outfit" to uiOutfitFont,
         "ui_main_serif" to uiMainSerifFont,
         "ui_main_serif_bold" to uiMainSerifFontBold,
         "ui_main_serif_italic" to uiMainSerifFontItalic,
@@ -129,13 +136,15 @@ class SolitaireFonts(private val game: SolitaireGame) {
             hinting = Hinting.Medium
         }
 
-        val defaultAfterLoad: FreeTypeFontAfterLoad = { font ->
+        fun defaultAfterLoad(): FreeTypeFontAfterLoad = { font ->
             font.setUseIntegerPositions(true) // Filtering doesn't kick in so badly, solves "wiggly" glyphs
             font.setFixedWidthGlyphs("0123456789")
         }
-        val defaultScaledFontAfterLoad: FreeTypeFontAfterLoad = { font ->
+        fun defaultScaledFontAfterLoad(useFixedWidthNumbers: Boolean = true): FreeTypeFontAfterLoad = { font ->
             font.setUseIntegerPositions(false) // Stops glyphs from being offset due to rounding
-            font.setFixedWidthGlyphs("0123456789")
+            if (useFixedWidthNumbers) {
+                font.setFixedWidthGlyphs("0123456789")
+            }
         }
 
         fun addFontFamily(
@@ -143,7 +152,8 @@ class SolitaireFonts(private val game: SolitaireGame) {
             fontSize: Int,
             scaleToReferenceSize: Boolean = true, referenceSize: WindowSize = defaultReferenceWindowSize,
             hinting: Hinting? = null,
-            afterLoadFunc: FreeTypeFontAfterLoad = if (scaleToReferenceSize) defaultScaledFontAfterLoad else defaultAfterLoad,
+            afterLoadFunc: FreeTypeFontAfterLoad =
+                if (scaleToReferenceSize) defaultScaledFontAfterLoad() else defaultAfterLoad(),
         ) {
             family.createAllInstances().forEach { instance ->
                 val fileHandle = fontsFolder.child("${family.familyName}/${instance.getFilename()}")
@@ -167,7 +177,16 @@ class SolitaireFonts(private val game: SolitaireGame) {
                 size = 64
                 borderWidth = 0f
             }
-        ).setAfterLoad(defaultScaledFontAfterLoad)
+        ).setAfterLoad(defaultScaledFontAfterLoad(useFixedWidthNumbers = false))
+        uiHeadingFontBordered = PaintboxFontFreeType(
+            createDefaultFontParams(fontsFolder.child("Outfit/Outfit-SemiBold.ttf")),
+            createIncrementalFtfParam().apply {
+                hinting = Hinting.Slight
+                size = 64
+                borderWidth = 5f
+                borderColor = Color.BLACK
+            }
+        ).setAfterLoad(defaultScaledFontAfterLoad(useFixedWidthNumbers = false))
         
         uiPromptFont = PaintboxFontFreeType(
             createDefaultFontParams(fontsFolder.child("PromptFont/promptfont.ttf")),
@@ -176,7 +195,16 @@ class SolitaireFonts(private val game: SolitaireGame) {
                 size = 32
                 borderWidth = 0f
             }
-        ).setAfterLoad(defaultScaledFontAfterLoad)
+        ).setAfterLoad(defaultScaledFontAfterLoad())
+
+        uiOutfitFont = PaintboxFontFreeType(
+            createDefaultFontParams(fontsFolder.child("Outfit/Outfit-SemiBold.ttf")),
+            createIncrementalFtfParam().apply {
+                hinting = Hinting.Slight
+                size = 32
+                borderWidth = 0f
+            }
+        ).setAfterLoad(defaultScaledFontAfterLoad())
         
         addFontFamily(uiMainSerifFamily, fontSize = 32, hinting = Hinting.Medium)
         addFontFamily(uiMainSansSerifFamily, fontSize = 32, hinting = Hinting.Medium)
@@ -199,8 +227,9 @@ class SolitaireFonts(private val game: SolitaireGame) {
     private enum class FontKeys {
 
         UI_HEADING,
+        UI_HEADING_BORDERED,
         UI_PROMPTFONT,
-        
+        UI_OUTFIT,
 
     }
 }

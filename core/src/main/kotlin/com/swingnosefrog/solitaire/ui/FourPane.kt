@@ -17,11 +17,11 @@ open class FourPane(
     init {
         this += RectElement(borderColor).apply {
             this.bounds.width.set(borderWidth)
-            Anchor.TopCentre.configure(this, offsetX = -(borderWidth / 2))
+            Anchor.TopCentre.configure(this)
         }
         this += RectElement(borderColor).apply {
             this.bounds.height.set(borderWidth)
-            Anchor.CentreLeft.configure(this, offsetY = -(borderWidth / 2))
+            Anchor.CentreLeft.configure(this)
         }
 
         fun createCornerPane(): Pane {

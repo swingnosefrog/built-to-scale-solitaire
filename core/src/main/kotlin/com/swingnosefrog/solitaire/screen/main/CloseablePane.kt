@@ -20,8 +20,10 @@ open class CloseablePane() : Pane() {
     
     protected val containingPane: Pane
     
+    protected val closeButton: Button
+    
     init {
-        this += Button("").apply {
+        closeButton = Button("").apply {
             Anchor.TopRight.configure(this, offsetX = -8f, offsetY = 8f)
             this.bounds.width.set(48f)
             this.bounds.height.set(48f)
@@ -34,6 +36,7 @@ open class CloseablePane() : Pane() {
                 onClosePressed()
             }
         }
+        this += closeButton
 
         containingPane = Pane().apply {
             this.margin.set(Insets(48f, 24f, 64f, 64f))
