@@ -1,6 +1,8 @@
 package com.swingnosefrog.solitaire.screen.main
 
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.swingnosefrog.solitaire.Localization
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.inputmanager.IActionInputGlyph
@@ -12,8 +14,11 @@ import paintbox.binding.Var
 import paintbox.font.Markup
 import paintbox.font.PaintboxFont
 import paintbox.font.TextAlign
+import paintbox.registry.AssetRegistry
 import paintbox.ui.Anchor
 import paintbox.ui.Corner
+import paintbox.ui.ImageIcon
+import paintbox.ui.ImageRenderingMode
 import paintbox.ui.Pane
 import paintbox.ui.RenderAlign
 import paintbox.ui.area.Insets
@@ -78,8 +83,10 @@ class MainGameHowToPlayPane(
                         this.bindHeightToParent(multiplier = 0.6f)
                         this.margin.set(Insets(0f, 4f, 0f, 0f))
                         
-                        // TODO image placeholder element
-                        this += RectElement(Color.GRAY)
+                        this += ImageIcon(
+                            binding = { TextureRegion(AssetRegistry.get<Texture>("how_to_play_$stepNum")) },
+                            renderingMode = ImageRenderingMode.MAINTAIN_ASPECT_RATIO
+                        )
                         
                         this += TextLabel("$stepNum", font = numberFont).apply {
                             this.textColor.set(Color.WHITE)

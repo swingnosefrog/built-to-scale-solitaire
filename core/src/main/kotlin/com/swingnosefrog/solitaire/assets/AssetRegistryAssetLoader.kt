@@ -18,6 +18,11 @@ class AssetRegistryAssetLoader : AssetLoaderBase<AssetRegistry>(AssetRegistry) {
         assetRegistry.loadAsset<Texture>("ui_nut_icon", "textures/ui/nut_icon.png", linearTexture())
         assetRegistry.loadAsset<Texture>("ui_x", "textures/ui/x.png", linearTexture())
         assetRegistry.loadAsset<Texture>("ui_x_bordered", "textures/ui/x_bordered.png", linearTexture())
+        
+        assetRegistry.loadAsset<Texture>("how_to_play_1", "textures/how_to_play/1.png", linearTexture())
+        assetRegistry.loadAsset<Texture>("how_to_play_2", "textures/how_to_play/2.png", linearTexture())
+        assetRegistry.loadAsset<Texture>("how_to_play_3", "textures/how_to_play/3.png", linearTexture())
+        assetRegistry.loadAsset<Texture>("how_to_play_4", "textures/how_to_play/4.png", linearTexture())
     }
 
     override fun addUnmanagedAssets(assets: MutableMap<String, Any>) {
