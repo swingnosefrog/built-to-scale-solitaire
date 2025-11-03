@@ -3,6 +3,7 @@ package com.swingnosefrog.solitaire.steamworks
 import com.codedisaster.steamworks.SteamAPI
 import com.codedisaster.steamworks.SteamApps
 import com.codedisaster.steamworks.SteamController
+import com.codedisaster.steamworks.SteamUserStats
 import com.codedisaster.steamworks.SteamUtils
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -35,10 +36,16 @@ object Steamworks {
                     SteamUtils(fun() {}),
                     SteamController().apply { this.init() },
                     SteamApps(),
+                    SteamUserStats(SteamStats),
                 )
+
                 setInitialSettings(steamInterfaces)
+
                 SteamAPI.runCallbacks()
                 isRunningOnSteamDeck.set(steamInterfaces.utils.isSteamRunningOnSteamDeck)
+
+                steamInterfaces.stats.requestCurrentStats()
+
                 this.steamInterfaces = steamInterfaces
                 inited.set(true)
             }

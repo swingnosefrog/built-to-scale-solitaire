@@ -47,7 +47,7 @@ class MainGameScreen(
     val gameContainer: ReadOnlyVar<GameContainer> get() = backingGameContainer.currentContainer
 
     private val ui: MainGameUi = MainGameUi(this)
-    
+
     private val gameFrameBuffer: GameFrameBuffer = GameFrameBuffer()
 
     init {
@@ -168,21 +168,31 @@ src: ${inputManager.mostRecentActionSource.getOrCompute().sourceName}
         gameFrameBuffer.dispose()
     }
     
-    private class BackingGameContainer private constructor(
+    private inner class BackingGameContainer private constructor(
         private val gameInputMultiplexer: InputMultiplexer,
     ) : Disposable, InputProcessor by gameInputMultiplexer {
+        
+        private var statsAndAchievementsGameListener: StatsAndAchievementsGameListener? = null
         
         private var _container: GameContainer? = null
         private var current: GameContainer
             set(newValue) {
+                val stats = main.stats
+                
                 val oldValue = _container
                 if (oldValue != null) {
                     this.gameInputMultiplexer.removeProcessor(oldValue.inputProcessor)
+                    statsAndAchievementsGameListener?.let { oldValue.gameLogic.eventDispatcher.removeListener(it) }
+                    stats.persist()
                 }
 
                 newValue.resize(Gdx.graphics.width, Gdx.graphics.height)
                 newValue.gameRenderer.shouldApplyViewport.set(true)
                 this.gameInputMultiplexer.addProcessor(newValue.inputProcessor)
+                val newStatsListener = StatsAndAchievementsGameListener(stats, newValue)
+                newValue.gameLogic.eventDispatcher.addListener(newStatsListener)
+                statsAndAchievementsGameListener = newStatsListener
+                
                 _container = newValue
                 (currentContainer as Var).set(newValue)
 

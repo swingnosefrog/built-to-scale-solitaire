@@ -12,6 +12,7 @@ import com.swingnosefrog.solitaire.inputmanager.impl.InputManagerFactory
 import com.swingnosefrog.solitaire.screen.main.MainGameScreen
 import com.swingnosefrog.solitaire.settings.SolitaireSettings
 import com.swingnosefrog.solitaire.settings.VolumeGain
+import com.swingnosefrog.solitaire.statistics.StatsImpl
 import com.swingnosefrog.solitaire.steamworks.Steamworks
 import com.swingnosefrog.solitaire.util.WindowSizeUtils
 import paintbox.IPaintboxSettings
@@ -53,6 +54,8 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
     lateinit var settings: SolitaireSettings
         private set
     val volumeGain: VolumeGain by lazy { VolumeGain(settings) }
+    
+    val stats: StatsImpl by lazy { StatsImpl() }
 
     val fonts: SolitaireFonts = SolitaireFonts(this)
     
@@ -62,7 +65,7 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
     
     lateinit var inputManagerFactory: InputManagerFactory
         private set
-
+    
     override fun create() {
         super.create()
         instance = this
@@ -82,6 +85,8 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
             load()
             setStartupSettings()
         }
+        
+        stats.load()
         
         fonts.registerFonts()
 
@@ -154,6 +159,8 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
     override fun dispose() {
         super.dispose()
         settings.persist()
+        stats.persist()
+        Steamworks.getSteamInterfaces()?.stats?.storeStats()
         Steamworks.shutdown()
     }
 }
