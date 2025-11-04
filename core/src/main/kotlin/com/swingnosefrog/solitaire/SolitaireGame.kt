@@ -101,9 +101,7 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
         
         inputManagerFactory =
             InputManagerFactory(prioritizeController = isRunningOnSteamDeck, Steamworks.getSteamInterfaces())
-
-        (Gdx.graphics as Lwjgl3Graphics).window.setVisible(true)
-
+        
         setScreen(AssetRegistryLoadingScreen(this, AssetRegistry, GameAssets).apply {
             onStart = {}
             onAssetLoadingComplete = {
@@ -120,6 +118,8 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
                 )
             }
         })
+        
+        (Gdx.graphics as Lwjgl3Graphics).window.setVisible(true)
     }
 
     override fun createDebugKeysInputProcessor(): IDebugKeysInputProcessor {

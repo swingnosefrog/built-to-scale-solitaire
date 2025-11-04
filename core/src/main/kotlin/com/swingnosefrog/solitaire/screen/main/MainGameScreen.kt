@@ -188,6 +188,7 @@ src: ${inputManager.mostRecentActionSource.getOrCompute().sourceName}
 
                 newValue.resize(Gdx.graphics.width, Gdx.graphics.height)
                 newValue.gameRenderer.shouldApplyViewport.set(true)
+                
                 this.gameInputMultiplexer.addProcessor(newValue.inputProcessor)
                 val newStatsListener = StatsAndAchievementsGameListener(stats, newValue)
                 newValue.gameLogic.eventDispatcher.addListener(newStatsListener)
