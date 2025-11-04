@@ -2,6 +2,7 @@ package com.swingnosefrog.solitaire.screen.main
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Interpolation
+import com.swingnosefrog.solitaire.Localization
 import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.game.GameContainer
@@ -119,7 +120,7 @@ class MainGameHudPane(
             }
 
             onAnyHudSettingsChanged.addListenerAndFire { v ->
-                v.getOrCompute() // Force it to be un-invalided
+                v.getOrCompute() // Force it to be un-invalidated
                 this.temporarilyDisableLayouts {
                     this.removeAllChildren()
 
@@ -129,8 +130,7 @@ class MainGameHudPane(
 
                             this += createTextLabel().apply {
                                 this.text.bind {
-                                    val movesMadePortion = movesMadeString.use()
-                                    "Moves: $movesMadePortion"
+                                    Localization["game.hud.movesMade", listOf(movesMadeString.use())].use()
                                 }
                             }
                         }
@@ -142,8 +142,7 @@ class MainGameHudPane(
 
                             this += createTextLabel().apply {
                                 this.text.bind {
-                                    val clockPortion = elapsedTimeClock.use()
-                                    "Time: $clockPortion"
+                                    Localization["game.hud.timeElapsed", listOf(elapsedTimeClock.use())].use()
                                 }
                             }
                         }
