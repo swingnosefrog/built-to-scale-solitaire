@@ -81,12 +81,10 @@ class AssetRegistryLoadingScreen(
             
             // How to Play
             this += TextLabel(binding = {
-                Localization["game.howToPlay.instructions.1"].use() +
-                        Localization["game.howToPlay.instructions.2"].use() +
-                        Localization["game.howToPlay.instructions.3"].use() +
-                        Localization["game.howToPlay.instructions.4"].use() +
-                        Localization["game.howToPlay.objective"].use() +
-                        Localization["game.howToPlay.keybindHint"].use()
+                val howToPlayKeys = allLocalizationKeys.filter { it.startsWith("game.howToPlay.") }
+                howToPlayKeys.joinToString { key ->
+                    Localization[key].use()
+                }
             }).apply { 
                 this.markup.set(main.fonts.uiMainSerifMarkup)
                 this.textColor.set(Color.BLACK)
@@ -99,8 +97,8 @@ class AssetRegistryLoadingScreen(
             
             // Menu root & headings
             this += TextLabel(binding = {
-                val menuRootKeys = allLocalizationKeys.filter { it.startsWith("game.menu.") && it.endsWith(".heading") }
-                menuRootKeys.joinToString { key ->
+                val menuHeadingsKeys = allLocalizationKeys.filter { it.startsWith("game.menu.") && it.endsWith(".heading") }
+                menuHeadingsKeys.joinToString { key ->
                     Localization[key].use()
                 } + Localization["credits.title"].use()
             }, font = main.fonts.uiHeadingFont).apply {
