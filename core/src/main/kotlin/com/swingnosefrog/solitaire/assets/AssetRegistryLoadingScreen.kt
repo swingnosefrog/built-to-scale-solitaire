@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.swingnosefrog.solitaire.Localization
 import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.screen.AbstractGameScreen
 import paintbox.binding.FloatVar
@@ -14,9 +15,11 @@ import paintbox.registry.AssetRegistry
 import paintbox.registry.AssetRegistryInstance
 import paintbox.ui.Anchor
 import paintbox.ui.Pane
+import paintbox.ui.RenderAlign
 import paintbox.ui.SceneRoot
 import paintbox.ui.area.Insets
 import paintbox.ui.border.SolidBorder
+import paintbox.ui.control.TextLabel
 import paintbox.ui.element.RectElement
 
 class AssetRegistryLoadingScreen(
@@ -58,6 +61,67 @@ class AssetRegistryLoadingScreen(
     private var substate: Substate = Substate.BEFORE_START
 
     init {
+        // Pre-load some font glyphs by forcing a render
+        this.sceneRoot += Pane().apply {
+            val allLocalizationKeys = Localization.getAllUniqueKeysForAllLocales()
+            
+            fun TextLabel.setStyle() {
+                this.textColor.set(Color.BLACK)
+                this.renderAlign.set(RenderAlign.topLeft)
+                this.doXCompression.set(false)
+            }
+            
+            // HUD
+            this += TextLabel(binding = {
+                "0123456789:."
+            }).apply {
+                this.markup.set(main.fonts.uiMainSansSerifMarkup)
+                this.setStyle()
+            }
+            
+            // How to Play
+            this += TextLabel(binding = {
+                Localization["game.howToPlay.instructions.1"].use() +
+                        Localization["game.howToPlay.instructions.2"].use() +
+                        Localization["game.howToPlay.instructions.3"].use() +
+                        Localization["game.howToPlay.instructions.4"].use() +
+                        Localization["game.howToPlay.objective"].use() +
+                        Localization["game.howToPlay.keybindHint"].use()
+            }).apply { 
+                this.markup.set(main.fonts.uiMainSerifMarkup)
+                this.textColor.set(Color.BLACK)
+                this.renderAlign.set(RenderAlign.topLeft)
+                this.doXCompression.set(false)
+            }
+            this += TextLabel("1234", font = main.fonts.uiHeadingFontBordered).apply {
+                this.setStyle()
+            }
+            
+            // Menu root & headings
+            this += TextLabel(binding = {
+                val menuRootKeys = allLocalizationKeys.filter { it.startsWith("game.menu.") && it.endsWith(".heading") }
+                menuRootKeys.joinToString { key ->
+                    Localization[key].use()
+                } + Localization["credits.title"].use()
+            }, font = main.fonts.uiHeadingFont).apply {
+                this.setStyle()
+            }
+            this += TextLabel(binding = {
+                val menuRootKeys = allLocalizationKeys.filter { it.startsWith("game.menu.root.") }
+                menuRootKeys.joinToString { key ->
+                    Localization[key].use()
+                }
+            }).apply {
+                this.markup.set(main.fonts.uiMainSerifMarkup)
+                this.setStyle()
+            }
+            
+            // Cover up everything
+            this += RectElement(Color.BLACK)
+        }
+        
+        this.sceneRoot += RectElement(Color.BLACK)
+        
         this.sceneRoot += Pane().apply {
             this.bounds.width.set(960f)
             this.bounds.height.set(36f)
