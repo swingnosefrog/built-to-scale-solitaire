@@ -132,7 +132,7 @@ class SolitaireFonts(private val game: SolitaireGame) {
             mono = false
             color = Color(1f, 1f, 1f, 1f)
             borderColor = Color(0f, 0f, 0f, 1f)
-            characters = " a" // Needed to at least put one glyph in each font to prevent errors
+            characters = "\u0000 a" // Needed to at least put one glyph in each font to prevent errors
             hinting = Hinting.Medium
         }
 
