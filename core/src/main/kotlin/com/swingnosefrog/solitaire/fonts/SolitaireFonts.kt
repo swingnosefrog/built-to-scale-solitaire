@@ -192,7 +192,7 @@ class SolitaireFonts(private val game: SolitaireGame) {
             createDefaultFontParams(fontsFolder.child("PromptFont/promptfont.ttf")),
             createIncrementalFtfParam().apply {
                 hinting = Hinting.Slight
-                size = 32
+                size = 36
                 borderWidth = 0f
             }
         ).setAfterLoad(defaultScaledFontAfterLoad())
