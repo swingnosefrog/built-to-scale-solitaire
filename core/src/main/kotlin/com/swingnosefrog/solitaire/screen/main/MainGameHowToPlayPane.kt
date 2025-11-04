@@ -66,7 +66,7 @@ class MainGameHowToPlayPane(
                 }]).apply {
                     this.markup.set(mainSerifMarkup)
                     this.setScaleXY(0.75f)
-                    this.textColor.set(Color().grey(0.85f))
+                    this.textColor.set(Color().grey(0.9f))
                     this.renderAlign.set(RenderAlign.center)
                 }
             }
