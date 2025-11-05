@@ -68,10 +68,7 @@ class SolitaireSettings(
             musicVolume = KeyValue.Int(SETTINGS_MUSIC_VOLUME, 100, min = 0, max = 100).add().value
             sfxVolume = KeyValue.Int(SETTINGS_SFX_VOLUME, 100, min = 0, max = 100).add().value
             
-            gameplayMouseMode = KeyValue.Enum<MouseMode>(SETTINGS_GAMEPLAY_MOUSE_MODE,
-                if (definitelyOnSteamDeck) // Prefer toggle-based card movement for Steam Deck
-                    MouseMode.CLICK_THEN_CLICK
-                else MouseMode.CLICK_AND_DRAG).add().value
+            gameplayMouseMode = KeyValue.Enum<MouseMode>(SETTINGS_GAMEPLAY_MOUSE_MODE, MouseMode.CLICK_AND_DRAG).add().value
             gameplayShowMoveCounter = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER, true).add().value
             gameplayShowTimer = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_TIMER, true).add().value
             gameplayUseClassicCardSkin = KeyValue.Bool(SETTINGS_GAMEPLAY_USE_CLASSIC_CARD_SKIN, false).add().value
