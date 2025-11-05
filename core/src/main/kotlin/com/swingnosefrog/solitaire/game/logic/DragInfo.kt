@@ -1,6 +1,5 @@
 package com.swingnosefrog.solitaire.game.logic
 
-import com.badlogic.gdx.math.Vector2
 import com.swingnosefrog.solitaire.game.Card
 
 
@@ -9,17 +8,26 @@ sealed class DragInfo {
     data object Nothing : DragInfo()
 
     class Dragging(
-        cardList: List<Card>,
-
-        zoneCoords: ZoneCoordinates
+        zoneCoords: ZoneCoordinates,
+        cardList: List<Card> = zoneCoords.getCardsToDrag(),
     ) : DragInfo() {
 
-        val oldZone: CardZone = zoneCoords.zone
+        val originalZone: CardZone = zoneCoords.zone
+
+        val mouseOffsetX: Float = zoneCoords.offsetX
+        val mouseOffsetY: Float = zoneCoords.offsetY
+
         var x: Float = zoneCoords.zone.x.get()
+            private set
         var y: Float = zoneCoords.zone.y.get() + zoneCoords.index * zoneCoords.zone.cardStack.stackDirection.yOffset
-        
+            private set
+
         val cardStack: CardStack = CardStack(cardList.toMutableList(), StackDirection.DOWN)
-        val mouseOffset: Vector2 = Vector2(zoneCoords.offsetX, zoneCoords.offsetY)
+
+        fun updatePosition(worldX: Float, worldY: Float) {
+            x = worldX - mouseOffsetX
+            y = worldY - mouseOffsetY
+        }
     }
 
 }

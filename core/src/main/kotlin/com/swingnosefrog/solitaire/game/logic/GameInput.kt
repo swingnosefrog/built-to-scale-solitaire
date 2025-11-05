@@ -13,6 +13,7 @@ import kotlin.math.min
 class GameInput(val logic: GameLogic) {
 
     val inputsDisabled: BooleanVar = BooleanVar(false)
+    
     private val dragInfo: Var<DragInfo> = Var(DragInfo.Nothing)
     
     fun isDragging(): Boolean {
@@ -23,9 +24,9 @@ class GameInput(val logic: GameLogic) {
         val dragging = getDraggingInfo() ?: return
         
         val myList = dragging.cardStack.cardList.toList()
-        dragging.oldZone.cardStack.cardList.addAll(myList)
+        dragging.originalZone.cardStack.cardList.addAll(myList)
 
-        logic.eventDispatcher.onCardStackPickupCancelled(logic, dragging.cardStack, dragging.oldZone)
+        logic.eventDispatcher.onCardStackPickupCancelled(logic, dragging.cardStack, dragging.originalZone)
         dragInfo.set(DragInfo.Nothing)
         logic.checkTableauAfterActivity()
     }
@@ -33,7 +34,7 @@ class GameInput(val logic: GameLogic) {
     fun endDrag(newZone: CardZone): Boolean {
         val dragging = getDraggingInfo() ?: return false
         
-        if (newZone == dragging.oldZone || !logic.canPlaceStackOnZone(dragging.cardStack, newZone)) {
+        if (newZone == dragging.originalZone || !logic.canPlaceStackOnZone(dragging.cardStack, newZone)) {
             cancelDrag()
             return false
         }
@@ -65,7 +66,7 @@ class GameInput(val logic: GameLogic) {
             return
         }
 
-        val newDragging = DragInfo.Dragging(newSet, zoneCoords)
+        val newDragging = DragInfo.Dragging(zoneCoords, newSet)
         repeat(newSet.size) {
             zoneCardList.removeAt(zoneCoords.index)
         }
@@ -77,8 +78,7 @@ class GameInput(val logic: GameLogic) {
     fun updateDrag(worldX: Float, worldY: Float) {
         val dragging = getDraggingInfo() ?: return
         
-        dragging.x = worldX - dragging.mouseOffset.x
-        dragging.y = worldY - dragging.mouseOffset.y
+        dragging.updatePosition(worldX, worldY)
     }
     
     fun getDraggingInfo(): DragInfo.Dragging? = dragInfo.getOrCompute() as? DragInfo.Dragging
@@ -104,11 +104,10 @@ class GameInput(val logic: GameLogic) {
             val minY = max(dragRect.y, zoneRect.y)
             val maxX = min(dragRect.maxX, zoneRect.maxX)
             val maxY = min(dragRect.maxY, zoneRect.maxY)
-            val overlap = Rectangle(minX, minY, maxX - minX, maxY - minY)
-            val area = overlap.area()
+            val overlapArea = (maxX - minX) * (maxY - minY)
 
-            if (area > mostArea) {
-                mostArea = area
+            if (overlapArea > mostArea) {
+                mostArea = overlapArea
                 nearest = zone
             }
         }
