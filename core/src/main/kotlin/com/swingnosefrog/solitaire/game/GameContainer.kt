@@ -6,8 +6,8 @@ import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.swingnosefrog.solitaire.game.audio.GameAudio
 import com.swingnosefrog.solitaire.game.audio.GameMusic
-import com.swingnosefrog.solitaire.game.logic.GameInput
-import com.swingnosefrog.solitaire.game.logic.GameInputProcessor
+import com.swingnosefrog.solitaire.game.input.GameInput
+import com.swingnosefrog.solitaire.game.input.GameGdxInputProcessor
 import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.game.logic.GameStats
 import com.swingnosefrog.solitaire.game.rendering.GameRenderer
@@ -28,7 +28,7 @@ class GameContainer(
     val gameRenderer: GameRenderer = GameRenderer(gameLogic, batch)
     val viewport: Viewport get() = gameRenderer.viewport
     
-    val inputProcessor: InputProcessor = GameInputProcessor(gameInput, viewport)
+    val gdxInputProcessor: InputProcessor = GameGdxInputProcessor(gameInput, viewport)
     
     val gameAudio: GameAudio = GameAudio(gameLogic, soundSystem)
     

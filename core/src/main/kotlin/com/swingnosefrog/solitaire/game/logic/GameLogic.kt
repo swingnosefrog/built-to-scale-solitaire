@@ -6,6 +6,7 @@ import com.swingnosefrog.solitaire.game.CardSymbol
 import com.swingnosefrog.solitaire.game.animation.AnimationContainer
 import com.swingnosefrog.solitaire.game.animation.CardAnimation
 import com.swingnosefrog.solitaire.game.animation.GameAnimation
+import com.swingnosefrog.solitaire.game.input.GameInput
 import paintbox.Paintbox
 import paintbox.binding.BooleanVar
 import paintbox.binding.ReadOnlyBooleanVar

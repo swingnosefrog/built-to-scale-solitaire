@@ -1,7 +1,7 @@
 package com.swingnosefrog.solitaire.screen.main.menu
 
 import com.swingnosefrog.solitaire.Localization
-import com.swingnosefrog.solitaire.game.logic.MouseMode
+import com.swingnosefrog.solitaire.game.input.MouseMode
 import com.swingnosefrog.solitaire.menu.MenuOption
 import paintbox.binding.ReadOnlyVar
 import paintbox.ui.StringVarConverter

@@ -1,8 +1,10 @@
-package com.swingnosefrog.solitaire.game.logic
+package com.swingnosefrog.solitaire.game.input
 
 import com.badlogic.gdx.math.Rectangle
-import com.swingnosefrog.solitaire.game.logic.GameLogic.Companion.CARD_HEIGHT
-import com.swingnosefrog.solitaire.game.logic.GameLogic.Companion.CARD_WIDTH
+import com.swingnosefrog.solitaire.game.logic.CardZone
+import com.swingnosefrog.solitaire.game.logic.DragInfo
+import com.swingnosefrog.solitaire.game.logic.GameLogic
+import com.swingnosefrog.solitaire.game.logic.ZoneCoordinates
 import paintbox.binding.BooleanVar
 import paintbox.binding.Var
 import paintbox.util.gdxutils.maxX
@@ -14,7 +16,7 @@ class GameInput(val logic: GameLogic) {
 
     val inputsDisabled: BooleanVar = BooleanVar(false)
     
-    private val dragInfo: Var<DragInfo> = Var(DragInfo.Nothing)
+    private val dragInfo: Var<DragInfo> = Var.Companion(DragInfo.Nothing)
     
     fun isDragging(): Boolean {
         return dragInfo.getOrCompute() !is DragInfo.Nothing
@@ -91,13 +93,18 @@ class GameInput(val logic: GameLogic) {
 
         val dragX = dragging.x
         val dragY = dragging.y
-        val dragW = CARD_WIDTH
-        val dragH = CARD_HEIGHT // Only the topmost card of the stack counts for area checking
+        val dragW = GameLogic.Companion.CARD_WIDTH
+        val dragH = GameLogic.Companion.CARD_HEIGHT // Only the topmost card of the stack counts for area checking
         val dragRect = Rectangle(dragX, dragY, dragW, dragH)
 
         for (zone in logic.zones.placeableCardZones) {
             val zoneRect =
-                Rectangle(zone.x.get(), zone.y.get(), CARD_WIDTH, CARD_HEIGHT + (zone.maxStackSize - 1) * zone.cardStack.stackDirection.yOffset)
+                Rectangle(
+                    zone.x.get(),
+                    zone.y.get(),
+                    GameLogic.Companion.CARD_WIDTH,
+                    GameLogic.Companion.CARD_HEIGHT + (zone.maxStackSize - 1) * zone.cardStack.stackDirection.yOffset
+                )
             if (!dragRect.overlaps(zoneRect)) continue
 
             val minX = max(dragRect.x, zoneRect.x)

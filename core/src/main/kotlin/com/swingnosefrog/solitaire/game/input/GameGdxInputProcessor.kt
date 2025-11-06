@@ -1,4 +1,4 @@
-package com.swingnosefrog.solitaire.game.logic
+package com.swingnosefrog.solitaire.game.input
 
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputProcessor
@@ -8,11 +8,10 @@ import com.swingnosefrog.solitaire.SolitaireGame
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 
+class GameGdxInputProcessor(private val input: GameInput, private val viewport: Viewport) : InputProcessor {
 
-class GameInputProcessor(private val input: GameInput, private val viewport: Viewport) : InputProcessor {
-
-    val currentMouseMode: ReadOnlyVar<MouseMode> = Var {
-        SolitaireGame.instance.settings.gameplayMouseMode.use()
+    private val currentMouseModeSetting: ReadOnlyVar<MouseMode> = Var.Companion {
+        SolitaireGame.Companion.instance.settings.gameplayMouseMode.use()
     }
 
     private fun convertToWorldCoords(screenX: Int, screenY: Int): Vector2 {
@@ -62,7 +61,7 @@ class GameInputProcessor(private val input: GameInput, private val viewport: Vie
         if (!pointer.isFirstPointer()) return false
 
         if (button == Input.Buttons.LEFT) {
-            val mouseMode = currentMouseMode.getOrCompute()
+            val mouseMode = currentMouseModeSetting.getOrCompute()
 
             when (mouseMode) {
                 MouseMode.CLICK_AND_DRAG -> {
@@ -93,7 +92,7 @@ class GameInputProcessor(private val input: GameInput, private val viewport: Vie
         if (!pointer.isFirstPointer()) return false
 
         if (button == Input.Buttons.LEFT) {
-            val mouseMode = currentMouseMode.getOrCompute()
+            val mouseMode = currentMouseModeSetting.getOrCompute()
             if (mouseMode == MouseMode.CLICK_AND_DRAG) {
                 attemptPutDownCards(screenX, screenY)
             }
@@ -123,7 +122,7 @@ class GameInputProcessor(private val input: GameInput, private val viewport: Vie
     }
 
     override fun mouseMoved(screenX: Int, screenY: Int): Boolean {
-        val mouseMode = currentMouseMode.getOrCompute()
+        val mouseMode = currentMouseModeSetting.getOrCompute()
         
         if (mouseMode == MouseMode.CLICK_THEN_CLICK) {
             if (input.isDragging()) {

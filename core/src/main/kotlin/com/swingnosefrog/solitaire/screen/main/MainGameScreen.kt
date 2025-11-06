@@ -169,8 +169,8 @@ src: ${inputManager.mostRecentActionSource.getOrCompute().sourceName}
     }
     
     private inner class BackingGameContainer private constructor(
-        private val gameInputMultiplexer: InputMultiplexer,
-    ) : Disposable, InputProcessor by gameInputMultiplexer {
+        private val gameGdxInputMultiplexer: InputMultiplexer,
+    ) : Disposable, InputProcessor by gameGdxInputMultiplexer {
         
         private var statsAndAchievementsGameListener: StatsAndAchievementsGameListener? = null
         
@@ -181,7 +181,7 @@ src: ${inputManager.mostRecentActionSource.getOrCompute().sourceName}
                 
                 val oldValue = _container
                 if (oldValue != null) {
-                    this.gameInputMultiplexer.removeProcessor(oldValue.inputProcessor)
+                    this.gameGdxInputMultiplexer.removeProcessor(oldValue.gdxInputProcessor)
                     statsAndAchievementsGameListener?.let { oldValue.gameLogic.eventDispatcher.removeListener(it) }
                     stats.persist()
                 }
@@ -189,7 +189,7 @@ src: ${inputManager.mostRecentActionSource.getOrCompute().sourceName}
                 newValue.resize(Gdx.graphics.width, Gdx.graphics.height)
                 newValue.gameRenderer.shouldApplyViewport.set(true)
                 
-                this.gameInputMultiplexer.addProcessor(newValue.inputProcessor)
+                this.gameGdxInputMultiplexer.addProcessor(newValue.gdxInputProcessor)
                 val newStatsListener = StatsAndAchievementsGameListener(stats, newValue)
                 newValue.gameLogic.eventDispatcher.addListener(newStatsListener)
                 statsAndAchievementsGameListener = newStatsListener
@@ -203,7 +203,7 @@ src: ${inputManager.mostRecentActionSource.getOrCompute().sourceName}
         
         val currentContainer: ReadOnlyVar<GameContainer> by lazy { Var(current) }
 
-        constructor() : this(gameInputMultiplexer = InputMultiplexer())
+        constructor() : this(gameGdxInputMultiplexer = InputMultiplexer())
         
         fun setNewGameContainer(newValue: GameContainer) {
             this.current = newValue

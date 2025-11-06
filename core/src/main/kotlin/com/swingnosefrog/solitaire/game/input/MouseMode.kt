@@ -1,5 +1,4 @@
-package com.swingnosefrog.solitaire.game.logic
-
+package com.swingnosefrog.solitaire.game.input
 
 enum class MouseMode {
     
