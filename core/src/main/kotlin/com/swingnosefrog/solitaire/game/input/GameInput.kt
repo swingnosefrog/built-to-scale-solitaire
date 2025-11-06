@@ -16,7 +16,7 @@ class GameInput(val logic: GameLogic) {
 
     val inputsDisabled: BooleanVar = BooleanVar(false)
     
-    private val dragInfo: Var<DragInfo> = Var.Companion(DragInfo.Nothing)
+    private val dragInfo: Var<DragInfo> = Var(DragInfo.Nothing)
     
     fun isDragging(): Boolean {
         return dragInfo.getOrCompute() !is DragInfo.Nothing
@@ -93,8 +93,8 @@ class GameInput(val logic: GameLogic) {
 
         val dragX = dragging.x
         val dragY = dragging.y
-        val dragW = GameLogic.Companion.CARD_WIDTH
-        val dragH = GameLogic.Companion.CARD_HEIGHT // Only the topmost card of the stack counts for area checking
+        val dragW = GameLogic.CARD_WIDTH
+        val dragH = GameLogic.CARD_HEIGHT // Only the topmost card of the stack counts for area checking
         val dragRect = Rectangle(dragX, dragY, dragW, dragH)
 
         for (zone in logic.zones.placeableCardZones) {
@@ -102,8 +102,8 @@ class GameInput(val logic: GameLogic) {
                 Rectangle(
                     zone.x.get(),
                     zone.y.get(),
-                    GameLogic.Companion.CARD_WIDTH,
-                    GameLogic.Companion.CARD_HEIGHT + (zone.maxStackSize - 1) * zone.cardStack.stackDirection.yOffset
+                    GameLogic.CARD_WIDTH,
+                    GameLogic.CARD_HEIGHT + (zone.maxStackSize - 1) * zone.cardStack.stackDirection.yOffset
                 )
             if (!dragRect.overlaps(zoneRect)) continue
 

@@ -10,8 +10,8 @@ import paintbox.binding.Var
 
 class GameGdxInputProcessor(private val input: GameInput, private val viewport: Viewport) : InputProcessor {
 
-    private val currentMouseModeSetting: ReadOnlyVar<MouseMode> = Var.Companion {
-        SolitaireGame.Companion.instance.settings.gameplayMouseMode.use()
+    private val currentMouseModeSetting: ReadOnlyVar<MouseMode> = Var {
+        SolitaireGame.instance.settings.gameplayMouseMode.use()
     }
 
     private fun convertToWorldCoords(screenX: Int, screenY: Int): Vector2 {
