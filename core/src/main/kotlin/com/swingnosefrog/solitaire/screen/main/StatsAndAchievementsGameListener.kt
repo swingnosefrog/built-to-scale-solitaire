@@ -23,7 +23,7 @@ class StatsAndAchievementsGameListener(
         val steamStats = SteamStats
         steamStats.updateStatCache(stats)
 
-        val achievementsWon = AchievementsLogic.getAchievementsGottenOnGameWin(gameLogic, gameContainer.gameStats)
+        val achievementsWon = AchievementsLogic.getAchievementsGottenOnGameWin(gameLogic, gameContainer.gamePlayStats)
         if (achievementsWon.isNotEmpty()) {
             achievementsWon.forEach { steamStats.markAchievementAsAchieved(it) }
         }

@@ -9,7 +9,7 @@ import com.swingnosefrog.solitaire.game.audio.GameMusic
 import com.swingnosefrog.solitaire.game.input.GameInput
 import com.swingnosefrog.solitaire.game.input.GameGdxInputProcessor
 import com.swingnosefrog.solitaire.game.logic.GameLogic
-import com.swingnosefrog.solitaire.game.logic.GameStats
+import com.swingnosefrog.solitaire.game.logic.GamePlayStats
 import com.swingnosefrog.solitaire.game.rendering.GameRenderer
 import com.swingnosefrog.solitaire.soundsystem.SoundSystem
 
@@ -23,7 +23,7 @@ class GameContainer(
 
     val gameLogic: GameLogic = gameLogicFactory()
     val gameInput: GameInput get() = gameLogic.gameInput
-    val gameStats: GameStats get() = gameLogic.gameStats
+    val gamePlayStats: GamePlayStats get() = gameLogic.gamePlayStats
     
     val gameRenderer: GameRenderer = GameRenderer(gameLogic, batch)
     val viewport: Viewport get() = gameRenderer.viewport

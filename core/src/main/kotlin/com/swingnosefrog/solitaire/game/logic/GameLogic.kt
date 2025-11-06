@@ -24,7 +24,7 @@ class GameLogic(val deckInitializer: DeckInitializer) {
 
     val zones: CardZones = CardZones(this)
     val gameInput: GameInput by lazy { GameInput(this) }
-    val gameStats: GameStats by lazy { GameStats(this) }
+    val gamePlayStats: GamePlayStats by lazy { GamePlayStats(this) }
     val animationContainer: AnimationContainer = AnimationContainer()
 
     val eventDispatcher: GameEventDispatcher = DispatcherImpl()
@@ -84,7 +84,7 @@ class GameLogic(val deckInitializer: DeckInitializer) {
         val shouldInputsBeDisabled = gameWon.get() || animationContainer.getPlayingAnimations().isNotEmpty()
         gameInput.inputsDisabled.set(shouldInputsBeDisabled)
         
-        gameStats.renderUpdate(deltaSec)
+        gamePlayStats.renderUpdate(deltaSec)
     }
 
     fun checkTableauAfterActivity() {

@@ -48,7 +48,7 @@ class MainGameHudPane(
         
         elapsedTimeClock = Var {
             val gameContainer = gameContainer.use()
-            val gameStats = gameContainer.gameStats
+            val gameStats = gameContainer.gamePlayStats
 
             val elapsedSec = gameStats.timeElapsedSec.use()
             val elapsedSecondsInt = elapsedSec.toInt()
@@ -64,7 +64,7 @@ class MainGameHudPane(
         
         movesMadeString = Var {
             val gameContainer = gameContainer.use()
-            val gameStats = gameContainer.gameStats
+            val gameStats = gameContainer.gamePlayStats
 
             val movesMade = gameStats.movesMade.use()
             var movesMadePortion = DecimalFormats.format("#,###", movesMade)

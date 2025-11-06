@@ -6,7 +6,7 @@ import paintbox.binding.ReadOnlyFloatVar
 import paintbox.binding.ReadOnlyIntVar
 
 
-class GameStats(private val logic: GameLogic) {
+class GamePlayStats(private val logic: GameLogic) {
 
     private val _timeElapsedSec: FloatVar = FloatVar(0f)
     val timeElapsedSec: ReadOnlyFloatVar get() = _timeElapsedSec
