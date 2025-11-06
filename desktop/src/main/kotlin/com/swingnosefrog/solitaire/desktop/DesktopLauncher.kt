@@ -46,7 +46,10 @@ object DesktopLauncher {
             SolitaireGame.createPaintboxSettings(
                 args.toList(),
                 IPaintboxSettings.ILoggerSettings.Impl(
-                    Logger(),
+                    Logger().apply {
+                        this.loggingLevel =
+                            if (Solitaire.isNonProductionVersion) Logger.LogLevel.DEBUG else Logger.LogLevel.INFO
+                    },
                     Solitaire.DOT_DIRECTORY.resolve("logs/")
                 )
             )
