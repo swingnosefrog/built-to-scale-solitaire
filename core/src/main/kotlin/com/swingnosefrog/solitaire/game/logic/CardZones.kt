@@ -3,9 +3,7 @@ package com.swingnosefrog.solitaire.game.logic
 import com.swingnosefrog.solitaire.game.CardSymbol
 
 
-class CardZones(
-    logic: GameLogic,
-) {
+class CardZones {
 
     val freeCellZones: List<CardZone>
     val playerZones: List<CardZone>
@@ -13,8 +11,10 @@ class CardZones(
     val spareZone: CardZone
     val foundationZones: List<CardZone>
 
-    val placeableCardZones: List<CardZone>
+    val allPlaceableCardZones: List<CardZone>
     val allCardZones: List<CardZone>
+    
+    private val placeableCardZonesSet: Set<CardZone>
 
     init {
         val zoneSpacingX = 0.5f
@@ -52,7 +52,7 @@ class CardZones(
             }
         }
 
-        placeableCardZones = freeCellZones + playerZones + foundationZones
+        allPlaceableCardZones = freeCellZones + playerZones + foundationZones
         allCardZones = freeCellZones + playerZones + spareZone + dealZone + foundationZones
 
         // Centre horizontally
@@ -62,5 +62,9 @@ class CardZones(
             it.x.set(it.x.get() + xOffset)
             it.y.set(it.y.get() - (GameLogic.CARD_HEIGHT * 2 + zoneSpacingY * 1))
         }
+        
+        placeableCardZonesSet = allPlaceableCardZones.toSet()
     }
+    
+    fun isPlaceable(zone: CardZone): Boolean = zone in placeableCardZonesSet
 }

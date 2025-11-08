@@ -16,10 +16,10 @@ class GameInput(val logic: GameLogic) {
 
     val inputsDisabled: BooleanVar = BooleanVar(false)
     
-    private val dragInfo: Var<DragInfo> = Var(DragInfo.Nothing)
+    private val dragInfo: Var<DragInfo> = Var(DragInfo.Deciding(ZoneSelection(logic.zones.playerZones.first(), indexFromEnd = 0)))
     
     fun isDragging(): Boolean {
-        return dragInfo.getOrCompute() !is DragInfo.Nothing
+        return dragInfo.getOrCompute() !is DragInfo.Deciding
     }
 
     fun cancelDrag() {
@@ -29,8 +29,9 @@ class GameInput(val logic: GameLogic) {
         dragging.originalZone.cardStack.cardList.addAll(myList)
 
         logic.eventDispatcher.onCardStackPickupCancelled(logic, dragging.cardStack, dragging.originalZone)
-        dragInfo.set(DragInfo.Nothing)
-        logic.checkTableauAfterActivity()
+        val zoneSelection = ZoneSelection(dragging.originalZone, indexFromEnd = dragging.cardStack.cardList.size)
+        dragInfo.set(DragInfo.Deciding(zoneSelection))
+        logic.checkTableauAfterActivity() 
     }
     
     fun endDrag(newZone: CardZone): Boolean {
@@ -48,7 +49,7 @@ class GameInput(val logic: GameLogic) {
         if (dragging.cardStack.cardList.size == 1 && newZone in logic.zones.foundationZones) {
             logic.eventDispatcher.onCardPlacedInFoundation(logic, dragging.cardStack.cardList.first(), newZone)
         }
-        dragInfo.set(DragInfo.Nothing)
+        dragInfo.set(DragInfo.Deciding(ZoneSelection(newZone, indexFromEnd = 0)))
         logic.checkTableauAfterActivity()
 
         return true
@@ -78,12 +79,12 @@ class GameInput(val logic: GameLogic) {
     }
 
     fun updateDrag(worldX: Float, worldY: Float) {
-        val dragging = getDraggingInfo() ?: return
-        
-        dragging.updatePosition(worldX, worldY)
+        dragInfo.getOrCompute().updatePosition(this, worldX, worldY)
     }
     
     fun getDraggingInfo(): DragInfo.Dragging? = dragInfo.getOrCompute() as? DragInfo.Dragging
+    
+    fun getDecidingInfo(): DragInfo.Deciding? = dragInfo.getOrCompute() as? DragInfo.Deciding
 
     fun getNearestOverlappingDraggingZone(): CardZone? {
         val dragging = getDraggingInfo() ?: return null
@@ -97,7 +98,7 @@ class GameInput(val logic: GameLogic) {
         val dragH = GameLogic.CARD_HEIGHT // Only the topmost card of the stack counts for area checking
         val dragRect = Rectangle(dragX, dragY, dragW, dragH)
 
-        for (zone in logic.zones.placeableCardZones) {
+        for (zone in logic.zones.allPlaceableCardZones) {
             val zoneRect =
                 Rectangle(
                     zone.x.get(),

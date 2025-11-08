@@ -20,11 +20,9 @@ class GameGdxInputProcessor(private val input: GameInput, private val viewport: 
         return unprojected
     }
 
-    private fun updateDrag(screenX: Int, screenY: Int) {
-        if (input.isDragging()) {
-            val worldCoords = convertToWorldCoords(screenX, screenY)
-            input.updateDrag(worldCoords.x, worldCoords.y)
-        }
+    private fun updateMouseMovement(screenX: Int, screenY: Int) {
+        val worldCoords = convertToWorldCoords(screenX, screenY)
+        input.updateDrag(worldCoords.x, worldCoords.y)
     }
 
     private fun Int.isFirstPointer(): Boolean = this == 0
@@ -105,7 +103,7 @@ class GameGdxInputProcessor(private val input: GameInput, private val viewport: 
         if (areInputsDisabled()) return false
         if (!pointer.isFirstPointer()) return false
 
-        updateDrag(screenX, screenY)
+        updateMouseMovement(screenX, screenY)
 
         return false
     }
@@ -122,13 +120,7 @@ class GameGdxInputProcessor(private val input: GameInput, private val viewport: 
     }
 
     override fun mouseMoved(screenX: Int, screenY: Int): Boolean {
-        val mouseMode = currentMouseModeSetting.getOrCompute()
-        
-        if (mouseMode == MouseMode.CLICK_THEN_CLICK) {
-            if (input.isDragging()) {
-                updateDrag(screenX, screenY)
-            }
-        }
+        updateMouseMovement(screenX, screenY)
         
         return false
     }

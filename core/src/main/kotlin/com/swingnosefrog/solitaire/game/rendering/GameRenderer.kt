@@ -100,6 +100,21 @@ open class GameRenderer(
         logic.gameInput.getDraggingInfo()?.also { dragging ->
             dragging.cardStack.render(dragging.x, dragging.y - 0.05f, isFlippedOver = false, renderShadow = true)
         }
+        
+        logic.gameInput.getDecidingInfo()?.also { deciding ->
+            if (deciding.isHoveringOverSelection) {
+                val selection = deciding.currentSelection
+                val zone = selection.zone
+                val cardStack = zone.cardStack
+
+                batch.setColor(0f, 0f, 1f, 0.35f)
+                renderCardTex(
+                    CardAssetKey.Silhouette,
+                    zone.x.get(),
+                    zone.y.get() + zone.cardStack.stackDirection.yOffset * (cardStack.cardList.size - selection.indexFromEnd - 1)
+                )
+            }
+        }
 
         batch.color = Color.WHITE
         batch.end()

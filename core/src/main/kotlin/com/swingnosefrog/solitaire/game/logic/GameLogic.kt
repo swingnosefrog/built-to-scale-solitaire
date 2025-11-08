@@ -22,7 +22,7 @@ class GameLogic(val deckInitializer: DeckInitializer) {
 
     private val deck: List<Card> = deckInitializer.initializeDeck(Card.createStandardDeck())
 
-    val zones: CardZones = CardZones(this)
+    val zones: CardZones = CardZones()
     val gameInput: GameInput by lazy { GameInput(this) }
     val gamePlayStats: GamePlayStats by lazy { GamePlayStats(this) }
     val animationContainer: AnimationContainer = AnimationContainer()
