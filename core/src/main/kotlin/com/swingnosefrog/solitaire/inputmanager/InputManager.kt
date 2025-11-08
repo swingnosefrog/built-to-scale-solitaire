@@ -98,9 +98,13 @@ class InputManager(
         return actionsToGlyphsVars[action] ?: glyphVarEmpty
     }
 
-    fun addInputActionListener(listener: InputActionListener) {
+    fun addInputActionListener(listener: InputActionListener, index: Int? = null) {
         if (!listeners.contains(listener)) {
-            listeners.add(listener)
+            if (index != null) {
+                listeners.add(index, listener)
+            } else {
+                listeners.add(listener)
+            }
         }
     }
 

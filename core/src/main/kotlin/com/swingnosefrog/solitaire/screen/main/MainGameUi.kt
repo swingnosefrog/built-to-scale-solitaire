@@ -47,7 +47,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
     private val uiSceneRoot: SceneRoot = SceneRoot(uiViewport)
     private val sceneRootInputProcessor: ToggleableInputProcessor = ToggleableInputProcessor(uiSceneRoot.inputSystem)
 
-    val uiInputHandler: IUiInputHandler
+    private val uiInputHandler: IUiInputHandler
     val inputProcessor: InputProcessor
     val inputActionListener: InputActionListener
 
@@ -156,6 +156,10 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
     fun getDebugString(): String {
         return """MenuState: ${currentMenuState.getOrCompute()}
 """
+    }
+
+    fun debugReinitSceneRoot() {
+        uiInputHandler.debugReinitSceneRoot()
     }
 
     interface IUiInputHandler {

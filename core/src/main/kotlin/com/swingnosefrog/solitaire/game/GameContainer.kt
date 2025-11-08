@@ -8,6 +8,7 @@ import com.swingnosefrog.solitaire.game.audio.GameAudio
 import com.swingnosefrog.solitaire.game.audio.GameMusic
 import com.swingnosefrog.solitaire.game.input.GameInput
 import com.swingnosefrog.solitaire.game.input.GameGdxInputProcessor
+import com.swingnosefrog.solitaire.game.input.GameInputActionListener
 import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.game.logic.GamePlayStats
 import com.swingnosefrog.solitaire.game.rendering.GameRenderer
@@ -29,6 +30,7 @@ class GameContainer(
     val viewport: Viewport get() = gameRenderer.viewport
     
     val gdxInputProcessor: InputProcessor = GameGdxInputProcessor(gameInput, viewport)
+    val inputActionListener: GameInputActionListener = GameInputActionListener(gameInput)
     
     val gameAudio: GameAudio = GameAudio(gameLogic, soundSystem)
     

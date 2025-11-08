@@ -43,7 +43,7 @@ class DebugInputAdapter(
             MainGameUi.MenuState.PAUSE_MENU -> {
                 when (keycode) {
                     Input.Keys.R if ui.currentMenuState.getOrCompute() == MainGameUi.MenuState.PAUSE_MENU && Paintbox.debugMode.get() -> {
-                        ui.uiInputHandler.debugReinitSceneRoot()
+                        ui.debugReinitSceneRoot()
                         return true
                     }
                 }

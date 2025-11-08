@@ -37,7 +37,6 @@ class MainGameScreen(
     
     private val screenInputMultiplexer: InputMultiplexer = InputMultiplexer()
     private val toggleableGameInputProcessor: ToggleableInputProcessor
-
     val inputManager: InputManager = main.inputManagerFactory.create()
 
     private val soundSystem: SoundSystem = SoundSystem.createDefaultSoundSystem()
@@ -54,17 +53,16 @@ class MainGameScreen(
         toggleableGameInputProcessor = ToggleableInputProcessor(backingGameContainer)
         toggleableGameInputProcessor.enabled.bind { ui.currentMenuState.use() == MainGameUi.MenuState.NONE }
         
-        startNewGame(DeckInitializer.RandomSeed())
-        
-        soundSystem.startRealtime()
-        
         this.screenInputMultiplexer.addProcessor(ui.inputProcessor)
         if (Solitaire.isNonProductionVersion) {
             this.screenInputMultiplexer.addProcessor(DebugInputAdapter(this, this.ui))
         }
         this.screenInputMultiplexer.addProcessor(toggleableGameInputProcessor)
         
-        inputManager.addInputActionListener(ui.inputActionListener)
+        inputManager.addInputActionListener(ui.inputActionListener, index = 0)
+
+        startNewGame(DeckInitializer.RandomSeed())
+        soundSystem.startRealtime()
     }
     
     fun startNewGame(deckInitializer: DeckInitializer) {
@@ -181,6 +179,7 @@ src: ${inputManager.mostRecentActionSource.getOrCompute().sourceName}
                 
                 val oldValue = _container
                 if (oldValue != null) {
+                    inputManager.removeInputActionListener(oldValue.inputActionListener)
                     this.gameGdxInputMultiplexer.removeProcessor(oldValue.gdxInputProcessor)
                     statsAndAchievementsGameListener?.let { oldValue.gameLogic.eventDispatcher.removeListener(it) }
                     stats.persist()
@@ -188,7 +187,8 @@ src: ${inputManager.mostRecentActionSource.getOrCompute().sourceName}
 
                 newValue.resize(Gdx.graphics.width, Gdx.graphics.height)
                 newValue.gameRenderer.shouldApplyViewport.set(true)
-                
+
+                inputManager.addInputActionListener(newValue.inputActionListener)
                 this.gameGdxInputMultiplexer.addProcessor(newValue.gdxInputProcessor)
                 val newStatsListener = StatsAndAchievementsGameListener(stats, newValue)
                 newValue.gameLogic.eventDispatcher.addListener(newStatsListener)
@@ -203,7 +203,7 @@ src: ${inputManager.mostRecentActionSource.getOrCompute().sourceName}
         
         val currentContainer: ReadOnlyVar<GameContainer> by lazy { Var(current) }
 
-        constructor() : this(gameGdxInputMultiplexer = InputMultiplexer())
+        constructor() : this(InputMultiplexer())
         
         fun setNewGameContainer(newValue: GameContainer) {
             this.current = newValue
