@@ -13,14 +13,18 @@ sealed class DragInfo {
 
         var currentSelection: ZoneSelection = initialSelection
             private set
-        var isHoveringOverSelection: Boolean = false // TODO this may be true on instantiation
+        var isHoveringOverSelection: Boolean = false
             private set
         
         override fun updatePosition(input: GameInput, worldX: Float, worldY: Float) {
             val logic = input.logic
             val newSelection = logic.getSelectedZoneCoordinates(worldX, worldY)?.toZoneSelection()?.takeIf { sel ->
-                logic.zones.isPlaceable(sel.zone)
+                logic.zones.isPickupable(sel.zone)
             }
+            attemptSetNewSelection(newSelection)
+        }
+        
+        private fun attemptSetNewSelection(newSelection: ZoneSelection?) {
             if (newSelection != null) {
                 isHoveringOverSelection = true
                 currentSelection = newSelection

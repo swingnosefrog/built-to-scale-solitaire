@@ -101,6 +101,7 @@ open class GameRenderer(
             dragging.cardStack.render(dragging.x, dragging.y - 0.05f, isFlippedOver = false, renderShadow = true)
         }
         
+        // TODO remove me
         logic.gameInput.getDecidingInfo()?.also { deciding ->
             if (deciding.isHoveringOverSelection) {
                 val selection = deciding.currentSelection

@@ -12,9 +12,11 @@ class CardZones {
     val foundationZones: List<CardZone>
 
     val allPlaceableCardZones: List<CardZone>
+    val allPickupableCardZones: List<CardZone>
     val allCardZones: List<CardZone>
-    
+
     private val placeableCardZonesSet: Set<CardZone>
+    private val pickupableCardZonesSet: Set<CardZone>
 
     init {
         val zoneSpacingX = 0.5f
@@ -36,7 +38,8 @@ class CardZones {
         ).onEach { zone ->
             zone.cardStack.stackDirection = StackDirection.DOWN
         }
-        dealZone = CardZone("deal", (1 + zoneSpacingX) * 4.5f, 0f, 2, false, isFlippedOver = true, isOutlineVisible = false)
+        dealZone =
+            CardZone("deal", (1 + zoneSpacingX) * 4.5f, 0f, 2, false, isFlippedOver = true, isOutlineVisible = false)
         spareZone = CardZone("spare", (1 + zoneSpacingX) * 3.5f, 0f, 3, false, isFlippedOver = false).apply {
             this.cardStack.stackDirection = StackDirection.UP
         }
@@ -53,6 +56,7 @@ class CardZones {
         }
 
         allPlaceableCardZones = freeCellZones + playerZones + foundationZones
+        allPickupableCardZones = freeCellZones + playerZones
         allCardZones = freeCellZones + playerZones + spareZone + dealZone + foundationZones
 
         // Centre horizontally
@@ -62,9 +66,12 @@ class CardZones {
             it.x.set(it.x.get() + xOffset)
             it.y.set(it.y.get() - (GameLogic.CARD_HEIGHT * 2 + zoneSpacingY * 1))
         }
-        
+
         placeableCardZonesSet = allPlaceableCardZones.toSet()
+        pickupableCardZonesSet = allPickupableCardZones.toSet()
     }
-    
+
     fun isPlaceable(zone: CardZone): Boolean = zone in placeableCardZonesSet
+
+    fun isPickupable(zone: CardZone): Boolean = zone in pickupableCardZonesSet
 }
