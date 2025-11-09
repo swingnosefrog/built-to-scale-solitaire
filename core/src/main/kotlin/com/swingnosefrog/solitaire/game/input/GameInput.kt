@@ -78,7 +78,7 @@ class GameInput(val logic: GameLogic) {
         logic.eventDispatcher.onCardStackPickedUp(logic, newDragging.cardStack, zoneCoords.zone)
     }
 
-    fun updateDrag(worldX: Float, worldY: Float) {
+    fun updateMousePosition(worldX: Float, worldY: Float) {
         dragInfo.getOrCompute().updatePosition(this, worldX, worldY)
     }
     

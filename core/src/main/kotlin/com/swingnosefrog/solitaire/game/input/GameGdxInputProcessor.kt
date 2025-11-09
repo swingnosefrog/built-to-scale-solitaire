@@ -22,7 +22,7 @@ class GameGdxInputProcessor(private val input: GameInput, private val viewport: 
 
     private fun updateMouseMovement(screenX: Int, screenY: Int) {
         val worldCoords = convertToWorldCoords(screenX, screenY)
-        input.updateDrag(worldCoords.x, worldCoords.y)
+        input.updateMousePosition(worldCoords.x, worldCoords.y)
     }
 
     private fun Int.isFirstPointer(): Boolean = this == 0
@@ -43,7 +43,7 @@ class GameGdxInputProcessor(private val input: GameInput, private val viewport: 
 
     private fun attemptPutDownCards(screenX: Int, screenY: Int) {
         val worldCoords = convertToWorldCoords(screenX, screenY)
-        input.updateDrag(worldCoords.x, worldCoords.y)
+        input.updateMousePosition(worldCoords.x, worldCoords.y)
 
         val nearestZone = input.getNearestOverlappingDraggingZone()
         if (nearestZone == null) {
