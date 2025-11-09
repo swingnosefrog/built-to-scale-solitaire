@@ -339,7 +339,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
                             return true
                         }
 
-                        InputActions.Back, InputActions.Menu -> {
+                        InputActions.Menu -> {
                             openPauseMenu()
                             return true
                         }
