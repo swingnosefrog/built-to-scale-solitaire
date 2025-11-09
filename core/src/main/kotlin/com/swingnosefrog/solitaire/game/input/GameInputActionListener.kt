@@ -11,6 +11,7 @@ class GameInputActionListener(private val input: GameInput) : InputActionListene
 
     override fun handleDigitalActionPressed(actionSource: ActionSource, action: IDigitalInputAction): Boolean {
         if (action !is InputActions) return false
+        if (input.inputsDisabled.get()) return false
 
         when (action) {
             InputActions.DirectionUp -> {

@@ -96,6 +96,7 @@ class GameInput(val logic: GameLogic) {
     }
     
     fun updateFromDirectionPress(direction: Direction): Boolean {
+        if (inputsDisabled.get()) return false
         if (!canNonCancelButtonOperationInterruptDragging()) return false
 
         switchToButtonsFocus(false)
@@ -107,6 +108,8 @@ class GameInput(val logic: GameLogic) {
     }
 
     fun switchToButtonsFocus(snapToNearestZoneIfNotHovering: Boolean) {
+        if (inputsDisabled.get()) return
+        
         _isMouseBased.set(false)
 
         val currentDragInfo = getCurrentDragInfo()
