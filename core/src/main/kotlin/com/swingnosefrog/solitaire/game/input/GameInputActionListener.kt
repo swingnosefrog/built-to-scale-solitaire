@@ -38,8 +38,10 @@ class GameInputActionListener(private val input: GameInput) : InputActionListene
                             return true
                         }
 
-                        val mouseOffset = dragInfo.lastKnownMouseOffset
-                        val zoneCoords = dragInfo.currentSelection.toZoneCoordinates(mouseOffset.x, mouseOffset.y)
+                        val zoneCoords = dragInfo.currentSelection.toZoneCoordinates(
+                            dragInfo.lastKnownMouseOffsetX,
+                            dragInfo.lastKnownMouseOffsetY
+                        )
                         return input.attemptStartDrag(zoneCoords, null)
                     }
 

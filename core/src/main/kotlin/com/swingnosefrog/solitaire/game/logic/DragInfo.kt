@@ -1,7 +1,6 @@
 package com.swingnosefrog.solitaire.game.logic
 
 import com.badlogic.gdx.math.Rectangle
-import com.badlogic.gdx.math.Vector2
 import com.swingnosefrog.solitaire.game.Card
 import com.swingnosefrog.solitaire.game.input.GameInput
 import com.swingnosefrog.solitaire.game.input.MouseMode
@@ -29,7 +28,10 @@ sealed class DragInfo {
             private set
         var isHoveringOverSelection: Boolean = false
             private set
-        val lastKnownMouseOffset: Vector2 = Vector2(0f, 0f)
+        var lastKnownMouseOffsetX: Float = 0f
+            private set
+        var lastKnownMouseOffsetY: Float = 0f
+            private set
 
         override val hoveredZone: CardZone
             get() = currentSelection.zone
@@ -51,7 +53,8 @@ sealed class DragInfo {
             }
             attemptSetNewSelection(newSelection)
             if (newSelection != null) {
-                lastKnownMouseOffset.set(selectedZoneCoordinates.offsetX, selectedZoneCoordinates.offsetY)
+                lastKnownMouseOffsetX = selectedZoneCoordinates.offsetX
+                lastKnownMouseOffsetY = selectedZoneCoordinates.offsetY
             }
         }
         
