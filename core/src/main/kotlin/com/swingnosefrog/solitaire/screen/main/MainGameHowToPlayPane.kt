@@ -23,7 +23,6 @@ import paintbox.ui.Pane
 import paintbox.ui.RenderAlign
 import paintbox.ui.area.Insets
 import paintbox.ui.control.TextLabel
-import paintbox.ui.element.RectElement
 import paintbox.ui.element.RoundedRectElement
 import paintbox.util.gdxutils.grey
 import kotlin.math.min

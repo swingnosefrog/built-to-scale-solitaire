@@ -1,13 +1,9 @@
 package com.swingnosefrog.solitaire.screen.main.menu
 
 import com.swingnosefrog.solitaire.Localization
-import com.swingnosefrog.solitaire.inputmanager.IActionInputGlyph
 import com.swingnosefrog.solitaire.inputmanager.InputManager
-import com.swingnosefrog.solitaire.inputmanager.impl.InputActions
 import com.swingnosefrog.solitaire.menu.MenuOption
 import com.swingnosefrog.solitaire.screen.main.MainGameUi
-import paintbox.binding.ReadOnlyVar
-import paintbox.binding.Var
 
 class MainGameMenus(
     private val ui: MainGameUi,
