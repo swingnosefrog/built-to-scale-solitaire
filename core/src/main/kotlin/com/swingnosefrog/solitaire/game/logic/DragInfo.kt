@@ -19,7 +19,7 @@ sealed class DragInfo {
         override fun updatePosition(input: GameInput, worldX: Float, worldY: Float) {
             val logic = input.logic
             val newSelection = logic.getSelectedZoneCoordinates(worldX, worldY)?.toZoneSelection()?.takeIf { sel ->
-                logic.zones.isPickupable(sel.zone)
+                logic.zones.isPickupable(sel.zone) && !sel.zone.isFlippedOver
             }
             attemptSetNewSelection(newSelection)
         }
