@@ -16,7 +16,6 @@ class CardZones {
     val allCardZones: List<CardZone>
 
     private val placeableCardZonesSet: Set<CardZone>
-    private val pickupableCardZonesSet: Set<CardZone>
 
     init {
         val zoneSpacingX = 0.5f
@@ -68,10 +67,7 @@ class CardZones {
         }
 
         placeableCardZonesSet = allPlaceableCardZones.toSet()
-        pickupableCardZonesSet = allPickupableCardZones.toSet()
     }
 
     fun isPlaceable(zone: CardZone): Boolean = zone in placeableCardZonesSet
-
-    fun isPickupable(zone: CardZone): Boolean = zone in pickupableCardZonesSet
 }

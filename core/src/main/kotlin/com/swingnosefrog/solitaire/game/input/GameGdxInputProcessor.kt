@@ -29,12 +29,12 @@ class GameGdxInputProcessor(private val input: GameInput, private val viewport: 
 
     private fun areInputsDisabled(): Boolean = input.inputsDisabled.get()
 
-    private fun attemptPickUpCards(screenX: Int, screenY: Int): Boolean {
+    private fun attemptPickUpCards(screenX: Int, screenY: Int, mouseMode: MouseMode): Boolean {
         val worldCoords = convertToWorldCoords(screenX, screenY)
 
         val zoneCoords = input.logic.getSelectedZoneCoordinates(worldCoords.x, worldCoords.y)
         if (zoneCoords != null) {
-            input.attemptStartDrag(zoneCoords)
+            input.attemptStartDrag(zoneCoords, mouseMode)
             return true
         }
 
@@ -45,11 +45,12 @@ class GameGdxInputProcessor(private val input: GameInput, private val viewport: 
         val worldCoords = convertToWorldCoords(screenX, screenY)
         input.updateMousePosition(worldCoords.x, worldCoords.y)
 
-        val nearestZone = input.getNearestOverlappingDraggingZone()
+        val dragging = input.getDraggingInfo() ?: return
+        val nearestZone = dragging.getNearestOverlappingDraggingZone(input.logic)
         if (nearestZone == null) {
             input.cancelDrag()
         } else {
-            input.endDrag(nearestZone)
+            input.endDrag(nearestZone, false)
         }
     }
 
@@ -59,11 +60,9 @@ class GameGdxInputProcessor(private val input: GameInput, private val viewport: 
         if (!pointer.isFirstPointer()) return false
 
         if (button == Input.Buttons.LEFT) {
-            val mouseMode = currentMouseModeSetting.getOrCompute()
-
-            when (mouseMode) {
+            when (val mouseMode = currentMouseModeSetting.getOrCompute()) {
                 MouseMode.CLICK_AND_DRAG -> {
-                    return attemptPickUpCards(screenX, screenY)
+                    return attemptPickUpCards(screenX, screenY, mouseMode)
                 }
 
                 MouseMode.CLICK_THEN_CLICK -> {
@@ -71,7 +70,7 @@ class GameGdxInputProcessor(private val input: GameInput, private val viewport: 
                         attemptPutDownCards(screenX, screenY)
                         return true
                     } else {
-                        return attemptPickUpCards(screenX, screenY)
+                        return attemptPickUpCards(screenX, screenY, mouseMode)
                     }
                 }
             }

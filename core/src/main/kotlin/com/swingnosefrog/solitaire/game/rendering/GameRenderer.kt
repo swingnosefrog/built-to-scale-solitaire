@@ -102,18 +102,33 @@ open class GameRenderer(
         }
         
         // TODO remove me
-        logic.gameInput.getDecidingInfo()?.also { deciding ->
-            if (deciding.isHoveringOverSelection) {
-                val selection = deciding.currentSelection
-                val zone = selection.zone
-                val cardStack = zone.cardStack
+        run {
+            logic.gameInput.getDecidingInfo()?.also { deciding ->
+                if (deciding.isHoveringOverSelection) {
+                    val selection = deciding.currentSelection
+                    val zone = selection.zone
+                    val cardStack = zone.cardStack
 
-                batch.setColor(0f, 0f, 1f, 0.35f)
-                renderCardTex(
-                    CardAssetKey.Silhouette,
-                    zone.x.get(),
-                    zone.y.get() + zone.cardStack.stackDirection.yOffset * (cardStack.cardList.size - selection.indexFromEnd - 1)
-                )
+                    batch.setColor(0f, 0f, 1f, 0.35f)
+                    renderCardTex(
+                        CardAssetKey.Silhouette,
+                        zone.x.get(),
+                        zone.y.get() + zone.cardStack.stackDirection.yOffset * (cardStack.cardList.size - selection.indexFromEnd - 1)
+                    )
+                }
+            }
+            logic.gameInput.getDraggingInfo()?.also { dragging ->
+                if (dragging.isCurrentlyHoveringOverZone) {
+                    val zone = dragging.hoveredZone
+                    val cardStack = zone.cardStack
+
+                    batch.setColor(1f, 0f, 1f, 0.35f)
+                    renderCardTex(
+                        CardAssetKey.Silhouette,
+                        zone.x.get(),
+                        zone.y.get() + zone.cardStack.stackDirection.yOffset * (cardStack.cardList.size)
+                    )
+                }
             }
         }
 

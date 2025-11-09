@@ -18,6 +18,8 @@ class AssetRegistryAssetLoader : AssetLoaderBase<AssetRegistry>(AssetRegistry) {
         assetRegistry.loadAsset<Texture>("ui_nut_icon", "textures/ui/nut_icon.png", linearTexture())
         assetRegistry.loadAsset<Texture>("ui_x", "textures/ui/x.png", linearTexture())
         assetRegistry.loadAsset<Texture>("ui_x_bordered", "textures/ui/x_bordered.png", linearTexture())
+        assetRegistry.loadAsset<Texture>("ui_cursor_invert", "cursors/cursor_invert.png")
+        assetRegistry.loadAsset<Texture>("ui_cursor_invert_pressed", "cursors/cursor_invert_pressed.png")
         
         assetRegistry.loadAsset<Texture>("how_to_play_1", "textures/how_to_play/1.png", linearTexture())
         assetRegistry.loadAsset<Texture>("how_to_play_2", "textures/how_to_play/2.png", linearTexture())
