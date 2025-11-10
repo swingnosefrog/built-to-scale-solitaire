@@ -34,7 +34,7 @@ class GameInputActionListener(private val input: GameInput) : InputActionListene
                 when (val dragInfo = input.getCurrentDragInfo()) {
                     is DragInfo.Deciding -> {
                         if (!dragInfo.isHoveringOverSelection) {
-                            input.switchToButtonsFocus(true)
+                            input.switchToButtonsFocusAndSnapToNearestZoneIfNotHovering()
                             return true
                         }
 
@@ -48,7 +48,7 @@ class GameInputActionListener(private val input: GameInput) : InputActionListene
                     is DragInfo.Dragging -> {
                         if (!dragInfo.isCurrentlyHoveringOverZone) {
                             // Don't actually end drag, steal input focus first
-                            input.switchToButtonsFocus(true)
+                            input.switchToButtonsFocusAndSnapToNearestZoneIfNotHovering()
                             return true
                         }
 

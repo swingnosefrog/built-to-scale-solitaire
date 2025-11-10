@@ -38,6 +38,10 @@ sealed class DragInfo {
         override val isCurrentlyHoveringOverZone: Boolean
             get() = isHoveringOverSelection
 
+        override var lastMouseWorldX: Float = initialSelection.zone.x.get()
+        override var lastMouseWorldY: Float =
+            initialSelection.zone.y.get() + initialSelection.zone.cardStack.cardList.size * initialSelection.zone.cardStack.stackDirection.yOffset
+
         constructor(
             initialSelection: ZoneSelection,
             initialHovering: Boolean,
@@ -46,6 +50,8 @@ sealed class DragInfo {
         }
 
         override fun updateMousePosition(input: GameInput, worldX: Float, worldY: Float) {
+            super.updateMousePosition(input, worldX, worldY)
+            
             val logic = input.logic
             val selectedZoneCoordinates = logic.getSelectedZoneCoordinates(worldX, worldY)
             val newSelection = selectedZoneCoordinates?.toZoneSelection()?.takeIf { sel ->
@@ -94,16 +100,23 @@ sealed class DragInfo {
             private set
         override var isCurrentlyHoveringOverZone: Boolean = true
             private set
-        
+
+        override var lastMouseWorldX: Float = x
+        override var lastMouseWorldY: Float = y
+
         override fun updateMousePosition(input: GameInput, worldX: Float, worldY: Float) {
+            super.updateMousePosition(input, worldX, worldY)
+            
             x = worldX - mouseOffsetX
             y = worldY - mouseOffsetY
-            
-            attemptSetNewZone(getNearestOverlappingDraggingZone(input.logic))
-            
+
             if (mouseMode == null) {
                 mouseMode = MouseMode.CLICK_THEN_CLICK
             }
+
+            val newZone = getNearestOverlappingDraggingZone(input.logic)
+            // TODO check if newZone is legal
+            attemptSetNewZone(newZone)
         }
         
         fun getNearestOverlappingDraggingZone(logic: GameLogic): CardZone? {
@@ -154,7 +167,14 @@ sealed class DragInfo {
     abstract val hoveredZone: CardZone
     abstract val isCurrentlyHoveringOverZone: Boolean
     
+    abstract var lastMouseWorldX: Float
+        protected set
+    abstract var lastMouseWorldY: Float
+        protected set
+    
     open fun updateMousePosition(input: GameInput, worldX: Float, worldY: Float) {
+        lastMouseWorldX = worldX
+        lastMouseWorldY = worldY
     }
     
 }

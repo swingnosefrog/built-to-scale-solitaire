@@ -99,23 +99,47 @@ class GameInput(val logic: GameLogic) {
         if (inputsDisabled.get()) return false
         if (!canNonCancelButtonOperationInterruptDragging()) return false
 
-        switchToButtonsFocus(false)
-        
         val currentDragInfo = getCurrentDragInfo()
-        // TODO snap to zone nearest to indicated direction -- also handle no zone currently hovered case
+        val isCurrentlyHoveringOverZone = currentDragInfo.isCurrentlyHoveringOverZone
+        
+        switchToButtonsFocus()
+        if (!isCurrentlyHoveringOverZone) {
+            snapToNearestZone()
+        } else {
+            // TODO different logic for deciding vs dragging, specifically for UP/DOWN
+        }
         
         return true
     }
-
-    fun switchToButtonsFocus(snapToNearestZoneIfNotHovering: Boolean) {
+    
+    fun switchToButtonsFocusAndSnapToNearestZoneIfNotHovering() {
         if (inputsDisabled.get()) return
         
-        _isMouseBased.set(false)
-
+        switchToButtonsFocus()
+        
         val currentDragInfo = getCurrentDragInfo()
-        if (snapToNearestZoneIfNotHovering && !currentDragInfo.isCurrentlyHoveringOverZone) {
-            // TODO
+        if (!currentDragInfo.isCurrentlyHoveringOverZone) {
+            snapToNearestZone()
         }
+    }
+    
+    private fun snapToNearestZone() {
+        val currentDragInfo = getCurrentDragInfo()
+        
+        val isCurrentlyHoveringOverZone = currentDragInfo.isCurrentlyHoveringOverZone
+        if (isCurrentlyHoveringOverZone) {
+            val zone = currentDragInfo.hoveredZone
+            // TODO snap to it fully
+        } else {
+            // Use last hoveredZone and snap to it
+            // TODO could this be smarter? i.e. proximity based
+        }
+    }
+
+    private fun switchToButtonsFocus() {
+        if (inputsDisabled.get()) return
+
+        _isMouseBased.set(false)
     }
     
     private fun canNonCancelButtonOperationInterruptDragging(): Boolean {
