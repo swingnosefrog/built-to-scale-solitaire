@@ -5,7 +5,6 @@ import com.swingnosefrog.solitaire.game.logic.DragInfo
 import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.game.logic.ZoneCoordinates
 import paintbox.binding.BooleanVar
-import paintbox.binding.ReadOnlyBooleanVar
 import paintbox.binding.Var
 
 class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
@@ -14,8 +13,6 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
     
     private val cardCursor: Var<CardCursor> =
         Var(CardCursor(logic.zones.playerZones.first(), indexFromEnd = 0, isMouseBased = initiallyMouseBased))
-    
-    val isMouseBased: ReadOnlyBooleanVar = BooleanVar { cardCursor.use().isMouseBased }
 
     private val dragInfo: Var<DragInfo> = Var(DragInfo.Deciding())
 
@@ -87,28 +84,36 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
         if (!newCardCursor.isMouseBased) {
             newCardCursor = newCardCursor.copy(isMouseBased = true)
         }
-        
-        when (currentDragInfo) {
+
+        val zoneCoords = when (currentDragInfo) {
             is DragInfo.Deciding -> {
                 // Use just worldXY position
-                val zoneCoords = logic.getSelectedZoneCoordinates(worldX, worldY)
-                newCardCursor = newCardCursor.copy(lastMouseZoneCoordinates = zoneCoords)
+                logic.getSelectedZoneCoordinates(worldX, worldY)
             }
+
             is DragInfo.Dragging -> {
                 // Use rectangle overlap check
                 val cardRect = currentDragInfo.toOverlapCheckRectangle()
-                val closestCardZone = getNearestOverlappingCardZone(cardRect, logic.zones.allPlaceableCardZones)
-                val zoneCoords = closestCardZone?.let { zone ->
-                    val lastIndex = zone.cardStack.cardList.size - 1
+                val legalPlacementZones = logic.zones.allPlaceableCardZones.filter { z ->
+                    isZoneSelectionLegal(z, z.cardStack.cardList.lastIndex)
+                }
+                val closestCardZone = getNearestOverlappingCardZone(cardRect, legalPlacementZones)
+
+                closestCardZone?.let { zone ->
+                    val lastIndex = zone.cardStack.cardList.lastIndex
                     ZoneCoordinates(zone, lastIndex, offsetX = 0f, offsetY = 0f)
                 }
-                newCardCursor = newCardCursor.copy(lastMouseZoneCoordinates = zoneCoords)
             }
         }
-        
-        val zoneCoords = newCardCursor.lastMouseZoneCoordinates
-        if (zoneCoords != null) {
-            newCardCursor = newCardCursor.copy(zone = zoneCoords.zone, indexFromEnd = zoneCoords.indexFromEnd)
+
+        if (zoneCoords != null && isZoneSelectionLegal(zoneCoords.zone, zoneCoords.indexFromEnd)) {
+            newCardCursor = newCardCursor.copy(
+                zone = zoneCoords.zone,
+                indexFromEnd = zoneCoords.indexFromEnd,
+                lastMouseZoneCoordinates = zoneCoords,
+            )
+        } else {
+            newCardCursor = newCardCursor.copy(lastMouseZoneCoordinates = null)
         }
         
         cardCursor.set(newCardCursor)
@@ -134,12 +139,13 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
     fun switchToButtonsFocusAndSnapToNearestZoneIfNotAlready() {
         if (inputsDisabled.get()) return
 
+        val wasAlreadyHovering = cardCursor.getOrCompute().lastMouseZoneCoordinates != null
         switchToButtonsFocus()
 
+        if (!wasAlreadyHovering) {
+            // TODO implement snap to nearest zone
+        }
         val currentDragInfo = getCurrentDragInfo()
-//        if (!currentDragInfo.isCurrentlyHoveringOverZone) {
-//            snapToNearestZone()
-//        }
     }
 
     fun switchToButtonsFocus() {
@@ -200,7 +206,7 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
         val newDragInfo = DragInfo.Deciding()
         dragInfo.set(newDragInfo)
 
-        // Set card cursor to new position within stack
+        // Set card cursor to new position within stack (always legal to pick up)
         val originalCardCursor = dragging.initialCardCursor
         val currentCardCursor = cardCursor.getOrCompute()
         val newMouseZoneCoordinates: ZoneCoordinates? =
@@ -209,7 +215,8 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
             )
         cardCursor.set(
             currentCardCursor.copy(
-                indexFromEnd = myList.size - 1,
+                zone = newZone,
+                indexFromEnd = (myList.lastIndex).coerceAtLeast(0),
                 lastMouseZoneCoordinates = newMouseZoneCoordinates,
                 isMouseBased = !isFromButtonInput
             )
@@ -241,13 +248,47 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
         }
         dragInfo.set(newDragging)
         
-        // Set card cursor to end of original zone
-        // lastMouseZoneCoordinates no longer relevant since index changed
+        // Set card cursor to end of original zone (always a legal spot to drop/cancel)
+        // lastMouseZoneCoordinates are no longer relevant since index has changed
         cardCursor.set(currentCardCursor.copy(indexFromEnd = 0, lastMouseZoneCoordinates = null))
 
         logic.eventDispatcher.onCardStackPickedUp(logic, newDragging.cardStack, zoneCoords.zone)
 
         return true
+    }
+
+    private fun isZoneSelectionLegal(zone: CardZone, indexFromEnd: Int): Boolean {
+        val zones = logic.zones
+        val zoneCardList = zone.cardStack.cardList
+        
+        when (val currentDragInfo = getCurrentDragInfo()) {
+            is DragInfo.Deciding -> {
+                if (zoneCardList.isEmpty() || indexFromEnd !in zoneCardList.indices) {
+                    return false
+                }
+
+                if (zone in zones.freeCellZones && indexFromEnd == 0 && zoneCardList.isNotEmpty()) {
+                    return true
+                }
+                
+                if (zone in zones.playerZones && zoneCardList.isNotEmpty()) {
+                    val indexFromStart = zoneCardList.size - indexFromEnd - 1
+                    return logic.isStackValidToMove(zoneCardList.subList(indexFromStart, zoneCardList.size))
+                }
+            }
+
+            is DragInfo.Dragging -> {
+                if (zone == currentDragInfo.originalZone) {
+                    return true
+                }
+                
+                if (logic.canPlaceStackOnZone(currentDragInfo.cardStack, zone)) {
+                    return true
+                }
+            }
+        }
+        
+        return false
     }
     
     //endregion
