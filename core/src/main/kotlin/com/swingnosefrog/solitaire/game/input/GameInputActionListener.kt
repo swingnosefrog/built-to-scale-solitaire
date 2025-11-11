@@ -35,7 +35,7 @@ class GameInputActionListener(private val input: GameInput) : InputActionListene
                 
                 // Attempt to "steal input focus" first unless already hovering over card
                 if (currentCardCursor.isMouseBased && currentCardCursor.lastMouseZoneCoordinates == null) {
-                    input.switchToButtonsFocusAndSnapToNearestZoneIfNotAlready()
+                    input.switchToButtonsFocusAndSnapToNearestLegalZone()
                     return true
                 }
                 

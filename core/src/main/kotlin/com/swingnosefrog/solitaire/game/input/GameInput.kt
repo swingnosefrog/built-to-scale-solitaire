@@ -1,5 +1,7 @@
 package com.swingnosefrog.solitaire.game.input
 
+import com.badlogic.gdx.math.Rectangle
+import com.badlogic.gdx.math.Vector2
 import com.swingnosefrog.solitaire.game.logic.CardZone
 import com.swingnosefrog.solitaire.game.logic.DragInfo
 import com.swingnosefrog.solitaire.game.logic.GameLogic
@@ -15,7 +17,8 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
         Var(CardCursor(logic.zones.playerZones.first(), indexFromEnd = 0, isMouseBased = initiallyMouseBased))
 
     private val dragInfo: Var<DragInfo> = Var(DragInfo.Deciding())
-
+    private var lastMouseWorldX: Float = 0f
+    private var lastMouseWorldY: Float = 0f
 
     //region Actions
 
@@ -75,6 +78,9 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
     }
 
     fun updateMousePosition(worldX: Float, worldY: Float) {
+        lastMouseWorldX = worldX
+        lastMouseWorldY = worldY
+        
         switchToMouseFocus()
 
         val currentDragInfo = dragInfo.getOrCompute()
@@ -94,10 +100,8 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
             is DragInfo.Dragging -> {
                 // Use rectangle overlap check
                 val cardRect = currentDragInfo.toOverlapCheckRectangle()
-                val legalPlacementZones = logic.zones.allPlaceableCardZones.filter { z ->
-                    isZoneSelectionLegal(z, z.cardStack.cardList.lastIndex)
-                }
-                val closestCardZone = getNearestOverlappingCardZone(cardRect, legalPlacementZones)
+                val legalPlacementZones = getLegalCardZonesBasedOnCurrentDragInfo()
+                val closestCardZone = cardRect.getNearestOverlappingCardZone(legalPlacementZones)
 
                 closestCardZone?.let { zone ->
                     val lastIndex = zone.cardStack.cardList.lastIndex
@@ -125,27 +129,23 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
 
         switchToButtonsFocus()
 
-//        val currentDragInfo = getCurrentDragInfo()
-//        val isCurrentlyHoveringOverZone = currentDragInfo.isCurrentlyHoveringOverZone
-//        if (!isCurrentlyHoveringOverZone) {
-//            snapToNearestZone()
-//        } else {
-//            // TODO different logic for deciding vs dragging, specifically for UP/DOWN
-//        }
+        val wasAlreadyHovering = cardCursor.getOrCompute().isHoveringOverZone()
+        if (!wasAlreadyHovering) {
+            snapToNearestLegalZone()
+        } else {
+            // TODO different logic for deciding vs dragging, specifically for UP/DOWN
+        }
         
         return true
     }
     
-    fun switchToButtonsFocusAndSnapToNearestZoneIfNotAlready() {
-        if (inputsDisabled.get()) return
-
-        val wasAlreadyHovering = cardCursor.getOrCompute().lastMouseZoneCoordinates != null
+    fun switchToButtonsFocusAndSnapToNearestLegalZone() {
         switchToButtonsFocus()
 
+        val wasAlreadyHovering = cardCursor.getOrCompute().isHoveringOverZone()
         if (!wasAlreadyHovering) {
-            // TODO implement snap to nearest zone
+            snapToNearestLegalZone()
         }
-        val currentDragInfo = getCurrentDragInfo()
     }
 
     fun switchToButtonsFocus() {
@@ -159,18 +159,32 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
 
     //region Private functions
     
-//    private fun snapToNearestZone() {
-//        val currentDragInfo = getCurrentDragInfo()
-//        
-////        val isCurrentlyHoveringOverZone = currentDragInfo.isCurrentlyHoveringOverZone
-////        if (isCurrentlyHoveringOverZone) {
-////            val zone = currentDragInfo.hoveredZone
-////            // TODO snap to it fully
-////        } else {
-////            // Use last hoveredZone and snap to it
-////            // TODO could this be smarter? i.e. proximity based
-////        }
-//    }
+    private fun snapToNearestLegalZone() {
+        val legalZones = getLegalCardZonesBasedOnCurrentDragInfo()
+        snapToNearestCardZone(legalZones)
+    }
+    
+    private fun snapToNearestCardZone(zones: List<CardZone>) {
+        val mousePos = Vector2(lastMouseWorldX, lastMouseWorldY)
+        val cardRect = Rectangle()
+        val nearestZone: CardZone? = zones.minByOrNull { zone ->
+            cardRect.setToLastCardInZone(zone)
+            mousePos.getDistanceToNearestRectangleSide(cardRect)
+        }
+        
+        val currentCardCursor = cardCursor.getOrCompute()
+        cardCursor.set(
+            currentCardCursor.copy(
+                zone = nearestZone ?: logic.zones.playerZones.first(),
+                indexFromEnd = 0,
+                lastMouseZoneCoordinates = null
+            )
+        )
+    }
+    
+    private fun CardCursor.isHoveringOverZone(): Boolean {
+        return this.lastMouseZoneCoordinates != null
+    }
 
     private fun switchToMouseFocus() {
         val currentCardCursor = cardCursor.getOrCompute()
@@ -289,6 +303,12 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
         }
         
         return false
+    }
+    
+    private fun getLegalCardZonesBasedOnCurrentDragInfo(): List<CardZone> {
+        return logic.zones.allPlaceableCardZones.filter { z ->
+            isZoneSelectionLegal(z, 0)
+        }
     }
     
     //endregion
