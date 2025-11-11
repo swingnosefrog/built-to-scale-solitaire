@@ -8,6 +8,7 @@ import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.game.logic.ZoneCoordinates
 import paintbox.binding.BooleanVar
 import paintbox.binding.Var
+import kotlin.math.hypot
 
 class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
     
@@ -17,9 +18,18 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
         Var(CardCursor(logic.zones.playerZones.first(), indexFromEnd = 0, isMouseBased = initiallyMouseBased))
 
     private val dragInfo: Var<DragInfo> = Var(DragInfo.Deciding())
+    
+    private val lastIndexFromEndByZone: MutableMap<CardZone, Int> = mutableMapOf()
     private var lastMouseWorldX: Float = 0f
     private var lastMouseWorldY: Float = 0f
+    
 
+    init {
+        cardCursor.addListener { v ->
+            updateLastIndexFromEndForZone(v.getOrCompute())
+        }
+    }
+    
     //region Actions
 
     fun cancelDrag(): Boolean {
@@ -126,23 +136,35 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
     fun updateFromDirectionPress(direction: Direction): Boolean {
         if (inputsDisabled.get()) return false
         if (!canNonCancelButtonOperationInterruptDragging()) return false
-
+        
+        val wasAlreadyHovering = cardCursor.getOrCompute().isHoveringOverZone()
+        
         switchToButtonsFocus()
 
-        val wasAlreadyHovering = cardCursor.getOrCompute().isHoveringOverZone()
         if (!wasAlreadyHovering) {
             snapToNearestLegalZone()
         } else {
-            // TODO different logic for deciding vs dragging, specifically for UP/DOWN
+            if (direction == Direction.UP || direction == Direction.DOWN) {
+                val currentCardCursor = cardCursor.getOrCompute()
+                val predictedIndex = currentCardCursor.indexFromEnd + (if (direction == Direction.UP) 1 else -1)
+                if (isZoneSelectionLegal(currentCardCursor.zone, predictedIndex)) {
+                    cardCursor.set(currentCardCursor.copy(indexFromEnd = predictedIndex, lastMouseZoneCoordinates = null))
+                } else {
+                    snapToCardZoneInDirection(direction)
+                }
+            } else {
+                snapToCardZoneInDirection(direction)
+            }
         }
         
         return true
     }
     
     fun switchToButtonsFocusAndSnapToNearestLegalZone() {
+        val wasAlreadyHovering = cardCursor.getOrCompute().isHoveringOverZone()
+        
         switchToButtonsFocus()
 
-        val wasAlreadyHovering = cardCursor.getOrCompute().isHoveringOverZone()
         if (!wasAlreadyHovering) {
             snapToNearestLegalZone()
         }
@@ -161,10 +183,10 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
     
     private fun snapToNearestLegalZone() {
         val legalZones = getLegalCardZonesBasedOnCurrentDragInfo()
-        snapToNearestCardZone(legalZones)
+        snapToNearestCardZoneToMouse(legalZones)
     }
     
-    private fun snapToNearestCardZone(zones: List<CardZone>) {
+    private fun snapToNearestCardZoneToMouse(zones: List<CardZone>) {
         val mousePos = Vector2(lastMouseWorldX, lastMouseWorldY)
         val cardRect = Rectangle()
         val nearestZone: CardZone? = zones.minByOrNull { zone ->
@@ -181,9 +203,52 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
             )
         )
     }
+
+    private fun snapToCardZoneInDirection(direction: Direction) {
+        val legalZones = getLegalCardZonesBasedOnCurrentDragInfo()
+        snapToCardZoneInDirection(legalZones, direction)
+    }
+
+    private fun snapToCardZoneInDirection(zones: List<CardZone>, direction: Direction) {
+        val currentCardCursor = cardCursor.getOrCompute()
+        if (currentCardCursor.isMouseBased) {
+            snapToNearestCardZoneToMouse(zones)
+            return
+        }
+
+        val currentZone = currentCardCursor.zone
+        val currentZoneX = currentZone.x.get()
+        val currentZoneY = currentZone.y.get()
+        val zonesExcludingCurrent = zones.filterNot { it == currentZone }
+        
+        val zonesOnSide = zonesExcludingCurrent
+            .filter {
+                when (direction) {
+                    Direction.UP -> it.y.get() < currentZoneY
+                    Direction.DOWN -> it.y.get() > currentZoneY
+                    Direction.LEFT -> it.x.get() < currentZoneX
+                    Direction.RIGHT -> it.x.get() > currentZoneX
+                }
+            }
+
+        val nearestZone: CardZone? = zonesOnSide.minByOrNull { zone ->
+            hypot(currentZoneX - zone.x.get(), currentZoneY - zone.y.get())
+        }
+        if (nearestZone == null) {
+            return
+        }
+
+        cardCursor.set(
+            currentCardCursor.copy(
+                zone = nearestZone,
+                indexFromEnd = getValidLastCursorIndexFromEndForZone(nearestZone),
+                lastMouseZoneCoordinates = null
+            )
+        )
+    }
     
     private fun CardCursor.isHoveringOverZone(): Boolean {
-        return this.lastMouseZoneCoordinates != null
+        return this.lastMouseZoneCoordinates != null || !this.isMouseBased
     }
 
     private fun switchToMouseFocus() {
@@ -275,6 +340,10 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
         val zones = logic.zones
         val zoneCardList = zone.cardStack.cardList
         
+        if (zone.isFlippedOver) {
+            return false
+        }
+        
         when (val currentDragInfo = getCurrentDragInfo()) {
             is DragInfo.Deciding -> {
                 if (zoneCardList.isEmpty() || indexFromEnd !in zoneCardList.indices) {
@@ -292,6 +361,10 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
             }
 
             is DragInfo.Dragging -> {
+                if (indexFromEnd != 0) {
+                    return false
+                }
+                
                 if (zone == currentDragInfo.originalZone) {
                     return true
                 }
@@ -309,6 +382,29 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
         return logic.zones.allPlaceableCardZones.filter { z ->
             isZoneSelectionLegal(z, 0)
         }
+    }
+    
+    private fun updateLastIndexFromEndForZone(cursor: CardCursor) {
+        lastIndexFromEndByZone[cursor.zone] = cursor.indexFromEnd
+    }
+    
+    private fun getValidLastCursorIndexFromEndForZone(zone: CardZone): Int {
+        val lastIndexFromEnd = lastIndexFromEndByZone.getOrDefault(zone, 0)
+        
+        val cardList = zone.cardStack.cardList
+        if (cardList.isEmpty()) {
+            return 0
+        }
+        
+        if (lastIndexFromEnd !in cardList.indices) {
+            return 0
+        }
+        
+        if (!isZoneSelectionLegal(zone, lastIndexFromEnd)) {
+            return 0
+        }
+        
+        return lastIndexFromEnd
     }
     
     //endregion

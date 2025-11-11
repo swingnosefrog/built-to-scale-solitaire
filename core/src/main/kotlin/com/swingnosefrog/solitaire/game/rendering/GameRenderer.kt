@@ -13,6 +13,7 @@ import com.swingnosefrog.solitaire.game.assets.CardAssetKey
 import com.swingnosefrog.solitaire.game.assets.CardSkin
 import com.swingnosefrog.solitaire.game.assets.GameAssets
 import com.swingnosefrog.solitaire.game.logic.CardStack
+import com.swingnosefrog.solitaire.game.logic.DragInfo
 import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.game.logic.GameLogic.Companion.CARD_HEIGHT
 import com.swingnosefrog.solitaire.game.logic.GameLogic.Companion.CARD_WIDTH
@@ -107,10 +108,16 @@ open class GameRenderer(
             val zone = cardCursor.zone
             val cardStack = zone.cardStack
 
-            val x = zone.x.get()
-            val y = zone.y.get() + cardStack.stackDirection.yOffset * (cardStack.cardList.size - cardCursor.indexFromEnd - 1).coerceAtLeast(0)
+            val currentDragInfo = logic.gameInput.getCurrentDragInfo()
+            var indexFromEnd = cardCursor.indexFromEnd
+            if (currentDragInfo is DragInfo.Dragging) {
+                indexFromEnd -= 1
+            }
             
-            val alpha = if (cardCursor.isMouseBased && cardCursor.lastMouseZoneCoordinates == null) 0.5f else 1f
+            val x = zone.x.get()
+            val y = zone.y.get() + cardStack.stackDirection.yOffset * (cardStack.cardList.size - indexFromEnd - 1).coerceAtLeast(0)
+            
+            val alpha = if (cardCursor.isMouseBased && cardCursor.lastMouseZoneCoordinates == null) 0.2f else 1f
             
             batch.setColor(0f, 0f, 1f, 0.35f * alpha)
             renderCardTex(CardAssetKey.Silhouette, x, y)
