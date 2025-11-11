@@ -5,13 +5,16 @@ import com.swingnosefrog.solitaire.inputmanager.ActionSource
 import com.swingnosefrog.solitaire.inputmanager.IDigitalInputAction
 import com.swingnosefrog.solitaire.inputmanager.InputActionListener
 import com.swingnosefrog.solitaire.inputmanager.impl.InputActions
+import paintbox.binding.BooleanVar
 
 
 class GameInputActionListener(private val input: GameInput) : InputActionListener.Adapter() {
+    
+    val enabled: BooleanVar = BooleanVar(true)
 
     override fun handleDigitalActionPressed(actionSource: ActionSource, action: IDigitalInputAction): Boolean {
         if (action !is InputActions) return false
-        if (input.inputsDisabled.get()) return false
+        if (input.inputsDisabled.get() || !enabled.get()) return false
 
         when (action) {
             InputActions.DirectionUp -> {

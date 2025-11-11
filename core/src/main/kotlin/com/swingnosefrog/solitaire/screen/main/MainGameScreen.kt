@@ -19,6 +19,8 @@ import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.inputmanager.InputManager
 import com.swingnosefrog.solitaire.screen.AbstractGameScreen
 import com.swingnosefrog.solitaire.soundsystem.SoundSystem
+import paintbox.binding.BooleanVar
+import paintbox.binding.ReadOnlyBooleanVar
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 import paintbox.framebuffer.FrameBufferManager
@@ -37,6 +39,7 @@ class MainGameScreen(
     
     private val screenInputMultiplexer: InputMultiplexer = InputMultiplexer()
     private val toggleableGameInputProcessor: ToggleableInputProcessor
+    private val gameInputsEnabled: ReadOnlyBooleanVar
     val inputManager: InputManager = main.inputManagerFactory.create()
 
     private val soundSystem: SoundSystem = SoundSystem.createDefaultSoundSystem()
@@ -50,8 +53,9 @@ class MainGameScreen(
     private val gameFrameBuffer: GameFrameBuffer = GameFrameBuffer()
 
     init {
+        gameInputsEnabled = BooleanVar { ui.currentMenuState.use() == MainGameUi.MenuState.NONE }
         toggleableGameInputProcessor = ToggleableInputProcessor(backingGameContainer)
-        toggleableGameInputProcessor.enabled.bind { ui.currentMenuState.use() == MainGameUi.MenuState.NONE }
+        toggleableGameInputProcessor.enabled.bind(gameInputsEnabled)
         
         this.screenInputMultiplexer.addProcessor(ui.inputProcessor)
         if (Solitaire.isNonProductionVersion) {
@@ -180,7 +184,9 @@ src: ${inputManager.mostRecentActionSource.getOrCompute().sourceName}
                 
                 val oldValue = _container
                 if (oldValue != null) {
-                    inputManager.removeInputActionListener(oldValue.inputActionListener)
+                    val oldInputActionListener = oldValue.inputActionListener
+                    oldInputActionListener.enabled.set(false)
+                    inputManager.removeInputActionListener(oldInputActionListener)
                     this.gameGdxInputMultiplexer.removeProcessor(oldValue.gdxInputProcessor)
                     statsAndAchievementsGameListener?.let { oldValue.gameLogic.eventDispatcher.removeListener(it) }
                     stats.persist()
@@ -189,7 +195,9 @@ src: ${inputManager.mostRecentActionSource.getOrCompute().sourceName}
                 newValue.resize(Gdx.graphics.width, Gdx.graphics.height)
                 newValue.gameRenderer.shouldApplyViewport.set(true)
 
-                inputManager.addInputActionListener(newValue.inputActionListener)
+                val newInputActionListener = newValue.inputActionListener
+                newInputActionListener.enabled.bind(gameInputsEnabled)
+                inputManager.addInputActionListener(newInputActionListener)
                 this.gameGdxInputMultiplexer.addProcessor(newValue.gdxInputProcessor)
                 val newStatsListener = StatsAndAchievementsGameListener(stats, newValue)
                 newValue.gameLogic.eventDispatcher.addListener(newStatsListener)
