@@ -33,26 +33,26 @@ class GameInputActionListener(private val input: GameInput) : InputActionListene
             InputActions.Select -> {
                 when (val dragInfo = input.getCurrentDragInfo()) {
                     is DragInfo.Deciding -> {
-                        if (!dragInfo.isHoveringOverSelection) {
-                            input.switchToButtonsFocusAndSnapToNearestZoneIfNotHovering()
-                            return true
-                        }
-
-                        val zoneCoords = dragInfo.currentSelection.toZoneCoordinates(
-                            dragInfo.lastKnownMouseOffsetX,
-                            dragInfo.lastKnownMouseOffsetY
-                        )
-                        return input.attemptStartDrag(zoneCoords, null)
+//                        if (!dragInfo.isHoveringOverSelection) {
+//                            input.switchToButtonsFocusAndSnapToNearestZoneIfNotHovering()
+//                            return true
+//                        }
+//
+//                        val zoneCoords = dragInfo.currentSelection.toZoneCoordinates(
+//                            dragInfo.lastKnownMouseOffsetX,
+//                            dragInfo.lastKnownMouseOffsetY
+//                        )
+//                        return input.attemptStartDrag(zoneCoords, null)
                     }
 
                     is DragInfo.Dragging -> {
-                        if (!dragInfo.isCurrentlyHoveringOverZone) {
-                            // Don't actually end drag, steal input focus first
-                            input.switchToButtonsFocusAndSnapToNearestZoneIfNotHovering()
-                            return true
-                        }
-
-                        return input.endDrag(dragInfo.hoveredZone, true)
+//                        if (!dragInfo.isCurrentlyHoveringOverZone) {
+//                            // Don't actually end drag, steal input focus first
+//                            input.switchToButtonsFocusAndSnapToNearestZoneIfNotHovering()
+//                            return true
+//                        }
+//
+//                        return input.endDrag(dragInfo.hoveredZone, true)
                     }
                 }
             }

@@ -12,7 +12,7 @@ import paintbox.binding.BooleanVar
 import paintbox.binding.ReadOnlyBooleanVar
 import kotlin.math.floor
 
-class GameLogic(val deckInitializer: DeckInitializer) {
+class GameLogic(val deckInitializer: DeckInitializer, initiallyMouseBased: Boolean) {
 
     companion object {
 
@@ -23,7 +23,7 @@ class GameLogic(val deckInitializer: DeckInitializer) {
     private val deck: List<Card> = deckInitializer.initializeDeck(Card.createStandardDeck())
 
     val zones: CardZones = CardZones()
-    val gameInput: GameInput by lazy { GameInput(this) }
+    val gameInput: GameInput by lazy { GameInput(this, initiallyMouseBased) }
     val gamePlayStats: GamePlayStats by lazy { GamePlayStats(this) }
     val animationContainer: AnimationContainer = AnimationContainer()
 

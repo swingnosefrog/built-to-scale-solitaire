@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Rectangle
 import com.swingnosefrog.solitaire.game.Card
 import com.swingnosefrog.solitaire.game.input.GameInput
 import com.swingnosefrog.solitaire.game.input.MouseMode
-import com.swingnosefrog.solitaire.game.input.ZoneSelection
 import paintbox.util.gdxutils.maxX
 import paintbox.util.gdxutils.maxY
 import kotlin.math.max
@@ -13,65 +12,39 @@ import kotlin.math.min
 
 sealed class DragInfo {
 
-    class Deciding(
-        initialSelection: ZoneSelection,
-    ) : DragInfo() {
+    class Deciding() : DragInfo() {
         
-        companion object {
-            
-            fun isZoneSelectionLegal(selection: ZoneSelection): Boolean {
-                return selection.zone.canDragFrom && !selection.zone.isFlippedOver
-            }
-        }
+//        companion object {
+//            
+//            fun isZoneSelectionLegal(selection: ZoneSelection): Boolean {
+//                return selection.zone.canDragFrom && !selection.zone.isFlippedOver
+//            }
+//        }
 
-        var currentSelection: ZoneSelection = initialSelection
-            private set
-        var isHoveringOverSelection: Boolean = false
-            private set
-        var lastKnownMouseOffsetX: Float = 0f
-            private set
-        var lastKnownMouseOffsetY: Float = 0f
-            private set
+//        override var lastMouseWorldX: Float = initialSelection.zone.x.get()
+//        override var lastMouseWorldY: Float =
+//            initialSelection.zone.y.get() + initialSelection.zone.cardStack.cardList.size * initialSelection.zone.cardStack.stackDirection.yOffset
 
-        override val hoveredZone: CardZone
-            get() = currentSelection.zone
-        override val isCurrentlyHoveringOverZone: Boolean
-            get() = isHoveringOverSelection
-
-        override var lastMouseWorldX: Float = initialSelection.zone.x.get()
-        override var lastMouseWorldY: Float =
-            initialSelection.zone.y.get() + initialSelection.zone.cardStack.cardList.size * initialSelection.zone.cardStack.stackDirection.yOffset
-
-        constructor(
-            initialSelection: ZoneSelection,
-            initialHovering: Boolean,
-        ) : this(initialSelection) {
-            isHoveringOverSelection = initialHovering && isZoneSelectionLegal(initialSelection)
-        }
 
         override fun updateMousePosition(input: GameInput, worldX: Float, worldY: Float) {
             super.updateMousePosition(input, worldX, worldY)
             
-            val logic = input.logic
-            val selectedZoneCoordinates = logic.getSelectedZoneCoordinates(worldX, worldY)
-            val newSelection = selectedZoneCoordinates?.toZoneSelection()?.takeIf { sel ->
-                isZoneSelectionLegal(sel)
-            }
-            attemptSetNewSelection(newSelection)
-            if (newSelection != null) {
-                lastKnownMouseOffsetX = selectedZoneCoordinates.offsetX
-                lastKnownMouseOffsetY = selectedZoneCoordinates.offsetY
-            }
+//            val logic = input.logic
+//            val selectedZoneCoordinates = logic.getSelectedZoneCoordinates(worldX, worldY)
+//            val newSelection = selectedZoneCoordinates?.toZoneSelection()?.takeIf { sel ->
+//                isZoneSelectionLegal(sel)
+//            }
+//            attemptSetNewSelection(newSelection)
         }
         
-        private fun attemptSetNewSelection(newSelection: ZoneSelection?) {
-            if (newSelection != null) {
-                isHoveringOverSelection = true
-                currentSelection = newSelection
-            } else {
-                isHoveringOverSelection = false
-            }
-        }
+//        private fun attemptSetNewSelection(newSelection: ZoneSelection?) {
+//            if (newSelection != null) {
+//                isHoveringOverSelection = true
+//                currentSelection = newSelection
+//            } else {
+//                isHoveringOverSelection = false
+//            }
+//        }
     }
 
     class Dragging(
@@ -94,15 +67,10 @@ sealed class DragInfo {
             private set
 
         val cardStack: CardStack = CardStack(cardList.toMutableList(), StackDirection.DOWN)
-
         
-        override var hoveredZone: CardZone = originalZone
-            private set
-        override var isCurrentlyHoveringOverZone: Boolean = true
-            private set
 
-        override var lastMouseWorldX: Float = x
-        override var lastMouseWorldY: Float = y
+//        override var lastMouseWorldX: Float = x
+//        override var lastMouseWorldY: Float = y
 
         override fun updateMousePosition(input: GameInput, worldX: Float, worldY: Float) {
             super.updateMousePosition(input, worldX, worldY)
@@ -116,7 +84,7 @@ sealed class DragInfo {
 
             val newZone = getNearestOverlappingDraggingZone(input.logic)
             // TODO check if newZone is legal
-            attemptSetNewZone(newZone)
+//            attemptSetNewZone(newZone)
         }
         
         fun getNearestOverlappingDraggingZone(logic: GameLogic): CardZone? {
@@ -154,27 +122,24 @@ sealed class DragInfo {
             return nearest
         }
 
-        private fun attemptSetNewZone(newZone: CardZone?) {
-            if (newZone != null) {
-                isCurrentlyHoveringOverZone = true
-                hoveredZone = newZone
-            } else {
-                isCurrentlyHoveringOverZone = false
-            }
-        }
+//        private fun attemptSetNewZone(newZone: CardZone?) {
+//            if (newZone != null) {
+//                isCurrentlyHoveringOverZone = true
+//                hoveredZone = newZone
+//            } else {
+//                isCurrentlyHoveringOverZone = false
+//            }
+//        }
     }
     
-    abstract val hoveredZone: CardZone
-    abstract val isCurrentlyHoveringOverZone: Boolean
-    
-    abstract var lastMouseWorldX: Float
-        protected set
-    abstract var lastMouseWorldY: Float
-        protected set
+//    abstract var lastMouseWorldX: Float
+//        protected set
+//    abstract var lastMouseWorldY: Float
+//        protected set
     
     open fun updateMousePosition(input: GameInput, worldX: Float, worldY: Float) {
-        lastMouseWorldX = worldX
-        lastMouseWorldY = worldY
+//        lastMouseWorldX = worldX
+//        lastMouseWorldY = worldY
     }
     
 }

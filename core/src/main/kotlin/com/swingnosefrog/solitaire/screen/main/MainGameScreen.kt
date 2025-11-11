@@ -66,7 +66,8 @@ class MainGameScreen(
     }
     
     fun startNewGame(deckInitializer: DeckInitializer) {
-        val newContainer = GameContainer({ GameLogic(deckInitializer) }, batch, soundSystem, gameMusic)
+        val newContainer =
+            GameContainer({ GameLogic(deckInitializer, initiallyMouseBased = true) }, batch, soundSystem, gameMusic)
         backingGameContainer.setNewGameContainer(newContainer)
         
         gameMusic.transitionToStemMix(GameMusic.StemMixes.ALL, 1f)

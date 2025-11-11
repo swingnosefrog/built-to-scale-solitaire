@@ -8,15 +8,17 @@ import paintbox.binding.BooleanVar
 import paintbox.binding.ReadOnlyBooleanVar
 import paintbox.binding.Var
 
-class GameInput(val logic: GameLogic) {
+class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
     
     val inputsDisabled: BooleanVar = BooleanVar(false)
+    
+    private val cardCursor: Var<CardCursor> =
+        Var(CardCursor(logic.zones.playerZones.first(), indexFromEnd = 0, isMouseBased = initiallyMouseBased))
+    
+    val isMouseBased: ReadOnlyBooleanVar = BooleanVar { cardCursor.use().isMouseBased }
 
-    private val _isMouseBased: BooleanVar = BooleanVar(true)
-    private val isMouseBased: ReadOnlyBooleanVar = _isMouseBased
+    private val dragInfo: Var<DragInfo> = Var(DragInfo.Deciding())
 
-    private val dragInfo: Var<DragInfo> =
-        Var(DragInfo.Deciding(ZoneSelection(logic.zones.playerZones.first(), indexFromEnd = 0)))
 
     fun isDragging(): Boolean {
         return dragInfo.getOrCompute() !is DragInfo.Deciding
@@ -30,8 +32,7 @@ class GameInput(val logic: GameLogic) {
 
         logic.eventDispatcher.onCardStackPickupCancelled(logic, dragging.cardStack, dragging.originalZone)
 
-        val zoneSelection = ZoneSelection(dragging.originalZone, indexFromEnd = (dragging.cardStack.cardList.size - 1).coerceAtLeast(0))
-        dragInfo.set(DragInfo.Deciding(zoneSelection, dragging.isCurrentlyHoveringOverZone))
+        dragInfo.set(DragInfo.Deciding())
 
         logic.checkTableauAfterActivity()
         
@@ -56,8 +57,7 @@ class GameInput(val logic: GameLogic) {
             logic.eventDispatcher.onCardPlacedInFoundation(logic, dragging.cardStack.cardList.first(), newZone)
         }
 
-        val initialZoneSelection = ZoneSelection(newZone, indexFromEnd = 0)
-        val newDragInfo = DragInfo.Deciding(initialZoneSelection, dragging.isCurrentlyHoveringOverZone)
+        val newDragInfo = DragInfo.Deciding()
         dragInfo.set(newDragInfo)
 
         logic.checkTableauAfterActivity()
@@ -84,14 +84,18 @@ class GameInput(val logic: GameLogic) {
             zoneCardList.removeAt(zoneCoords.index)
         }
         dragInfo.set(newDragging)
-        
+
         logic.eventDispatcher.onCardStackPickedUp(logic, newDragging.cardStack, zoneCoords.zone)
-        
+
         return true
     }
 
     fun updateMousePosition(worldX: Float, worldY: Float) {
-        _isMouseBased.set(true)
+        val currentCardCursor = cardCursor.getOrCompute()
+        if (!currentCardCursor.isMouseBased) {
+            cardCursor.set(currentCardCursor.copy(isMouseBased = true))
+        }
+
         dragInfo.getOrCompute().updateMousePosition(this, worldX, worldY)
     }
     
@@ -100,14 +104,14 @@ class GameInput(val logic: GameLogic) {
         if (!canNonCancelButtonOperationInterruptDragging()) return false
 
         val currentDragInfo = getCurrentDragInfo()
-        val isCurrentlyHoveringOverZone = currentDragInfo.isCurrentlyHoveringOverZone
-        
+//        val isCurrentlyHoveringOverZone = currentDragInfo.isCurrentlyHoveringOverZone
+
         switchToButtonsFocus()
-        if (!isCurrentlyHoveringOverZone) {
-            snapToNearestZone()
-        } else {
-            // TODO different logic for deciding vs dragging, specifically for UP/DOWN
-        }
+//        if (!isCurrentlyHoveringOverZone) {
+//            snapToNearestZone()
+//        } else {
+//            // TODO different logic for deciding vs dragging, specifically for UP/DOWN
+//        }
         
         return true
     }
@@ -118,28 +122,28 @@ class GameInput(val logic: GameLogic) {
         switchToButtonsFocus()
         
         val currentDragInfo = getCurrentDragInfo()
-        if (!currentDragInfo.isCurrentlyHoveringOverZone) {
-            snapToNearestZone()
-        }
+//        if (!currentDragInfo.isCurrentlyHoveringOverZone) {
+//            snapToNearestZone()
+//        }
     }
     
     private fun snapToNearestZone() {
         val currentDragInfo = getCurrentDragInfo()
         
-        val isCurrentlyHoveringOverZone = currentDragInfo.isCurrentlyHoveringOverZone
-        if (isCurrentlyHoveringOverZone) {
-            val zone = currentDragInfo.hoveredZone
-            // TODO snap to it fully
-        } else {
-            // Use last hoveredZone and snap to it
-            // TODO could this be smarter? i.e. proximity based
-        }
+//        val isCurrentlyHoveringOverZone = currentDragInfo.isCurrentlyHoveringOverZone
+//        if (isCurrentlyHoveringOverZone) {
+//            val zone = currentDragInfo.hoveredZone
+//            // TODO snap to it fully
+//        } else {
+//            // Use last hoveredZone and snap to it
+//            // TODO could this be smarter? i.e. proximity based
+//        }
     }
 
     private fun switchToButtonsFocus() {
         if (inputsDisabled.get()) return
 
-        _isMouseBased.set(false)
+        cardCursor.set(cardCursor.getOrCompute().copy(isMouseBased = false))
     }
     
     private fun canNonCancelButtonOperationInterruptDragging(): Boolean {
@@ -153,5 +157,7 @@ class GameInput(val logic: GameLogic) {
     fun getDraggingInfo(): DragInfo.Dragging? = getCurrentDragInfo() as? DragInfo.Dragging
     
     fun getDecidingInfo(): DragInfo.Deciding? = getCurrentDragInfo() as? DragInfo.Deciding
+    
+    fun getCurrentCardCursor(): CardCursor = cardCursor.getOrCompute()
 
 }

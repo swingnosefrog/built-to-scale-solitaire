@@ -20,6 +20,7 @@ import com.swingnosefrog.solitaire.game.logic.StackDirection
 import paintbox.binding.BooleanVar
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
+import paintbox.registry.AssetRegistry
 import paintbox.util.gdxutils.fillRect
 
 
@@ -100,36 +101,24 @@ open class GameRenderer(
         logic.gameInput.getDraggingInfo()?.also { dragging ->
             dragging.cardStack.render(dragging.x, dragging.y - 0.05f, isFlippedOver = false, renderShadow = true)
         }
-        
+
         // TODO remove me
         run {
-            logic.gameInput.getDecidingInfo()?.also { deciding ->
-                if (deciding.isHoveringOverSelection) {
-                    val selection = deciding.currentSelection
-                    val zone = selection.zone
-                    val cardStack = zone.cardStack
+            val cardCursor = logic.gameInput.getCurrentCardCursor()
+            val zone = cardCursor.zone
+            val cardStack = zone.cardStack
 
-                    batch.setColor(0f, 0f, 1f, 0.35f)
-                    renderCardTex(
-                        CardAssetKey.Silhouette,
-                        zone.x.get(),
-                        zone.y.get() + zone.cardStack.stackDirection.yOffset * (cardStack.cardList.size - selection.indexFromEnd - 1)
-                    )
-                }
-            }
-            logic.gameInput.getDraggingInfo()?.also { dragging ->
-                if (dragging.isCurrentlyHoveringOverZone) {
-                    val zone = dragging.hoveredZone
-                    val cardStack = zone.cardStack
-
-                    batch.setColor(1f, 0f, 1f, 0.35f)
-                    renderCardTex(
-                        CardAssetKey.Silhouette,
-                        zone.x.get(),
-                        zone.y.get() + zone.cardStack.stackDirection.yOffset * (cardStack.cardList.size)
-                    )
-                }
-            }
+            val x = zone.x.get()
+            val y = zone.y.get() + cardStack.stackDirection.yOffset * (cardStack.cardList.size - cardCursor.indexFromEnd - 1)
+            
+            batch.setColor(0f, 0f, 1f, 0.35f)
+            renderCardTex(CardAssetKey.Silhouette, x, y)
+            
+            batch.setColor(1f, 1f, 1f, 1f)
+            val cursorTex = AssetRegistry.get<Texture>("ui_cursor_invert")
+            val cursorWidth = CARD_WIDTH * 0.5f
+            val cursorHeight = cursorWidth * (cursorTex.height.toFloat() / cursorTex.width)
+            batch.draw(cursorTex, x + CARD_WIDTH, -(y + CARD_HEIGHT * 0.0625f), cursorWidth, cursorHeight)
         }
 
         batch.color = Color.WHITE
