@@ -2,7 +2,9 @@ package com.swingnosefrog.solitaire.screen.main
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.swingnosefrog.solitaire.Localization
 import com.swingnosefrog.solitaire.credits.CreditsInfo
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
@@ -12,13 +14,16 @@ import paintbox.binding.VarContext
 import paintbox.font.Markup
 import paintbox.font.PaintboxFont
 import paintbox.font.TextAlign
+import paintbox.registry.AssetRegistry
 import paintbox.ui.Anchor
+import paintbox.ui.ImageIcon
 import paintbox.ui.Pane
 import paintbox.ui.RenderAlign
 import paintbox.ui.area.Insets
 import paintbox.ui.control.ScrollPane
 import paintbox.ui.control.TextLabel
 import paintbox.ui.element.RoundedRectElement
+import paintbox.ui.layout.VBox
 
 
 class MainGameCreditsPane(
@@ -65,12 +70,21 @@ class MainGameCreditsPane(
 
             val credits = creditsInfo.credits.toList()
             scrollPane = ScrollPane().apply {
-                this.setContent(createTextLabel(credits).apply {
-                    this@MainGameCreditsPane.visible.addListenerAndFire { v ->
-                        if (v.getOrCompute()) {
-                            this.resizeBoundsToContent(affectWidth = false)
+                this.setContent(VBox().apply {
+                    this.spacing.set(16f)
+                    this.temporarilyDisableLayouts {
+                        this += ImageIcon(binding = { TextureRegion(AssetRegistry.get<Texture>("ui_credits_logo")) }).apply {
+                            this.bounds.height.set(175f)
+                        }
+                        this += createTextLabel(credits).apply {
+                            this@MainGameCreditsPane.visible.addListenerAndFire { v ->
+                                if (v.getOrCompute()) {
+                                    this.resizeBoundsToContent(affectWidth = false)
+                                }
+                            }
                         }
                     }
+                    this.autoSizeToChildren.set(true)
                 })
                 this.vBarPolicy.set(ScrollPane.ScrollBarPolicy.ALWAYS)
                 this.hBarPolicy.set(ScrollPane.ScrollBarPolicy.NEVER)
