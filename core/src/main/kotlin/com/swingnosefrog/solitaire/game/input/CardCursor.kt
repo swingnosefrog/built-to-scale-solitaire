@@ -13,4 +13,7 @@ data class CardCursor(
 ) {
 
     val indexFromStart: Int get() = zone.cardStack.cardList.size - indexFromEnd - 1
+
+    fun doLastMouseZoneCoordinatesAgreeWithOtherFields(): Boolean =
+        lastMouseZoneCoordinates == null || (lastMouseZoneCoordinates.indexFromEnd == this.indexFromEnd && lastMouseZoneCoordinates.zone == this.zone)
 }

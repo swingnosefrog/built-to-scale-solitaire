@@ -75,11 +75,12 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
 
         val currentCardCursor = cardCursor.getOrCompute()
 
-        val zoneCoords: ZoneCoordinates? = currentCardCursor.lastMouseZoneCoordinates
-            ?: (if (!currentCardCursor.isMouseBased)
-                ZoneCoordinates(currentCardCursor.zone, currentCardCursor.indexFromStart, 0f, 0f)
-            else null)
-        
+        val zoneCoords: ZoneCoordinates? =
+            currentCardCursor.lastMouseZoneCoordinates?.takeIf { currentCardCursor.doLastMouseZoneCoordinatesAgreeWithOtherFields() }
+                ?: (if (!currentCardCursor.isMouseBased)
+                    ZoneCoordinates(currentCardCursor.zone, currentCardCursor.indexFromStart, 0f, 0f)
+                else null)
+
         if (zoneCoords != null) {
             attemptStartDrag(zoneCoords, initialMouseMode)
         }
@@ -274,6 +275,7 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
             return false
         }
 
+        val newZoneOriginalCardCount = newZone.cardStack.cardList.size
         val myList = dragging.cardStack.cardList.toList()
         newZone.cardStack.cardList += myList
 
@@ -290,7 +292,7 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
         val currentCardCursor = cardCursor.getOrCompute()
         val newMouseZoneCoordinates: ZoneCoordinates? =
             originalCardCursor.lastMouseZoneCoordinates?.copy(
-                zone = newZone, index = newZone.cardStack.cardList.size - myList.size
+                zone = newZone, index = newZoneOriginalCardCount
             )
         cardCursor.set(
             currentCardCursor.copy(
