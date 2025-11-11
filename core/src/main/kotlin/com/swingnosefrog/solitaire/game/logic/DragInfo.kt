@@ -2,12 +2,9 @@ package com.swingnosefrog.solitaire.game.logic
 
 import com.badlogic.gdx.math.Rectangle
 import com.swingnosefrog.solitaire.game.Card
+import com.swingnosefrog.solitaire.game.input.CardCursor
 import com.swingnosefrog.solitaire.game.input.GameInput
 import com.swingnosefrog.solitaire.game.input.MouseMode
-import paintbox.util.gdxutils.maxX
-import paintbox.util.gdxutils.maxY
-import kotlin.math.max
-import kotlin.math.min
 
 
 sealed class DragInfo {
@@ -50,7 +47,8 @@ sealed class DragInfo {
     class Dragging(
         zoneCoords: ZoneCoordinates,
         cardList: List<Card>,
-        initialMouseMode: MouseMode?
+        initialMouseMode: MouseMode?,
+        val initialCardCursor: CardCursor,
     ) : DragInfo() {
 
         val originalZone: CardZone = zoneCoords.zone
@@ -82,45 +80,12 @@ sealed class DragInfo {
                 mouseMode = MouseMode.CLICK_THEN_CLICK
             }
 
-            val newZone = getNearestOverlappingDraggingZone(input.logic)
+//            val newZone = getNearestOverlappingDraggingZone(input.logic)
             // TODO check if newZone is legal
 //            attemptSetNewZone(newZone)
         }
         
-        fun getNearestOverlappingDraggingZone(logic: GameLogic): CardZone? {
-            var nearest: CardZone? = null
-            var mostArea = 0f
-
-            val dragX = this.x
-            val dragY = this.y
-            val dragW = GameLogic.CARD_WIDTH
-            val dragH = GameLogic.CARD_HEIGHT // Only the topmost card of the dragged stack counts for area checking
-            val dragRect = Rectangle(dragX, dragY, dragW, dragH)
-
-            for (zone in logic.zones.allPlaceableCardZones) {
-                val zoneRect =
-                    Rectangle(
-                        zone.x.get(),
-                        zone.y.get(),
-                        GameLogic.CARD_WIDTH,
-                        GameLogic.CARD_HEIGHT + (zone.maxStackSize - 1) * zone.cardStack.stackDirection.yOffset
-                    )
-                if (!dragRect.overlaps(zoneRect)) continue
-
-                val minX = max(dragRect.x, zoneRect.x)
-                val minY = max(dragRect.y, zoneRect.y)
-                val maxX = min(dragRect.maxX, zoneRect.maxX)
-                val maxY = min(dragRect.maxY, zoneRect.maxY)
-                val overlapArea = (maxX - minX) * (maxY - minY)
-
-                if (overlapArea > mostArea) {
-                    mostArea = overlapArea
-                    nearest = zone
-                }
-            }
-
-            return nearest
-        }
+        fun toOverlapCheckRectangle(): Rectangle = Rectangle(x, y, GameLogic.CARD_WIDTH, GameLogic.CARD_HEIGHT)
 
 //        private fun attemptSetNewZone(newZone: CardZone?) {
 //            if (newZone != null) {

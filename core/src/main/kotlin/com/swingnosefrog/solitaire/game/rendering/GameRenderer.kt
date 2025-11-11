@@ -59,7 +59,6 @@ open class GameRenderer(
         val camWidth = cam.viewportWidth
         val camHeight = cam.viewportHeight
         
-        updateCameraPosition()
         cam.update()
         if (shouldApplyViewport.get()) {
             viewport.apply()
@@ -109,7 +108,7 @@ open class GameRenderer(
             val cardStack = zone.cardStack
 
             val x = zone.x.get()
-            val y = zone.y.get() + cardStack.stackDirection.yOffset * (cardStack.cardList.size - cardCursor.indexFromEnd - 1)
+            val y = zone.y.get() + cardStack.stackDirection.yOffset * (cardStack.cardList.size - cardCursor.indexFromEnd - 1).coerceAtLeast(0)
             
             batch.setColor(0f, 0f, 1f, 0.35f)
             renderCardTex(CardAssetKey.Silhouette, x, y)
@@ -123,10 +122,6 @@ open class GameRenderer(
 
         batch.color = Color.WHITE
         batch.end()
-    }
-    
-    private fun updateCameraPosition() {
-        
     }
 
     protected open fun CardStack.render(x: Float, y: Float, isFlippedOver: Boolean, renderShadow: Boolean) {

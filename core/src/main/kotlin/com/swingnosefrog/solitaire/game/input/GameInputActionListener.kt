@@ -31,6 +31,7 @@ class GameInputActionListener(private val input: GameInput) : InputActionListene
             }
 
             InputActions.Select -> {
+                // FIXME
                 when (val dragInfo = input.getCurrentDragInfo()) {
                     is DragInfo.Deciding -> {
 //                        if (!dragInfo.isHoveringOverSelection) {

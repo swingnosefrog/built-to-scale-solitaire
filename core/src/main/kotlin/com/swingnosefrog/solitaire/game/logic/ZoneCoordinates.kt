@@ -9,5 +9,7 @@ data class ZoneCoordinates(
     val offsetY: Float,
 ) {
     
+    val indexFromEnd: Int get() = zone.cardStack.cardList.size - index - 1
+    
     fun getCardsToDrag(): List<Card> = zone.cardStack.cardList.drop(index)
 }
