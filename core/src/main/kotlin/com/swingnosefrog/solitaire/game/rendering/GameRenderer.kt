@@ -110,10 +110,12 @@ open class GameRenderer(
             val x = zone.x.get()
             val y = zone.y.get() + cardStack.stackDirection.yOffset * (cardStack.cardList.size - cardCursor.indexFromEnd - 1).coerceAtLeast(0)
             
-            batch.setColor(0f, 0f, 1f, 0.35f)
+            val alpha = if (cardCursor.isMouseBased && cardCursor.lastMouseZoneCoordinates == null) 0.5f else 1f
+            
+            batch.setColor(0f, 0f, 1f, 0.35f * alpha)
             renderCardTex(CardAssetKey.Silhouette, x, y)
             
-            batch.setColor(1f, 1f, 1f, 1f)
+            batch.setColor(1f, 1f, 1f, 1f * alpha)
             val cursorTex = AssetRegistry.get<Texture>("ui_cursor_invert")
             val cursorWidth = CARD_WIDTH * 0.5f
             val cursorHeight = cursorWidth * (cursorTex.height.toFloat() / cursorTex.width)

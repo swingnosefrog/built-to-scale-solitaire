@@ -35,10 +35,10 @@ class GameGdxInputProcessor(private val input: GameInput, private val viewport: 
         return input.attemptStartDrag(mouseMode)
     }
 
-    private fun attemptPutDownCards(screenX: Int, screenY: Int) {
+    private fun attemptPutDownCards(screenX: Int, screenY: Int): Boolean {
         updateMouseMovement(screenX, screenY)
         
-        input.endDrag()
+        return input.endDrag(isFromButtonInput = false)
     }
     
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {

@@ -31,34 +31,29 @@ class GameInputActionListener(private val input: GameInput) : InputActionListene
             }
 
             InputActions.Select -> {
-                // FIXME
-                when (val dragInfo = input.getCurrentDragInfo()) {
+                val currentCardCursor = input.getCurrentCardCursor()
+                
+                // Attempt to "steal input focus" first unless already hovering over card
+                if (currentCardCursor.isMouseBased && currentCardCursor.lastMouseZoneCoordinates == null) {
+                    input.switchToButtonsFocusAndSnapToNearestZoneIfNotAlready()
+                    return true
+                }
+                
+                input.switchToButtonsFocus()
+                
+                return when (input.getCurrentDragInfo()) {
                     is DragInfo.Deciding -> {
-//                        if (!dragInfo.isHoveringOverSelection) {
-//                            input.switchToButtonsFocusAndSnapToNearestZoneIfNotHovering()
-//                            return true
-//                        }
-//
-//                        val zoneCoords = dragInfo.currentSelection.toZoneCoordinates(
-//                            dragInfo.lastKnownMouseOffsetX,
-//                            dragInfo.lastKnownMouseOffsetY
-//                        )
-//                        return input.attemptStartDrag(zoneCoords, null)
+                        input.attemptStartDrag(initialMouseMode = null)
                     }
 
                     is DragInfo.Dragging -> {
-//                        if (!dragInfo.isCurrentlyHoveringOverZone) {
-//                            // Don't actually end drag, steal input focus first
-//                            input.switchToButtonsFocusAndSnapToNearestZoneIfNotHovering()
-//                            return true
-//                        }
-//
-//                        return input.endDrag(dragInfo.hoveredZone, true)
+                        input.endDrag(isFromButtonInput = true)
                     }
                 }
             }
 
             InputActions.Back -> {
+                input.switchToButtonsFocus()
                 return input.cancelDrag()
             }
 

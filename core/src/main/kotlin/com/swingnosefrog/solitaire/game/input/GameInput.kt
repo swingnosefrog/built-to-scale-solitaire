@@ -23,6 +23,7 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
     //region Actions
 
     fun cancelDrag(): Boolean {
+        if (inputsDisabled.get()) return false
         val dragging = getDraggingInfo() ?: return false
         
         val myList = dragging.cardStack.cardList.toList()
@@ -39,43 +40,41 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
             currentCardCursor.copy(
                 zone = originalCardCursor.zone,
                 indexFromEnd = originalCardCursor.indexFromEnd,
-                lastMouseZoneCoordinates = null // Relative position to sub-stack may change after cancelling
+                lastMouseZoneCoordinates = null // Relative position will likely change after cancelling, so must be null
             )
         )
 
         return true
     }
     
-    fun endDrag(): Boolean {
+    fun endDrag(isFromButtonInput: Boolean): Boolean {
+        if (inputsDisabled.get()) return false
         if (!isDragging()) return false
         
-        val currentCardCursor = cardCursor.getOrCompute()
+        if (isFromButtonInput && !canNonCancelButtonOperationInterruptDragging()) return false
         
-        if (currentCardCursor.isMouseBased) {
-            val zoneCoords = currentCardCursor.lastMouseZoneCoordinates
-            endDrag(zoneCoords?.zone, isFromButtonInput = false)
-            return true
-        } else {
-            // TODO implement non-mouse based
-            return false
-        }
+        val currentCardCursor = cardCursor.getOrCompute()
+        endDrag(currentCardCursor.zone, isFromButtonInput)
+        
+        return true
     }
 
     fun attemptStartDrag(initialMouseMode: MouseMode?): Boolean {
+        if (inputsDisabled.get()) return false
         if (isDragging()) return false
 
         val currentCardCursor = cardCursor.getOrCompute()
 
-        if (currentCardCursor.isMouseBased) {
-            val zoneCoords = currentCardCursor.lastMouseZoneCoordinates
-            if (zoneCoords != null) {
-                attemptStartDrag(zoneCoords, initialMouseMode)
-            }
-            return true
-        } else {
-            // TODO implement non-mouse based
-            return false
+        val zoneCoords: ZoneCoordinates? = currentCardCursor.lastMouseZoneCoordinates
+            ?: (if (!currentCardCursor.isMouseBased)
+                ZoneCoordinates(currentCardCursor.zone, currentCardCursor.indexFromStart, 0f, 0f)
+            else null)
+        
+        if (zoneCoords != null) {
+            attemptStartDrag(zoneCoords, initialMouseMode)
         }
+        
+        return true
     }
 
     fun updateMousePosition(worldX: Float, worldY: Float) {
@@ -132,16 +131,23 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
         return true
     }
     
-//    fun switchToButtonsFocusAndSnapToNearestZoneIfNotHovering() {
-//        if (inputsDisabled.get()) return
-//        
-//        switchToButtonsFocus()
-//        
-//        val currentDragInfo = getCurrentDragInfo()
-////        if (!currentDragInfo.isCurrentlyHoveringOverZone) {
-////            snapToNearestZone()
-////        }
-//    }
+    fun switchToButtonsFocusAndSnapToNearestZoneIfNotAlready() {
+        if (inputsDisabled.get()) return
+
+        switchToButtonsFocus()
+
+        val currentDragInfo = getCurrentDragInfo()
+//        if (!currentDragInfo.isCurrentlyHoveringOverZone) {
+//            snapToNearestZone()
+//        }
+    }
+
+    fun switchToButtonsFocus() {
+        val currentCardCursor = cardCursor.getOrCompute()
+        if (currentCardCursor.isMouseBased) {
+            cardCursor.set(currentCardCursor.copy(isMouseBased = false))
+        }
+    }
 
     //endregion
 
@@ -164,13 +170,6 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
         val currentCardCursor = cardCursor.getOrCompute()
         if (!currentCardCursor.isMouseBased) {
             cardCursor.set(currentCardCursor.copy(isMouseBased = true))
-        }
-    }
-
-    private fun switchToButtonsFocus() {
-        val currentCardCursor = cardCursor.getOrCompute()
-        if (currentCardCursor.isMouseBased) {
-            cardCursor.set(currentCardCursor.copy(isMouseBased = false))
         }
     }
     
@@ -201,7 +200,7 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
         val newDragInfo = DragInfo.Deciding()
         dragInfo.set(newDragInfo)
 
-        // Set card cursor to new position within stack, keeping current mouse mode
+        // Set card cursor to new position within stack
         val originalCardCursor = dragging.initialCardCursor
         val currentCardCursor = cardCursor.getOrCompute()
         val newMouseZoneCoordinates: ZoneCoordinates? =
@@ -209,7 +208,11 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
                 zone = newZone, index = newZone.cardStack.cardList.size - myList.size
             )
         cardCursor.set(
-            currentCardCursor.copy(indexFromEnd = myList.size - 1, lastMouseZoneCoordinates = newMouseZoneCoordinates)
+            currentCardCursor.copy(
+                indexFromEnd = myList.size - 1,
+                lastMouseZoneCoordinates = newMouseZoneCoordinates,
+                isMouseBased = !isFromButtonInput
+            )
         )
 
         logic.checkTableauAfterActivity()
