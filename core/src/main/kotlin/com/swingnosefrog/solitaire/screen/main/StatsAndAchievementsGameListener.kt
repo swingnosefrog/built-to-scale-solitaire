@@ -21,6 +21,7 @@ class StatsAndAchievementsGameListener(
         stats.persist()
         
         val steamStats = SteamStats
+        steamStats.triggerAchievementProgress(stats)
         steamStats.updateStatCache(stats)
 
         val achievementsWon = AchievementsLogic.getAchievementsGottenOnGameWin(gameLogic, gameContainer.gamePlayStats)

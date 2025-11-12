@@ -26,6 +26,19 @@ object SteamStats : SteamUserStatsCallback {
         return allSuccessful
     }
 
+    fun triggerAchievementProgress(stats: StatsImpl) {
+        val steamUserStats = getSteamUserStats() ?: return
+
+        fun triggerIfThreshold(achievementApiName: String, statName: String, threshold: Int, maxProgress: Int, currentStatValue: Int) {
+            val oldStat = steamUserStats.getStatI(statName, 0)
+            if (oldStat < threshold && currentStatValue >= threshold) {
+                steamUserStats.indicateAchievementProgress(achievementApiName, currentStatValue, maxProgress)
+            }
+        }
+        
+        triggerIfThreshold(AchievementIds.WIN_GAMES_100, STEAMWORKS_STAT_GAMES_WON, 50, 100, stats.gamesWon.value.get())
+    }
+
     fun markAchievementAsAchieved(achievementApiName: String): Boolean {
         val steamUserStats = getSteamUserStats() ?: return false
 

@@ -15,7 +15,7 @@ object Solitaire {
     }
 
     const val TITLE: String = "Built to Scale Solitaire"
-    val VERSION: Version = Version(0, 8, 2, "dev_20251111a")
+    val VERSION: Version = Version(0, 9, 0, "dev_20251111a")
 
     const val DOT_DIRECTORY_NAME: String = ".built-to-scale-solitaire"
     val DOT_DIRECTORY: File by lazy {
