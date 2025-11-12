@@ -1,9 +1,11 @@
 package com.swingnosefrog.solitaire.game.rendering
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.swingnosefrog.solitaire.SolitaireGame
@@ -13,7 +15,9 @@ import com.swingnosefrog.solitaire.game.assets.CardAssetKey
 import com.swingnosefrog.solitaire.game.assets.CardSkin
 import com.swingnosefrog.solitaire.game.assets.GameAssets
 import com.swingnosefrog.solitaire.game.logic.CardStack
+import com.swingnosefrog.solitaire.game.logic.CardZone
 import com.swingnosefrog.solitaire.game.logic.DragInfo
+import com.swingnosefrog.solitaire.game.logic.GameEventListener
 import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.game.logic.GameLogic.Companion.CARD_HEIGHT
 import com.swingnosefrog.solitaire.game.logic.GameLogic.Companion.CARD_WIDTH
@@ -22,6 +26,7 @@ import paintbox.binding.BooleanVar
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 import paintbox.registry.AssetRegistry
+import paintbox.util.gdxutils.GdxRunnableTransition
 import paintbox.util.gdxutils.fillRect
 
 
@@ -53,6 +58,12 @@ open class GameRenderer(
     
     val currentCardSkin: ReadOnlyVar<CardSkin> = Var { 
         if (SolitaireGame.instance.settings.gameplayUseClassicCardSkin.use()) CardSkin.CLASSIC else CardSkin.MODERN
+    }
+    
+    protected val tallStackEventListener: TallStackEventListener = TallStackEventListener()
+    
+    init {
+        logic.eventDispatcher.addListener(tallStackEventListener)
     }
 
     open fun render(deltaSec: Float) {
@@ -160,5 +171,29 @@ open class GameRenderer(
     
     fun resize(width: Int, height: Int) {
         viewport.update(width, height)
+    }
+
+    protected inner class TallStackEventListener : GameEventListener.Adapter() {
+
+        private var didZoomOut: Boolean = false
+
+        override fun onCardStackPlacedDown(
+            gameLogic: GameLogic,
+            cardStack: CardStack,
+            toZone: CardZone,
+        ) {
+            if (!didZoomOut && gameLogic.isPlayerZoneAndTallStack(toZone)) {
+                didZoomOut = true
+                Gdx.app.postRunnable(
+                    GdxRunnableTransition(
+                        startValue = 0f,
+                        endValue = 1f,
+                        durationSec = 1.5f,
+                        interpolation = Interpolation.pow3Out,
+                    ) { currentValue, _ ->
+                        DEFAULT_CAMERA_POSITION.lerp(ZOOMED_OUT_CAMERA_POSITION, currentValue).applyToCamera(camera)
+                    })
+            }
+        }
     }
 }

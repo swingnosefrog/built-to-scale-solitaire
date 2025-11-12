@@ -45,6 +45,12 @@ object SteamStats : SteamUserStatsCallback {
         return steamUserStats.setAchievement(achievementApiName)
     }
 
+    fun isAchievementUnlocked(achievementApiName: String): Boolean {
+        val steamUserStats = getSteamUserStats() ?: return false
+
+        return steamUserStats.isAchieved(achievementApiName, false)
+    }
+
     fun persistStats(): Boolean {
         val steamUserStats = getSteamUserStats() ?: return false
 

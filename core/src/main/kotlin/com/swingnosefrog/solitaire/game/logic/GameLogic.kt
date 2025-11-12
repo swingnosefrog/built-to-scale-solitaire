@@ -301,6 +301,10 @@ class GameLogic(val deckInitializer: DeckInitializer, initiallyMouseBased: Boole
 
         return isStackValidToMove(listOfNotNull(targetZone.cardStack.cardList.lastOrNull()) + dragStackList)
     }
+    
+    fun isPlayerZoneAndTallStack(zone: CardZone): Boolean {
+        return zones.isPlayerZone(zone) && zone.cardStack.cardList.size >= 11
+    }
 
 
     private class DispatcherImpl : GameEventDispatcher {

@@ -9,9 +9,13 @@ data class CameraPosition(
     val y: Float,
     val zoom: Float,
 ) {
-    
+
     fun lerp(other: CameraPosition, alpha: Float): CameraPosition {
-        return CameraPosition(MathUtils.lerp(this.x, other.x, alpha), MathUtils.lerp(this.y, other.y, alpha), MathUtils.lerp(this.zoom, other.zoom, alpha))
+        return CameraPosition(
+            MathUtils.lerp(this.x, other.x, alpha),
+            MathUtils.lerp(this.y, other.y, alpha),
+            MathUtils.lerp(this.zoom, other.zoom, alpha)
+        )
     }
     
     fun applyToCamera(camera: OrthographicCamera) {

@@ -10,4 +10,5 @@ object AchievementIds {
     
     const val WIN_GAME_FEW_MOVES: String = "win_game_few_moves"
     const val WIN_GAME_FAST: String = "win_game_fast"
+    const val TALL_STACK: String = "tall_stack"
 }

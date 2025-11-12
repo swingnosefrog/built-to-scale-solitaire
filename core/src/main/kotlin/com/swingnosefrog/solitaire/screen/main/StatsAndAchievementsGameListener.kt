@@ -8,6 +8,7 @@ import com.swingnosefrog.solitaire.game.logic.GameEventListener
 import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.statistics.AchievementsLogic
 import com.swingnosefrog.solitaire.statistics.StatsImpl
+import com.swingnosefrog.solitaire.steamworks.AchievementIds
 import com.swingnosefrog.solitaire.steamworks.SteamStats
 
 
@@ -59,6 +60,15 @@ class StatsAndAchievementsGameListener(
         toZone: CardZone,
     ) {
         stats.movesMade.increment()
+        
+        if (gameLogic.isPlayerZoneAndTallStack(toZone)) {
+            val steamStats = SteamStats
+            val id = AchievementIds.TALL_STACK
+            if (!steamStats.isAchievementUnlocked(id)) {
+                steamStats.markAchievementAsAchieved(id)
+                steamStats.persistStats()
+            }
+        }
     }
 
     override fun onCardAutoMoved(

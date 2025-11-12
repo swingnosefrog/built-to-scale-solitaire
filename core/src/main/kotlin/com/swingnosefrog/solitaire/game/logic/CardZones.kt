@@ -16,6 +16,7 @@ class CardZones {
     val allCardZones: List<CardZone>
 
     private val placeableCardZonesSet: Set<CardZone>
+    private val playerCardZonesSet: Set<CardZone>
 
     init {
         val zoneSpacingX = 0.5f
@@ -67,7 +68,9 @@ class CardZones {
         }
 
         placeableCardZonesSet = allPlaceableCardZones.toSet()
+        playerCardZonesSet = playerZones.toSet()
     }
 
     fun isPlaceable(zone: CardZone): Boolean = zone in placeableCardZonesSet
+    fun isPlayerZone(zone: CardZone): Boolean = zone in playerCardZonesSet
 }
