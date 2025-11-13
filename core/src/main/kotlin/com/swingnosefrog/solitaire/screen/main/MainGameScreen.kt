@@ -19,6 +19,7 @@ import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.inputmanager.InputManager
 import com.swingnosefrog.solitaire.screen.AbstractGameScreen
 import com.swingnosefrog.solitaire.soundsystem.SoundSystem
+import com.swingnosefrog.solitaire.steamworks.Steamworks
 import paintbox.binding.BooleanVar
 import paintbox.binding.ReadOnlyBooleanVar
 import paintbox.binding.ReadOnlyVar
@@ -68,12 +69,17 @@ class MainGameScreen(
         startNewGame(DeckInitializer.RandomSeed())
         soundSystem.startRealtime()
     }
-    
+
     fun startNewGame(deckInitializer: DeckInitializer) {
         val newContainer =
-            GameContainer({ GameLogic(deckInitializer, initiallyMouseBased = true) }, batch, soundSystem, gameMusic)
+            GameContainer(
+                { GameLogic(deckInitializer, initiallyMouseBased = !Steamworks.isRunningOnSteamDeck()) },
+                batch,
+                soundSystem,
+                gameMusic
+            )
         backingGameContainer.setNewGameContainer(newContainer)
-        
+
         gameMusic.transitionToStemMix(GameMusic.StemMixes.ALL, 1f)
     }
     
