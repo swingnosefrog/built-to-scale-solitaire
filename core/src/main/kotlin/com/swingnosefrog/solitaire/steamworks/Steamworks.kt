@@ -98,6 +98,6 @@ object Steamworks {
     }
     
     private fun setInitialSettings(interfaces: SteamInterfaces) {
-        interfaces.utils.setOverlayNotificationPosition(SteamUtils.NotificationPosition.BottomLeft)
+        interfaces.utils.setOverlayNotificationPosition(SteamUtils.NotificationPosition.BottomRight)
     }
 }
