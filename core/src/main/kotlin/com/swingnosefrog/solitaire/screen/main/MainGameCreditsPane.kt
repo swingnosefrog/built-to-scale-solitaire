@@ -46,15 +46,14 @@ class MainGameCreditsPane(
 
         val creditsHeadingTextColor: Color = Color.valueOf("FFE97F")
         val nameTextColor: Color = Color.valueOf("D8D8D8")
+        val attributionTextColor: Color = Color.valueOf("B7B7B7")
 
         val contentPane = Pane().apply {
 
             fun createTextLabel(creditsList: List<Pair<ReadOnlyVar<String>, List<ReadOnlyVar<String>>>>): TextLabel {
                 fun VarContext.addPair(pair: Pair<ReadOnlyVar<String>, List<ReadOnlyVar<String>>>): String {
                     return "[color=#${creditsHeadingTextColor} lineheight=0.8]${Markup.escape(pair.first.use())}\n[][scale=0.8]${
-                        pair.second.joinToString(
-                            separator = "\n"
-                        ) { Markup.escape(it.use()) }
+                        pair.second.joinToString(separator = "\n") { Markup.escape(it.use()) }
                     }\n[]"
                 }
                 return TextLabel("").apply {
@@ -67,20 +66,38 @@ class MainGameCreditsPane(
                     }
                 }
             }
+            fun TextLabel.setAutoResize() {
+                this@MainGameCreditsPane.visible.addListenerAndFire { v ->
+                    if (v.getOrCompute()) {
+                        this.resizeBoundsToContent(affectWidth = false)
+                    }
+                }
+            }
 
             val credits = creditsInfo.credits.toList()
             scrollPane = ScrollPane().apply {
                 this.setContent(VBox().apply {
-                    this.spacing.set(16f)
                     this.temporarilyDisableLayouts {
                         this += ImageIcon(binding = { TextureRegion(AssetRegistry.get<Texture>("ui_credits_logo")) }).apply {
                             this.bounds.height.set(175f)
                         }
                         this += createTextLabel(credits).apply {
-                            this@MainGameCreditsPane.visible.addListenerAndFire { v ->
-                                if (v.getOrCompute()) {
-                                    this.resizeBoundsToContent(affectWidth = false)
+                            this.margin.set(Insets(16f, 8f, 0f, 0f))
+                            this.setAutoResize()
+                        }
+                        creditsInfo.otherAttributions.forEach { attr ->
+                            this += TextLabel("").apply {
+                                this.setScaleXY(0.6f)
+                                this.margin.set(Insets(8f))
+                                this.markup.set(mainSansSerifMarkup)
+                                this.renderAlign.set(RenderAlign.topLeft)
+                                this.textAlign.set(TextAlign.LEFT)
+                                this.textColor.set(attributionTextColor)
+                                this.doLineWrapping.set(true)
+                                this.text.bind {
+                                    attr.use()
                                 }
+                                this.setAutoResize()
                             }
                         }
                     }

@@ -53,6 +53,12 @@ class CreditsInfo {
             "Open Sans",
         ).toVars(),
     )
+    
+    val otherAttributions: List<ReadOnlyVar<String>> = listOf(
+        Localization["credits.otherAttributions.thisGame"],
+        Localization["credits.otherAttributions.fontLicenses"],
+        Localization["credits.otherAttributions.promptFont"],
+    )
 
     private fun abcSorted(vararg things: String): List<String> = things.sortedBy { it.lowercase(Locale.ROOT) }
     
