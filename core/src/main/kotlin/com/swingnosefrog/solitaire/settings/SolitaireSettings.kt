@@ -6,6 +6,7 @@ import com.swingnosefrog.solitaire.game.input.MouseMode
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_FULLSCREEN
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_FULLSCREEN_MONITOR
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_MOUSE_MODE
+import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_HOW_TO_PLAY_BUTTON
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_TIMER
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_USE_CLASSIC_CARD_SKIN
@@ -46,9 +47,10 @@ class SolitaireSettings(
     val sfxVolume: IntVar
     
     val gameplayMouseMode: Var<MouseMode>
+    val gameplayUseClassicCardSkin: BooleanVar
     val gameplayShowMoveCounter: BooleanVar
     val gameplayShowTimer: BooleanVar
-    val gameplayUseClassicCardSkin: BooleanVar
+    val gameplayShowHowToPlayButton: BooleanVar
 
     init {
         val definitelyOnSteamDeck = isRunningOnSteamDeckHint == true
@@ -69,9 +71,10 @@ class SolitaireSettings(
             sfxVolume = KeyValue.Int(SETTINGS_SFX_VOLUME, 100, min = 0, max = 100).add().value
             
             gameplayMouseMode = KeyValue.Enum<MouseMode>(SETTINGS_GAMEPLAY_MOUSE_MODE, MouseMode.CLICK_AND_DRAG).add().value
+            gameplayUseClassicCardSkin = KeyValue.Bool(SETTINGS_GAMEPLAY_USE_CLASSIC_CARD_SKIN, false).add().value
             gameplayShowMoveCounter = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER, true).add().value
             gameplayShowTimer = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_TIMER, true).add().value
-            gameplayUseClassicCardSkin = KeyValue.Bool(SETTINGS_GAMEPLAY_USE_CLASSIC_CARD_SKIN, false).add().value
+            gameplayShowHowToPlayButton = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_HOW_TO_PLAY_BUTTON, true).add().value
         }
 
         allKeyValues = initScope.allKeyValues.toList()

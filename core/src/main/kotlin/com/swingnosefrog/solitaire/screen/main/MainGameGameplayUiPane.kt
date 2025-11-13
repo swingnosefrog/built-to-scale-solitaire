@@ -3,6 +3,7 @@ package com.swingnosefrog.solitaire.screen.main
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
 import com.swingnosefrog.solitaire.Localization
+import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.game.GameContainer
 import com.swingnosefrog.solitaire.inputmanager.IActionInputGlyph
@@ -87,6 +88,8 @@ class MainGameGameplayUiPane(
                 this.bounds.height.set(40f)
                 Anchor.BottomLeft.configure(this)
                 this.applyStyle(Corner.TOP_RIGHT)
+                
+                this.visible.bind { SolitaireGame.instance.settings.gameplayShowHowToPlayButton.use() }
 
                 this.setOnAction {
                     uiInputHandler.openHowToPlayMenu()

@@ -37,6 +37,10 @@ class GameplaySettingsMenu(
             Localization["game.menu.gameplaySettings.option.showTimer"],
             settings.gameplayShowTimer
         ),
+        MenuOption.OptionWidget.Checkbox(
+            Localization["game.menu.gameplaySettings.option.showHowToPlayButton"],
+            settings.gameplayShowHowToPlayButton
+        ),
         MenuOption.Back(),
     )
 
