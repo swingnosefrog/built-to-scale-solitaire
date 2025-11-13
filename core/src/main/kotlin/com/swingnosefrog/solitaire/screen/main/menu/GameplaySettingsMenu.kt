@@ -14,16 +14,20 @@ class GameplaySettingsMenu(
     override val headingText: ReadOnlyVar<String> = Localization["game.menu.gameplaySettings.heading"]
 
     override val options: List<MenuOption> = listOf(
-        MenuOption.OptionWidget.Cycle<MouseMode>(
+        MenuOption.OptionWidget.Cycle(
             Localization["game.menu.gameplaySettings.option.mouseMode"],
             ReadOnlyVar.const(MouseMode.entries.toList()),
             settings.gameplayMouseMode,
-            StringVarConverter { mouseMode ->
+            StringVarConverter { mouseMode: MouseMode ->
                 when (mouseMode) {
                     MouseMode.CLICK_AND_DRAG -> Localization["game.menu.gameplaySettings.option.mouseMode.drag"]
                     MouseMode.CLICK_THEN_CLICK -> Localization["game.menu.gameplaySettings.option.mouseMode.toggle"]
                 }
             }
+        ),
+        MenuOption.OptionWidget.Checkbox(
+            Localization["game.menu.gameplaySettings.option.useClassicCardSkin"],
+            settings.gameplayUseClassicCardSkin
         ),
         MenuOption.OptionWidget.Checkbox(
             Localization["game.menu.gameplaySettings.option.showMoveCounter"],
@@ -32,10 +36,6 @@ class GameplaySettingsMenu(
         MenuOption.OptionWidget.Checkbox(
             Localization["game.menu.gameplaySettings.option.showTimer"],
             settings.gameplayShowTimer
-        ),
-        MenuOption.OptionWidget.Checkbox(
-            Localization["game.menu.gameplaySettings.option.useClassicCardSkin"],
-            settings.gameplayUseClassicCardSkin
         ),
         MenuOption.Back(),
     )
