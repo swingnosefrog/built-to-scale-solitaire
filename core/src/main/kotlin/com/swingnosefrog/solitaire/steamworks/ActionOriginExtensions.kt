@@ -89,13 +89,13 @@ private fun SteamController.ActionOrigin.toSteamActionInputGlyph(): SteamActionI
         SteamController.ActionOrigin.PS4_RightTrigger_Pull -> PromptFontConsts.SONY_RIGHT_TRIGGER
         SteamController.ActionOrigin.PS4_RightTrigger_Click -> PromptFontConsts.SONY_RIGHT_TRIGGER
         SteamController.ActionOrigin.PS4_LeftStick_Move ->  PromptFontConsts.ANALOG_L
-        SteamController.ActionOrigin.PS4_LeftStick_Click -> PromptFontConsts.ANALOG_L_CLICK
+        SteamController.ActionOrigin.PS4_LeftStick_Click -> PromptFontConsts.SONY_LEFT_STICK
         SteamController.ActionOrigin.PS4_LeftStick_DPadNorth -> PromptFontConsts.ANALOG_L_UP
         SteamController.ActionOrigin.PS4_LeftStick_DPadSouth -> PromptFontConsts.ANALOG_L_DOWN
         SteamController.ActionOrigin.PS4_LeftStick_DPadWest ->  PromptFontConsts.ANALOG_L_LEFT
         SteamController.ActionOrigin.PS4_LeftStick_DPadEast ->  PromptFontConsts.ANALOG_L_RIGHT
         SteamController.ActionOrigin.PS4_RightStick_Move ->  PromptFontConsts.ANALOG_R
-        SteamController.ActionOrigin.PS4_RightStick_Click -> PromptFontConsts.ANALOG_R_CLICK
+        SteamController.ActionOrigin.PS4_RightStick_Click -> PromptFontConsts.SONY_RIGHT_STICK
         SteamController.ActionOrigin.PS4_RightStick_DPadNorth -> PromptFontConsts.ANALOG_R_UP
         SteamController.ActionOrigin.PS4_RightStick_DPadSouth -> PromptFontConsts.ANALOG_R_DOWN
         SteamController.ActionOrigin.PS4_RightStick_DPadWest ->  PromptFontConsts.ANALOG_R_LEFT
@@ -296,13 +296,13 @@ private fun SteamController.ActionOrigin.toSteamActionInputGlyph(): SteamActionI
         SteamController.ActionOrigin.PS5_RightTrigger_Pull -> PromptFontConsts.SONY_RIGHT_TRIGGER
         SteamController.ActionOrigin.PS5_RightTrigger_Click -> PromptFontConsts.SONY_RIGHT_TRIGGER
         SteamController.ActionOrigin.PS5_LeftStick_Move ->  PromptFontConsts.ANALOG_L
-        SteamController.ActionOrigin.PS5_LeftStick_Click -> PromptFontConsts.ANALOG_L_CLICK
+        SteamController.ActionOrigin.PS5_LeftStick_Click -> PromptFontConsts.SONY_LEFT_STICK
         SteamController.ActionOrigin.PS5_LeftStick_DPadNorth -> PromptFontConsts.ANALOG_L_UP
         SteamController.ActionOrigin.PS5_LeftStick_DPadSouth -> PromptFontConsts.ANALOG_L_DOWN
         SteamController.ActionOrigin.PS5_LeftStick_DPadWest ->  PromptFontConsts.ANALOG_L_LEFT
         SteamController.ActionOrigin.PS5_LeftStick_DPadEast ->  PromptFontConsts.ANALOG_L_RIGHT
         SteamController.ActionOrigin.PS5_RightStick_Move ->  PromptFontConsts.ANALOG_R
-        SteamController.ActionOrigin.PS5_RightStick_Click -> PromptFontConsts.ANALOG_R_CLICK
+        SteamController.ActionOrigin.PS5_RightStick_Click -> PromptFontConsts.SONY_RIGHT_STICK
         SteamController.ActionOrigin.PS5_RightStick_DPadNorth -> PromptFontConsts.ANALOG_R_UP
         SteamController.ActionOrigin.PS5_RightStick_DPadSouth -> PromptFontConsts.ANALOG_R_DOWN
         SteamController.ActionOrigin.PS5_RightStick_DPadWest ->  PromptFontConsts.ANALOG_R_LEFT
