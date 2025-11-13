@@ -17,7 +17,7 @@ object PreferenceKeys {
     val SETTINGS_SFX_VOLUME = "settings_volume_sfx"
     
     val SETTINGS_GAMEPLAY_MOUSE_MODE = "settings_gameplay_mouseMode"
-    val SETTINGS_GAMEPLAY_USE_CLASSIC_CARD_SKIN = "settings_gameplay_useClassicCardSkin"
+    val SETTINGS_GAMEPLAY_CARD_SKIN = "settings_gameplay_cardSkin"
     val SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER = "settings_gameplay_showMoveCounter"
     val SETTINGS_GAMEPLAY_SHOW_TIMER = "settings_gameplay_showTimer"
     val SETTINGS_GAMEPLAY_SHOW_HOW_TO_PLAY_BUTTON = "settings_gameplay_showHowToPlayButton"

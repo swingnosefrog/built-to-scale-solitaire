@@ -2,14 +2,15 @@ package com.swingnosefrog.solitaire.settings
 
 import com.badlogic.gdx.Preferences
 import com.swingnosefrog.solitaire.SolitaireGame
+import com.swingnosefrog.solitaire.game.assets.CardSkin
 import com.swingnosefrog.solitaire.game.input.MouseMode
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_FULLSCREEN
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_FULLSCREEN_MONITOR
+import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_CARD_SKIN
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_MOUSE_MODE
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_HOW_TO_PLAY_BUTTON
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_TIMER
-import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_USE_CLASSIC_CARD_SKIN
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_MASTER_VOLUME
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_MAX_FPS
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_MUSIC_VOLUME
@@ -47,7 +48,7 @@ class SolitaireSettings(
     val sfxVolume: IntVar
     
     val gameplayMouseMode: Var<MouseMode>
-    val gameplayUseClassicCardSkin: BooleanVar
+    val gameplayCardSkin: Var<CardSkin>
     val gameplayShowMoveCounter: BooleanVar
     val gameplayShowTimer: BooleanVar
     val gameplayShowHowToPlayButton: BooleanVar
@@ -71,7 +72,7 @@ class SolitaireSettings(
             sfxVolume = KeyValue.Int(SETTINGS_SFX_VOLUME, 100, min = 0, max = 100).add().value
             
             gameplayMouseMode = KeyValue.Enum<MouseMode>(SETTINGS_GAMEPLAY_MOUSE_MODE, MouseMode.CLICK_AND_DRAG).add().value
-            gameplayUseClassicCardSkin = KeyValue.Bool(SETTINGS_GAMEPLAY_USE_CLASSIC_CARD_SKIN, false).add().value
+            gameplayCardSkin = KeyValue.Enum<CardSkin>(SETTINGS_GAMEPLAY_CARD_SKIN, CardSkin.MODERN).add().value
             gameplayShowMoveCounter = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER, true).add().value
             gameplayShowTimer = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_TIMER, true).add().value
             gameplayShowHowToPlayButton = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_HOW_TO_PLAY_BUTTON, true).add().value

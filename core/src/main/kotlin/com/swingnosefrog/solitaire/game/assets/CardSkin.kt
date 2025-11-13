@@ -1,9 +1,9 @@
 package com.swingnosefrog.solitaire.game.assets
 
 
-enum class CardSkin(val prefix: String) {
+enum class CardSkin(val assetKeyPrefix: String, val localizationKeySuffix: String) {
     
-    MODERN("modern"),
-    CLASSIC("classic"),
+    MODERN("modern", "modern"),
+    CLASSIC("classic", "classic"),
     ;
 }

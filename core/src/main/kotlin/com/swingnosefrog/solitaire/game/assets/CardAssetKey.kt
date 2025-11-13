@@ -49,6 +49,6 @@ sealed class CardAssetKey {
     
     private val assetKeysBySkin: MutableMap<CardSkin, String> = mutableMapOf()
     
-    fun getAssetKey(skin: CardSkin): String = assetKeysBySkin.getOrPut(skin) { "${skin.prefix}_${skinlessAssetKey}"}
+    fun getAssetKey(skin: CardSkin): String = assetKeysBySkin.getOrPut(skin) { "${skin.assetKeyPrefix}_${skinlessAssetKey}"}
 }
 

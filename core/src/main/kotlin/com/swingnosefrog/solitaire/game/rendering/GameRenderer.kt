@@ -56,8 +56,8 @@ open class GameRenderer(
     
     val shouldApplyViewport: BooleanVar = BooleanVar(true)
     
-    val currentCardSkin: ReadOnlyVar<CardSkin> = Var { 
-        if (SolitaireGame.instance.settings.gameplayUseClassicCardSkin.use()) CardSkin.CLASSIC else CardSkin.MODERN
+    val currentCardSkin: ReadOnlyVar<CardSkin> = Var {
+        SolitaireGame.instance.settings.gameplayCardSkin.use()
     }
     
     protected val tallStackEventListener: TallStackEventListener = TallStackEventListener()
@@ -113,8 +113,8 @@ open class GameRenderer(
             dragging.cardStack.render(dragging.x, dragging.y - 0.05f, isFlippedOver = false, renderShadow = true)
         }
 
-        // TODO remove me
-        run {
+        // FIXME proper card cursor rendering
+        if (logic.gameInput.inputsDisabled.get() || logic.gameWon.get()) {
             val cardCursor = logic.gameInput.getCurrentCardCursor()
             val zone = cardCursor.zone
             val cardStack = zone.cardStack

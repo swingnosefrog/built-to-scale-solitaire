@@ -1,6 +1,7 @@
 package com.swingnosefrog.solitaire.screen.main.menu
 
 import com.swingnosefrog.solitaire.Localization
+import com.swingnosefrog.solitaire.game.assets.CardSkin
 import com.swingnosefrog.solitaire.game.input.MouseMode
 import com.swingnosefrog.solitaire.menu.MenuOption
 import paintbox.binding.ReadOnlyVar
@@ -25,9 +26,13 @@ class GameplaySettingsMenu(
                 }
             }
         ),
-        MenuOption.OptionWidget.Checkbox(
-            Localization["game.menu.gameplaySettings.option.useClassicCardSkin"],
-            settings.gameplayUseClassicCardSkin
+        MenuOption.OptionWidget.Cycle(
+            Localization["game.menu.gameplaySettings.option.cardSkin"],
+            ReadOnlyVar.const(CardSkin.entries.toList()),
+            settings.gameplayCardSkin,
+            StringVarConverter { cardSkin: CardSkin ->
+                Localization["game.menu.gameplaySettings.option.cardSkin.${cardSkin.localizationKeySuffix}"]
+            }
         ),
         MenuOption.OptionWidget.Checkbox(
             Localization["game.menu.gameplaySettings.option.showMoveCounter"],
