@@ -12,6 +12,7 @@ import com.swingnosefrog.solitaire.game.input.GameInputActionListener
 import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.game.logic.GamePlayStats
 import com.swingnosefrog.solitaire.game.rendering.GameRenderer
+import com.swingnosefrog.solitaire.game.rendering.IGameRenderer
 import com.swingnosefrog.solitaire.soundsystem.SoundSystem
 
 
@@ -26,7 +27,7 @@ class GameContainer(
     val gameInput: GameInput get() = gameLogic.gameInput
     val gamePlayStats: GamePlayStats get() = gameLogic.gamePlayStats
     
-    val gameRenderer: GameRenderer = GameRenderer(gameLogic, batch)
+    val gameRenderer: IGameRenderer = GameRenderer(gameLogic, batch)
     val viewport: Viewport get() = gameRenderer.viewport
     
     val gdxInputProcessor: InputProcessor = GameGdxInputProcessor(gameInput, viewport)

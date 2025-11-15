@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Interpolation
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.swingnosefrog.solitaire.SolitaireGame
@@ -23,25 +24,32 @@ import com.swingnosefrog.solitaire.game.logic.GameLogic.Companion.CARD_HEIGHT
 import com.swingnosefrog.solitaire.game.logic.GameLogic.Companion.CARD_WIDTH
 import com.swingnosefrog.solitaire.game.logic.StackDirection
 import paintbox.binding.BooleanVar
+import paintbox.binding.LongVar
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 import paintbox.registry.AssetRegistry
 import paintbox.util.gdxutils.GdxRunnableTransition
 import paintbox.util.gdxutils.fillRect
+import paintbox.util.gdxutils.setColor
+import paintbox.util.wave.CosineWave
+import paintbox.util.wave.SineWave
 
 
-open class GameRenderer(
-    protected val logic: GameLogic,
-    protected val batch: SpriteBatch,
-) {
+class GameRenderer(
+    private val logic: GameLogic,
+    private val batch: SpriteBatch,
+) : IGameRenderer {
     
     companion object {
         
         val DEFAULT_CAMERA_POSITION: CameraPosition = CameraPosition(0f, 0.25f, 0.7875f)
         val ZOOMED_OUT_CAMERA_POSITION: CameraPosition = CameraPosition(0f, 0f, 0.825f)
+        
+        private const val SHADOW_OFFSET_Y: Float = 0.1f
     }
 
-    protected val tableauColor: Color = Color.valueOf("125942")
+    private val cursorSelectionColor: Color = Color.valueOf("FF8400")
+    private val tableauColor: Color = Color.valueOf("125942")
 
     val viewportWidth: Float = 18f // 20f
     val viewportHeight: Float = 11.25f
@@ -52,21 +60,26 @@ open class GameRenderer(
 
         DEFAULT_CAMERA_POSITION.applyToCamera(this)
     }
-    val viewport: Viewport = ExtendViewport(18f, 11.25f, 20f, 11.25f, camera)
-    
-    val shouldApplyViewport: BooleanVar = BooleanVar(true)
+    override val viewport: Viewport = ExtendViewport(18f, 11.25f, 20f, 11.25f, camera)
+    override val shouldApplyViewport: BooleanVar = BooleanVar(true)
     
     val currentCardSkin: ReadOnlyVar<CardSkin> = Var {
         SolitaireGame.instance.settings.gameplayCardSkin.use()
     }
     
-    protected val tallStackEventListener: TallStackEventListener = TallStackEventListener()
+    private val tallStackEventListener: TallStackEventListener = TallStackEventListener()
+    
+    private val wasCardCursorRenderedLastFrame: BooleanVar = BooleanVar(false)
+    private val cardCursorBlinkOffsetMs: LongVar = LongVar(System.currentTimeMillis())
     
     init {
         logic.eventDispatcher.addListener(tallStackEventListener)
+        wasCardCursorRenderedLastFrame.addListener { 
+            cardCursorBlinkOffsetMs.set(System.currentTimeMillis())
+        }
     }
 
-    open fun render(deltaSec: Float) {
+    override fun render(deltaSec: Float) {
         val cam = this.camera
         val camWidth = cam.viewportWidth
         val camHeight = cam.viewportHeight
@@ -110,51 +123,30 @@ open class GameRenderer(
         batch.setColor(1f, 1f, 1f, 1f)
 
         logic.gameInput.getDraggingInfo()?.also { dragging ->
-            dragging.cardStack.render(dragging.x, dragging.y - 0.05f, isFlippedOver = false, renderShadow = true)
+            dragging.cardStack.render(dragging.x, dragging.y - 0.075f, isFlippedOver = false, renderShadow = true)
         }
 
-        // FIXME proper card cursor rendering
-        if (logic.gameInput.inputsDisabled.get() || logic.gameWon.get()) {
-            val cardCursor = logic.gameInput.getCurrentCardCursor()
-            val zone = cardCursor.zone
-            val cardStack = zone.cardStack
-
-            val currentDragInfo = logic.gameInput.getCurrentDragInfo()
-            var indexFromEnd = cardCursor.indexFromEnd
-            if (currentDragInfo is DragInfo.Dragging) {
-                indexFromEnd -= 1
-            }
-            
-            val x = zone.x.get()
-            val y = zone.y.get() + cardStack.stackDirection.yOffset * (cardStack.cardList.size - indexFromEnd - 1).coerceAtLeast(0)
-            
-            val alpha = if (cardCursor.isMouseBased && cardCursor.lastMouseZoneCoordinates == null) 0.2f else 1f
-            
-            batch.setColor(0f, 0f, 1f, 0.35f * alpha)
-            renderCardTex(CardAssetKey.Silhouette, x, y)
-            
-            batch.setColor(1f, 1f, 1f, 1f * alpha)
-            val cursorTex = AssetRegistry.get<Texture>("ui_cursor_invert")
-            val cursorWidth = CARD_WIDTH * 0.5f
-            val cursorHeight = cursorWidth * (cursorTex.height.toFloat() / cursorTex.width)
-            batch.draw(cursorTex, x + CARD_WIDTH, -(y + CARD_HEIGHT * 0.0625f), cursorWidth, cursorHeight)
-        }
+        renderCardCursor()
 
         batch.color = Color.WHITE
         batch.end()
     }
 
-    protected open fun CardStack.render(x: Float, y: Float, isFlippedOver: Boolean, renderShadow: Boolean) {
+    override fun resize(width: Int, height: Int) {
+        viewport.update(width, height)
+    }
+
+    private fun CardStack.render(x: Float, y: Float, isFlippedOver: Boolean, renderShadow: Boolean, shadowOffsetY: Float = SHADOW_OFFSET_Y) {
         val stackOffset = this.stackDirection.yOffset
         this.cardList.forEachIndexed { index, card ->
-            card.render(x, y + index * stackOffset, isFlippedOver, renderShadow)
+            card.render(x, y + index * stackOffset, isFlippedOver, renderShadow, shadowOffsetY)
         }
     }
 
-    protected open fun Card.render(x: Float, y: Float, flippedOver: Boolean, renderShadow: Boolean) {
+    private fun Card.render(x: Float, y: Float, flippedOver: Boolean, renderShadow: Boolean, shadowOffsetY: Float = SHADOW_OFFSET_Y) {
         if (renderShadow) {
             batch.setColor(0f, 0f, 0f, 0.35f)
-            renderCardTex(CardAssetKey.Silhouette, x, y + 0.1f)
+            renderCardTex(CardAssetKey.Silhouette, x, y + shadowOffsetY)
         }   
         
         val cardAssetKey: CardAssetKey = if (flippedOver) CardAssetKey.Back else this.cardAssetKey
@@ -168,12 +160,43 @@ open class GameRenderer(
         val tex = GameAssets.get<Texture>(cardAssetKey.getAssetKey(currentCardSkin.getOrCompute()))
         batch.draw(tex, x, -(y + CARD_HEIGHT), CARD_WIDTH, CARD_HEIGHT)
     }
-    
-    fun resize(width: Int, height: Int) {
-        viewport.update(width, height)
+
+    private fun renderCardCursor() {
+        val gameInput = logic.gameInput
+        val cardCursor = gameInput.getCurrentCardCursor()
+
+        if (gameInput.inputsDisabled.get() || logic.gameWon.get() || (cardCursor.isMouseBased && cardCursor.lastMouseZoneCoordinates == null)) {
+            wasCardCursorRenderedLastFrame.set(false)
+            return
+        }
+        wasCardCursorRenderedLastFrame.set(true)
+
+        val zone = cardCursor.zone
+        val cardStack = zone.cardStack
+
+        val currentDragInfo = gameInput.getCurrentDragInfo()
+        var indexFromEnd = cardCursor.indexFromEnd
+        if (currentDragInfo is DragInfo.Dragging) {
+            indexFromEnd -= 1 // Show future position instead of "index 0" position
+        }
+
+        val x = zone.x.get()
+        val y = zone.y.get() + cardStack.stackDirection.yOffset * (cardStack.cardList.size - indexFromEnd - 1).coerceAtLeast(0)
+
+        val blinkPeriodSec = 1.5f
+        val blinkProgress = SineWave.getWaveValue(blinkPeriodSec, offsetMs = -(cardCursorBlinkOffsetMs.get()))
+        batch.setColor(cursorSelectionColor, alpha = MathUtils.lerp(0f, 0.35f, blinkProgress))
+        renderCardTex(CardAssetKey.Hover, x, y)
+
+        val cursorTexKey = if (currentDragInfo is DragInfo.Dragging) "ui_cursor_invert_pressed" else "ui_cursor_invert"
+        val cursorTex = AssetRegistry.get<Texture>(cursorTexKey)
+        val cursorWidth = CARD_WIDTH * 0.5f
+        val cursorHeight = cursorWidth * (cursorTex.height.toFloat() / cursorTex.width)
+        batch.setColor(1f, 1f, 1f, 1f)
+        batch.draw(cursorTex, x + CARD_WIDTH, -(y + CARD_HEIGHT * 0.0625f), cursorWidth, cursorHeight)
     }
 
-    protected inner class TallStackEventListener : GameEventListener.Adapter() {
+    private inner class TallStackEventListener : GameEventListener.Adapter() {
 
         private var didZoomOut: Boolean = false
 

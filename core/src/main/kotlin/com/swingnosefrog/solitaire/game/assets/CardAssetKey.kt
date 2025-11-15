@@ -45,6 +45,11 @@ sealed class CardAssetKey {
         override val skinlessAssetKey: String = "card_silhouette"
     }
     
+    data object Hover : CardAssetKey() {
+        
+        override val skinlessAssetKey: String = "card_hover"
+    }
+    
     abstract val skinlessAssetKey: String
     
     private val assetKeysBySkin: MutableMap<CardSkin, String> = mutableMapOf()
