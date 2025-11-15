@@ -304,12 +304,9 @@ class MainGameMenuPane(
                                 }
 
                                 (this.skin.getOrCompute() as Slider.SliderSkin).let { skin ->
-                                    skin.circleSizeMultiplier.bind {
-                                        if (option.isSelected.use()) 1f else 0.65f
-                                    }
-                                    skin.barHeightMultiplier.bind {
-                                        if (option.isSelected.use()) 1f else 0.65f
-                                    }
+                                    val sizeMultiplier = FloatVar { if (option.isSelected.use()) 1f else 0.675f }
+                                    skin.circleSizeMultiplier.bind(sizeMultiplier)
+                                    skin.barHeightMultiplier.bind(sizeMultiplier)
                                 }
 
                                 this.minimum.bind(option.minimum)
