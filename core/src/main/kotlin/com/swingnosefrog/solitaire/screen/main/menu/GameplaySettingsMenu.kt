@@ -16,6 +16,14 @@ class GameplaySettingsMenu(
 
     override val options: List<MenuOption> = listOf(
         MenuOption.OptionWidget.Cycle(
+            Localization["game.menu.gameplaySettings.option.cardSkin"],
+            ReadOnlyVar.const(CardSkin.entries.toList()),
+            settings.gameplayCardSkin,
+            StringVarConverter { cardSkin: CardSkin ->
+                Localization["game.menu.gameplaySettings.option.cardSkin.${cardSkin.localizationKeySuffix}"]
+            }
+        ),
+        MenuOption.OptionWidget.Cycle(
             Localization["game.menu.gameplaySettings.option.mouseMode"],
             ReadOnlyVar.const(MouseMode.entries.toList()),
             settings.gameplayMouseMode,
@@ -26,13 +34,9 @@ class GameplaySettingsMenu(
                 }
             }
         ),
-        MenuOption.OptionWidget.Cycle(
-            Localization["game.menu.gameplaySettings.option.cardSkin"],
-            ReadOnlyVar.const(CardSkin.entries.toList()),
-            settings.gameplayCardSkin,
-            StringVarConverter { cardSkin: CardSkin ->
-                Localization["game.menu.gameplaySettings.option.cardSkin.${cardSkin.localizationKeySuffix}"]
-            }
+        MenuOption.OptionWidget.Checkbox(
+            Localization["game.menu.gameplaySettings.option.showCardCursorInMouseMode"],
+            settings.gameplayShowCardCursorInMouseMode
         ),
         MenuOption.OptionWidget.Checkbox(
             Localization["game.menu.gameplaySettings.option.showMoveCounter"],

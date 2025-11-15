@@ -8,6 +8,7 @@ import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_FULLSCREEN
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_FULLSCREEN_MONITOR
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_CARD_SKIN
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_MOUSE_MODE
+import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_CARD_CURSOR_IN_MOUSE_MODE
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_HOW_TO_PLAY_BUTTON
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_TIMER
@@ -48,6 +49,7 @@ class SolitaireSettings(
     val sfxVolume: IntVar
     
     val gameplayMouseMode: Var<MouseMode>
+    val gameplayShowCardCursorInMouseMode: BooleanVar
     val gameplayCardSkin: Var<CardSkin>
     val gameplayShowMoveCounter: BooleanVar
     val gameplayShowTimer: BooleanVar
@@ -72,6 +74,7 @@ class SolitaireSettings(
             sfxVolume = KeyValue.Int(SETTINGS_SFX_VOLUME, 100, min = 0, max = 100).add().value
             
             gameplayMouseMode = KeyValue.Enum<MouseMode>(SETTINGS_GAMEPLAY_MOUSE_MODE, MouseMode.CLICK_AND_DRAG).add().value
+            gameplayShowCardCursorInMouseMode = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_CARD_CURSOR_IN_MOUSE_MODE, true).add().value
             gameplayCardSkin = KeyValue.Enum<CardSkin>(SETTINGS_GAMEPLAY_CARD_SKIN, CardSkin.MODERN).add().value
             gameplayShowMoveCounter = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER, true).add().value
             gameplayShowTimer = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_TIMER, true).add().value

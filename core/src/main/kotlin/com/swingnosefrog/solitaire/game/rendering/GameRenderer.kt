@@ -25,6 +25,7 @@ import com.swingnosefrog.solitaire.game.logic.GameLogic.Companion.CARD_WIDTH
 import com.swingnosefrog.solitaire.game.logic.StackDirection
 import paintbox.binding.BooleanVar
 import paintbox.binding.LongVar
+import paintbox.binding.ReadOnlyBooleanVar
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 import paintbox.registry.AssetRegistry
@@ -69,6 +70,9 @@ class GameRenderer(
     
     private val tallStackEventListener: TallStackEventListener = TallStackEventListener()
     
+    private val showCardCursorInMouseModeSetting: ReadOnlyBooleanVar = BooleanVar {
+        SolitaireGame.instance.settings.gameplayShowCardCursorInMouseMode.use()
+    }
     private val wasCardCursorRenderedLastFrame: BooleanVar = BooleanVar(false)
     private val cardCursorBlinkOffsetMs: LongVar = LongVar(System.currentTimeMillis())
     
@@ -165,7 +169,10 @@ class GameRenderer(
         val gameInput = logic.gameInput
         val cardCursor = gameInput.getCurrentCardCursor()
 
-        if (gameInput.inputsDisabled.get() || logic.gameWon.get() || (cardCursor.isMouseBased && cardCursor.lastMouseZoneCoordinates == null)) {
+        if (gameInput.inputsDisabled.get() || 
+            logic.gameWon.get() || 
+            (cardCursor.isMouseBased && 
+                    (!showCardCursorInMouseModeSetting.get() || cardCursor.lastMouseZoneCoordinates == null))) {
             wasCardCursorRenderedLastFrame.set(false)
             return
         }
@@ -193,7 +200,7 @@ class GameRenderer(
         val cursorWidth = CARD_WIDTH * 0.5f
         val cursorHeight = cursorWidth * (cursorTex.height.toFloat() / cursorTex.width)
         batch.setColor(1f, 1f, 1f, 1f)
-        batch.draw(cursorTex, x + CARD_WIDTH, -(y + CARD_HEIGHT * 0.0625f), cursorWidth, cursorHeight)
+        batch.draw(cursorTex, x + CARD_WIDTH * 1.025f, -(y + CARD_HEIGHT * 0.0125f), cursorWidth, cursorHeight)
     }
 
     private inner class TallStackEventListener : GameEventListener.Adapter() {
