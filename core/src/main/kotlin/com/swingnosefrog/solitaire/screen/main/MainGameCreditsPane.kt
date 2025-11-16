@@ -55,6 +55,7 @@ class MainGameCreditsPane(
                     }\n[]"
                 }
                 return TextLabel("").apply {
+                    this.setScaleXY(0.875f)
                     this.markup.set(mainSansSerifMarkup)
                     this.renderAlign.set(RenderAlign.top)
                     this.textAlign.set(TextAlign.CENTRE)
@@ -118,15 +119,16 @@ class MainGameCreditsPane(
                         this.margin.set(Insets(0f, 8f))
                         this.textColor.set(Color.WHITE)
                         this.renderAlign.set(RenderAlign.left)
-                        this.bounds.height.set(64f)
+                        this.bounds.height.set(48f)
+                        this.setScaleXY(0.75f)
                     }
                     this += RoundedRectElement(Color.WHITE).apply {
                         this.margin.set(Insets(6f, 8f))
-                        this.bounds.y.set(64f)
+                        this.bounds.y.set(48f)
                         this.bounds.height.set(14f)
                     }
                     this += contentPane.apply {
-                        this.bounds.y.set(64f + 14f)
+                        this.bounds.y.set(48f + 14f)
                         this.bindHeightToParent(adjustBinding = { -bounds.y.use() })
                         this.margin.set(Insets(16f, 8f))
                     }
