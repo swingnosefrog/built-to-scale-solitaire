@@ -118,14 +118,20 @@ class MainGameMenuPane(
                     this += VBox().apply {
                         this.margin.set(Insets(48f).copy(right = 24f))
 
-                        val headingPane = Pane().apply {
+                        val headingPane = NoInputPane().apply {
                             this.bindHeightToParent(multiplier = 0.35f)
                             this.margin.set(Insets(48f, 0f))
 
                             this += TextLabel({ currentMenu.use()?.headingText?.use() ?: "" }, headingFont).apply {
+                                this.visible.bind { currentMenu.use() !is RootMenu }
                                 this.textColor.set(Color.WHITE)
                                 this.textAlign.set(TextAlign.LEFT)
                                 this.renderAlign.set(Align.bottomLeft)
+                            }
+                            this += ImageIcon({ TextureRegion(AssetRegistry.get<Texture>("ui_logo_menu")) }).apply {
+                                this.visible.bind { currentMenu.use() is RootMenu }
+                                this.bounds.y.set(20f)
+                                this.renderAlign.set(RenderAlign.bottomLeft)
                             }
                         }
                         this += headingPane

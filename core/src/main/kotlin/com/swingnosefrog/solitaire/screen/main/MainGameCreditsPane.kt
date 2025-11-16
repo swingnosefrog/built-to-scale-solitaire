@@ -77,7 +77,7 @@ class MainGameCreditsPane(
             scrollPane = ScrollPane().apply {
                 this.setContent(VBox().apply {
                     this.temporarilyDisableLayouts {
-                        this += ImageIcon(binding = { TextureRegion(AssetRegistry.get<Texture>("ui_credits_logo")) }).apply {
+                        this += ImageIcon(binding = { TextureRegion(AssetRegistry.get<Texture>("ui_logo_credits")) }).apply {
                             this.bounds.height.set(175f)
                         }
                         this += createTextLabel(credits).apply {
