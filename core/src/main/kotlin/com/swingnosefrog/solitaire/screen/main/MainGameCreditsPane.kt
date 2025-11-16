@@ -35,7 +35,6 @@ class MainGameCreditsPane(
 
     private val headingFont: PaintboxFont get() = fonts.uiHeadingFont
     private val mainSansSerifMarkup: Markup get() = fonts.uiMainSansSerifMarkup
-    private val mainSerifMarkup: Markup get() = fonts.uiMainSerifMarkup
     
     private val creditsInfo: CreditsInfo = CreditsInfo()
     
@@ -49,7 +48,6 @@ class MainGameCreditsPane(
         val attributionTextColor: Color = Color.valueOf("B7B7B7")
 
         val contentPane = Pane().apply {
-
             fun createTextLabel(creditsList: List<Pair<ReadOnlyVar<String>, List<ReadOnlyVar<String>>>>): TextLabel {
                 fun VarContext.addPair(pair: Pair<ReadOnlyVar<String>, List<ReadOnlyVar<String>>>): String {
                     return "[color=#${creditsHeadingTextColor} lineheight=0.8]${Markup.escape(pair.first.use())}\n[][scale=0.8]${
@@ -111,7 +109,6 @@ class MainGameCreditsPane(
         
         containingPane.apply {
             this += RoundedRectElement(darker).apply {
-                this.bindHeightToSelfWidth(multiplier = 648f / 1152f)
                 Anchor.Centre.configure(this)
                 this.roundedRadius.set(16)
                 this.padding.set(Insets(16f * 2))
