@@ -38,6 +38,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         PAUSE_MENU,
         HOW_TO_PLAY,
         CREDITS,
+        STATS,
     }
 
     private val uiCamera: OrthographicCamera = OrthographicCamera().apply {
@@ -78,9 +79,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         parentPane += MainGameHudPane(this).apply {
             this.opacity.bind(TransitioningFloatVar(animationHandler, {
                 if (currentMenuState.use() != MenuState.NONE) {
-                    if (menuController.currentMenu.use() is GameplaySettingsMenu)
-                        1f
-                    else 0.25f
+                    if (menuController.currentMenu.use() is GameplaySettingsMenu) 1f else 0.25f
                 } else 1f
             }, { currentValue, targetValue ->
                 createOpacityAnimation(currentValue, targetValue)
@@ -92,37 +91,34 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
             fun UIElement.bindVisibleIfNotZeroOpacity() {
                 this.visible.bind { opacity.use() > 0f }
             }
-            this += MainGameMenuPane(this@MainGameUi, menuController).apply {
+            fun UIElement.bindOpacityTransitionToMenuState(menuState: MenuState, animateWhenDisappearing: Boolean = true) {
                 this.opacity.bind(TransitioningFloatVar(animationHandler, {
-                    if (currentMenuState.use() == MenuState.PAUSE_MENU) 1f else 0f
+                    if (currentMenuState.use() == menuState) 1f else 0f
                 }, { currentValue, targetValue ->
-                    createOpacityAnimation(currentValue, targetValue)
+                    if (!animateWhenDisappearing && targetValue < currentValue) {
+                        null
+                    } else createOpacityAnimation(currentValue, targetValue)
                 }))
+            }
+            
+            this += MainGameMenuPane(this@MainGameUi, menuController).apply {
+                this.bindOpacityTransitionToMenuState(MenuState.PAUSE_MENU)
                 this.bindVisibleIfNotZeroOpacity()
             }
             this += MainGameGameplayUiPane(this@MainGameUi, uiInputHandler).apply {
-                this.opacity.bind(TransitioningFloatVar(animationHandler, {
-                    if (currentMenuState.use() != MenuState.NONE) 0f else 1f
-                }, { currentValue, targetValue ->
-                    if (targetValue < currentValue) null
-                    else createOpacityAnimation(currentValue, targetValue)
-                }))
+                this.bindOpacityTransitionToMenuState(MenuState.NONE, animateWhenDisappearing = false)
                 this.bindVisibleIfNotZeroOpacity()
             }
             this += MainGameHowToPlayPane(this@MainGameUi, uiInputHandler).apply {
-                this.opacity.bind(TransitioningFloatVar(animationHandler, {
-                    if (currentMenuState.use() != MenuState.HOW_TO_PLAY) 0f else 1f
-                }, { currentValue, targetValue ->
-                    createOpacityAnimation(currentValue, targetValue)
-                }))
+                this.bindOpacityTransitionToMenuState(MenuState.HOW_TO_PLAY)
                 this.bindVisibleIfNotZeroOpacity()
             }
             this += MainGameCreditsPane(this@MainGameUi, uiInputHandler).apply {
-                this.opacity.bind(TransitioningFloatVar(animationHandler, {
-                    if (currentMenuState.use() != MenuState.CREDITS) 0f else 1f
-                }, { currentValue, targetValue ->
-                    createOpacityAnimation(currentValue, targetValue)
-                }))
+                this.bindOpacityTransitionToMenuState(MenuState.CREDITS)
+                this.bindVisibleIfNotZeroOpacity()
+            }
+            this += MainGameStatsPane(this@MainGameUi, uiInputHandler).apply {
+                this.bindOpacityTransitionToMenuState(MenuState.STATS)
                 this.bindVisibleIfNotZeroOpacity()
             }
         }
@@ -172,6 +168,10 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
 
         fun closeHowToPlayMenu()
 
+        fun openStatsMenu()
+
+        fun closeStatsMenu()
+
         fun openCreditsMenu()
 
         fun closeCreditsMenu()
@@ -194,6 +194,16 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
 
         private fun MenuInputType.toKeyOrButtonInput(): MenuInput = MenuInput(this, MenuInputSource.KEYBOARD_OR_BUTTON)
 
+        private fun openModalMenu(newMenuState: MenuState) {
+            closePauseMenu()
+            _currentMenuState.set(newMenuState)
+            cancelDragOnMenuOpen()
+        }
+
+        private fun closeModalMenu() {
+            _currentMenuState.set(MenuState.NONE)
+        }
+
         //region IUiInputHandler
 
         override fun openPauseMenu() {
@@ -206,6 +216,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
                 requestCloseMenu = { closePauseMenu() },
                 requestOpenHowToPlayMenu = { openHowToPlayMenu() },
                 requestOpenCreditsMenu = { openCreditsMenu() },
+                requestOpenStatsMenu = { openStatsMenu() },
             )
             menuController.clearMenuStack()
 
@@ -220,23 +231,27 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         }
 
         override fun openHowToPlayMenu() {
-            closePauseMenu()
-            _currentMenuState.set(MenuState.HOW_TO_PLAY)
-            cancelDragOnMenuOpen()
+            openModalMenu(MenuState.HOW_TO_PLAY)
         }
 
         override fun closeHowToPlayMenu() {
-            _currentMenuState.set(MenuState.NONE)
+            closeModalMenu()
+        }
+
+        override fun openStatsMenu() {
+            openModalMenu(MenuState.STATS)
+        }
+
+        override fun closeStatsMenu() {
+            closeModalMenu()
         }
 
         override fun openCreditsMenu() {
-            closePauseMenu()
-            _currentMenuState.set(MenuState.CREDITS)
-            cancelDragOnMenuOpen()
+            openModalMenu(MenuState.CREDITS)
         }
 
         override fun closeCreditsMenu() {
-            _currentMenuState.set(MenuState.NONE)
+            closeModalMenu()
         }
 
         override fun startNewGame() {
@@ -325,6 +340,17 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
                     when (action) {
                         InputActions.Back, InputActions.Menu -> {
                             closeCreditsMenu()
+                            return true
+                        }
+
+                        else -> {}
+                    }
+                }
+
+                MenuState.STATS -> {
+                    when (action) {
+                        InputActions.Back, InputActions.Menu -> {
+                            closeStatsMenu()
                             return true
                         }
 
