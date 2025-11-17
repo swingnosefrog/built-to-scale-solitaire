@@ -153,24 +153,23 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
                 val cardStack = currentCardCursor.zone.cardStack
                 val cardList = cardStack.cardList
 
-                if (jump && cardList.size >= 2) {
-                    val predictedIndexFromEnd: Int? = if (direction == Direction.UP) {
+                val targetIndexFromEnd: Int? = if (jump && cardList.size >= 2) {
+                    if (direction == Direction.UP) {
                         cardList.indices.firstOrNull { idx ->
                             logic.isStackValidToMove(cardList.subList(idx, cardList.size))
                         }?.let { idx -> cardList.size - idx - 1 }
                     } else 0
-                    if (predictedIndexFromEnd == null || currentCardCursor.indexFromEnd == predictedIndexFromEnd) {
-                        snapToCardZoneInDirection(direction)
-                    } else {
-                        cardCursor.set(currentCardCursor.copy(indexFromEnd = predictedIndexFromEnd, lastMouseZoneCoordinates = null))
-                    }
                 } else {
-                    val predictedIndexFromEnd: Int = currentCardCursor.indexFromEnd + (if (direction == Direction.UP) 1 else -1)
-                    if (isZoneSelectionLegal(zone, predictedIndexFromEnd)) {
-                        cardCursor.set(currentCardCursor.copy(indexFromEnd = predictedIndexFromEnd, lastMouseZoneCoordinates = null))
-                    } else {
-                        snapToCardZoneInDirection(direction)
-                    }
+                    currentCardCursor.indexFromEnd + (if (direction == Direction.UP) 1 else -1)
+                }
+
+                if (targetIndexFromEnd == null ||
+                    !isZoneSelectionLegal(zone, targetIndexFromEnd) ||
+                    currentCardCursor.indexFromEnd == targetIndexFromEnd
+                ) {
+                    snapToCardZoneInDirection(direction)
+                } else {
+                    cardCursor.set(currentCardCursor.copy(indexFromEnd = targetIndexFromEnd, lastMouseZoneCoordinates = null))
                 }
             } else {
                 snapToCardZoneInDirection(direction)
