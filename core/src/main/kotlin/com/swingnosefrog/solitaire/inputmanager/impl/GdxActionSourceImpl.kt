@@ -21,6 +21,8 @@ class GdxActionSourceImpl(actions: List<InputActions>) : GdxActionSource(actions
             InputActions.Menu -> linkedSetOf(Input.Keys.ESCAPE)
             InputActions.NewGame -> linkedSetOf(Input.Keys.R)
             InputActions.HowToPlay -> linkedSetOf(Input.Keys.F1)
+            InputActions.JumpToTopOfStack -> linkedSetOf(Input.Keys.PAGE_UP)
+            InputActions.JumpToBottomOfStack -> linkedSetOf(Input.Keys.PAGE_DOWN)
         }
     }
 }

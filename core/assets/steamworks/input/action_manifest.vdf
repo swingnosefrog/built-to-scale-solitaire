@@ -36,6 +36,9 @@
 
                 "button_General_NewGame" "#button_General_NewGame"
                 "button_General_HowToPlay" "#button_General_HowToPlay"
+                
+                "button_General_JumpToTopOfStack" "#button_General_JumpToTopOfStack"
+                "button_General_JumpToBottomOfStack" "#button_General_JumpToBottomOfStack"
             }
         }
     }
@@ -59,6 +62,9 @@
 
             "button_General_NewGame" "New Game"
             "button_General_HowToPlay" "Open 'How to Play'"
+            
+            "button_General_JumpToTopOfStack" "Jump to Top of Stack"
+            "button_General_JumpToBottomOfStack" "Jump to Bottom of Stack"
         }
     }
 }

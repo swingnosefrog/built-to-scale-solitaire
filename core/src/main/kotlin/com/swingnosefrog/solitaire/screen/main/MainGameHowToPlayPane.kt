@@ -48,8 +48,8 @@ class MainGameHowToPlayPane(
             moveRightGlyph.use().firstOrNull(),
         )
     }
-    private val jumpToTopOfStackGlyph: ReadOnlyVar<List<IActionInputGlyph>> = inputManager.getGlyphsVarForAction(InputActions.HowToPlay) // FIXME
-    private val jumpToBottomOfStackGlyph: ReadOnlyVar<List<IActionInputGlyph>> = inputManager.getGlyphsVarForAction(InputActions.HowToPlay) // FIXME
+    private val jumpToTopOfStackGlyph: ReadOnlyVar<List<IActionInputGlyph>> = inputManager.getGlyphsVarForAction(InputActions.JumpToTopOfStack)
+    private val jumpToBottomOfStackGlyph: ReadOnlyVar<List<IActionInputGlyph>> = inputManager.getGlyphsVarForAction(InputActions.JumpToBottomOfStack)
     private val jumpInStackGlyphs: ReadOnlyVar<List<IActionInputGlyph>> = Var {
         listOfNotNull(
             jumpToTopOfStackGlyph.use().firstOrNull(),

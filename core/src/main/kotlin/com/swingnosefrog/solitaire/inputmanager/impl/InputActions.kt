@@ -17,6 +17,9 @@ enum class InputActions(override val actionId: String) : IDigitalInputAction {
 
     NewGame("button_General_NewGame"),
     HowToPlay("button_General_HowToPlay"),
+    
+    JumpToTopOfStack("button_General_JumpToTopOfStack"),
+    JumpToBottomOfStack("button_General_JumpToBottomOfStack"),
     ;
 
     override val actionName: String = this.name
