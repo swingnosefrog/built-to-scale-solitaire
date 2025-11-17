@@ -74,7 +74,7 @@ class GameRenderer(
         SolitaireGame.instance.settings.gameplayShowCardCursorInMouseMode.use()
     }
     private val wasCardCursorRenderedLastFrame: BooleanVar = BooleanVar(false)
-    private val cardCursorBlinkOffsetMs: LongVar = LongVar(System.currentTimeMillis())
+    private val cardCursorBlinkOffsetMs: LongVar = LongVar(0L)
     
     init {
         logic.eventDispatcher.addListener(tallStackEventListener)
@@ -190,9 +190,9 @@ class GameRenderer(
         val x = zone.x.get()
         val y = zone.y.get() + cardStack.stackDirection.yOffset * (cardStack.cardList.size - indexFromEnd - 1).coerceAtLeast(0)
 
-        val blinkPeriodSec = 1.5f
+        val blinkPeriodSec = 1.2f
         val blinkProgress = SineWave.getWaveValue(blinkPeriodSec, offsetMs = -(cardCursorBlinkOffsetMs.get()))
-        batch.setColor(cursorSelectionColor, alpha = MathUtils.lerp(0f, 0.35f, blinkProgress))
+        batch.setColor(cursorSelectionColor, alpha = MathUtils.lerp(0.3f, 0.6f, blinkProgress))
         renderCardTex(CardAssetKey.Hover, x, y)
 
         val cursorTexKey = if (currentDragInfo is DragInfo.Dragging) "ui_cursor_invert_pressed" else "ui_cursor_invert"

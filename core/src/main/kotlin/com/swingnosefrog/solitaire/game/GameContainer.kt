@@ -36,9 +36,9 @@ class GameContainer(
     val gameAudio: GameAudio = GameAudio(gameLogic, soundSystem)
     
     init {
-        val gameMusicListener = gameMusic?.gameEventListener
-        if (gameMusicListener != null) {
-            gameLogic.eventDispatcher.addListener(gameMusicListener)
+        val gameMusicEventListener = gameMusic?.gameEventListener
+        if (gameMusicEventListener != null) {
+            gameLogic.eventDispatcher.addListener(gameMusicEventListener)
         }
     }
 
@@ -49,9 +49,9 @@ class GameContainer(
     override fun dispose() {
         gameAudio.dispose()
         
-        val gameMusicListener = gameMusic?.gameEventListener
-        if (gameMusicListener != null) {
-            gameLogic.eventDispatcher.removeListener(gameMusicListener)
+        val gameMusicEventListener = gameMusic?.gameEventListener
+        if (gameMusicEventListener != null) {
+            gameLogic.eventDispatcher.removeListener(gameMusicEventListener)
         }
     }
 }
