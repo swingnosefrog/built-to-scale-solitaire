@@ -165,6 +165,16 @@ class MainGameMenuPane(
     }
 
     private fun createUIElementFromMenuOption(option: MenuOption): UIElement {
+        if (option is MenuOption.Separator) {
+            val element = RectElement(Color.WHITE).apply {
+                this.bounds.height.set(14f)
+                this.margin.set(Insets(6f, 4f))
+
+                this.opacity.set(0.5f)
+            }
+            return element
+        }
+        
         val inputListener = InputEventListener { evt ->
             if (option.disabled.get()) return@InputEventListener false
 

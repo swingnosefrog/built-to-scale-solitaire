@@ -56,6 +56,7 @@ class VideoSettingsMenu(
             applyResolution()
             copyResolutionVarsToSettings()
         }),
+        MenuOption.Separator(),
         MenuOption.OptionWidget.Checkbox(Localization["game.menu.videoSettings.option.vsyncEnabled"], settings.vsyncEnabled).apply { 
             this.selectedState.addListener { v ->
                 applyMaxFpsAndVsync()

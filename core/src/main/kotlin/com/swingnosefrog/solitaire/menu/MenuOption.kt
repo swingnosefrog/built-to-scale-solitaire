@@ -17,6 +17,16 @@ sealed class MenuOption(
             return Simple(text) {}
         }
     }
+    
+    class Separator() : MenuOption("".toConstVar()) {
+
+        init {
+            this.disabled.set(true)
+        }
+        
+        override fun onSelect(controller: MenuController, menuInput: MenuInput) {
+        }
+    }
 
     class Simple(
         text: ReadOnlyVar<String>,
