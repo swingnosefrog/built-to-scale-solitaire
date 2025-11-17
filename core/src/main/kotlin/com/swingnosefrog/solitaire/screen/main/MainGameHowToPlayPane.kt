@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.swingnosefrog.solitaire.Localization
+import com.swingnosefrog.solitaire.fonts.PromptFontConsts
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.inputmanager.IActionInputGlyph
 import com.swingnosefrog.solitaire.inputmanager.InputManager
@@ -32,11 +33,31 @@ class MainGameHowToPlayPane(
     private val mainGameUi: MainGameUi,
     private val uiInputHandler: MainGameUi.IUiInputHandler,
 ) : CloseablePane() {
-    
+
     private val inputManager: InputManager get() = mainGameUi.mainGameScreen.inputManager
 
-    private val howToPlayGlyph: ReadOnlyVar<List<IActionInputGlyph>> = inputManager.getGlyphsVarForAction(InputActions.HowToPlay)
-
+    private val moveUpGlyph: ReadOnlyVar<List<IActionInputGlyph>> = inputManager.getGlyphsVarForAction(InputActions.DirectionUp)
+    private val moveDownGlyph: ReadOnlyVar<List<IActionInputGlyph>> = inputManager.getGlyphsVarForAction(InputActions.DirectionDown)
+    private val moveLeftGlyph: ReadOnlyVar<List<IActionInputGlyph>> = inputManager.getGlyphsVarForAction(InputActions.DirectionLeft)
+    private val moveRightGlyph: ReadOnlyVar<List<IActionInputGlyph>> = inputManager.getGlyphsVarForAction(InputActions.DirectionRight)
+    private val moveGlyphs: ReadOnlyVar<List<IActionInputGlyph>> = Var {
+        listOfNotNull(
+            moveUpGlyph.use().firstOrNull(),
+            moveDownGlyph.use().firstOrNull(),
+            moveLeftGlyph.use().firstOrNull(),
+            moveRightGlyph.use().firstOrNull(),
+        )
+    }
+    private val jumpToTopOfStackGlyph: ReadOnlyVar<List<IActionInputGlyph>> = inputManager.getGlyphsVarForAction(InputActions.HowToPlay) // FIXME
+    private val jumpToBottomOfStackGlyph: ReadOnlyVar<List<IActionInputGlyph>> = inputManager.getGlyphsVarForAction(InputActions.HowToPlay) // FIXME
+    private val jumpInStackGlyphs: ReadOnlyVar<List<IActionInputGlyph>> = Var {
+        listOfNotNull(
+            jumpToTopOfStackGlyph.use().firstOrNull(),
+            jumpToBottomOfStackGlyph.use().firstOrNull(),
+        )
+    }
+    private val selectGlyph: ReadOnlyVar<List<IActionInputGlyph>> = inputManager.getGlyphsVarForAction(InputActions.Select)
+    private val cancelGlyph: ReadOnlyVar<List<IActionInputGlyph>> = inputManager.getGlyphsVarForAction(InputActions.Back)
 
     private val fonts: SolitaireFonts get() = mainGameUi.mainGameScreen.main.fonts
     private val numberFont: PaintboxFont get() = fonts.uiHeadingFontBordered
@@ -55,16 +76,22 @@ class MainGameHowToPlayPane(
             
             this += RoundedRectElement(dark).apply {
                 Anchor.TopRight.configure(this)
-                this.bounds.width.set(48f * 10)
-                
+                this.bounds.width.set(1100f)
+
                 this.roundedRadius.set(12)
                 this.padding.set(Insets(12f))
 
                 this += TextLabel(Localization["game.howToPlay.keybindHint", Var {
-                    listOf(howToPlayGlyph.use().firstOrNull()?.promptFontText ?: "")
+                    val unkIcon = PromptFontConsts.ICON_QUESTION_INT
+                    listOf(
+                        moveGlyphs.use().joinToString(separator = "") { it.promptFontText }.takeIf { it.isNotEmpty() } ?: unkIcon,
+                        jumpInStackGlyphs.use().joinToString(separator = "") { it.promptFontText }.takeIf { it.isNotEmpty() } ?: unkIcon,
+                        selectGlyph.use().firstOrNull()?.promptFontText ?: unkIcon,
+                        cancelGlyph.use().firstOrNull()?.promptFontText ?: unkIcon,
+                    )
                 }]).apply {
                     this.markup.set(mainSerifMarkup)
-                    this.setScaleXY(0.75f)
+                    this.setScaleXY(0.8125f)
                     this.textColor.set(Color().grey(0.9f))
                     this.renderAlign.set(RenderAlign.center)
                 }
