@@ -48,4 +48,8 @@ abstract class AbstractMenu(val id: String) {
 
         return false
     }
+    
+    open fun onEnter(menuController: MenuController) {}
+    
+    open fun onExit(menuController: MenuController) {}
 }

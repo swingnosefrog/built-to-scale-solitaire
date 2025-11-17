@@ -18,9 +18,12 @@ open class MenuController {
     val currentHighlightedMenuOption: ReadOnlyVar<MenuOption?> get() = _currentHighlightedMenuOption
 
     open fun setNewMenu(menu: AbstractMenu?, selectedMenuOption: MenuOption?) {
-        if (_currentMenu.getOrCompute() != menu) {
+        val oldMenu = _currentMenu.getOrCompute()
+        if (oldMenu != menu) {
+            oldMenu?.onExit(this)
             _currentMenu.set(menu)
             _currentHighlightedMenuOption.set(selectedMenuOption)
+            menu?.onEnter(this)
         }
     }
 

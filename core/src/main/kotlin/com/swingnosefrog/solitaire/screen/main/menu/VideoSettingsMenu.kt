@@ -3,12 +3,16 @@ package com.swingnosefrog.solitaire.screen.main.menu
 import com.badlogic.gdx.Gdx
 import com.swingnosefrog.solitaire.Localization
 import com.swingnosefrog.solitaire.SolitaireGame
+import com.swingnosefrog.solitaire.menu.MenuController
 import com.swingnosefrog.solitaire.menu.MenuOption
 import com.swingnosefrog.solitaire.util.WindowSizeUtils
+import paintbox.binding.BooleanVar
+import paintbox.binding.ReadOnlyBooleanVar
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 import paintbox.binding.toConstVar
 import paintbox.prefs.PaintboxPreferences
+import paintbox.util.WindowSize
 
 
 class VideoSettingsMenu(
@@ -16,12 +20,19 @@ class VideoSettingsMenu(
 ) : AbstractSettingsMenu(id) {
     
     override val headingText: ReadOnlyVar<String> = Localization["game.menu.videoSettings.heading"]
+    
+    private val windowedResolution: Var<WindowSize> = Var(settings.windowedResolution.getOrCompute())
+    private val fullscreen: BooleanVar = BooleanVar(settings.fullscreen.get())
+    
+    private val hasPendingResolutionChanges: ReadOnlyBooleanVar = BooleanVar {
+        windowedResolution.use() != settings.windowedResolution.use() || fullscreen.use() != settings.fullscreen.use()
+    }
 
     override val options: List<MenuOption> = listOf(
         MenuOption.OptionWidget.Cycle(
             Localization["game.menu.videoSettings.option.windowedResolution"],
             WindowSizeUtils.commonResolutions.toConstVar(),
-            settings.windowedResolution,
+            windowedResolution,
             { resolution ->
                 var resolutionMarkupText = "${resolution.width}×${resolution.height}"
                 val aspectRatio = WindowSizeUtils.getAspectRatio(resolution)
@@ -36,9 +47,14 @@ class VideoSettingsMenu(
             settings.fullscreen
         ),
         MenuOption.Simple(Var {
-            "       " + Localization["game.menu.videoSettings.option.windowedResolution.apply"].use()
-        }, { menuController ->
+            val locKey = if (!hasPendingResolutionChanges.use())
+                "game.menu.videoSettings.option.windowedResolution.apply"
+            else "game.menu.videoSettings.option.windowedResolution.applyChanges"
+
+            "       " + Localization[locKey].use()
+        }, fun(_) {
             applyResolution()
+            copyResolutionVarsToSettings()
         }),
         MenuOption.OptionWidget.Checkbox(Localization["game.menu.videoSettings.option.vsyncEnabled"], settings.vsyncEnabled).apply { 
             this.selectedState.addListener { v ->
@@ -65,12 +81,16 @@ class VideoSettingsMenu(
     init {
         this.menuSizeAdjustment.set(4)
     }
-    
+
+    override fun onEnter(menuController: MenuController) {
+        resetResolutionVarsToSettings()
+    }
+
     private fun applyResolution() {
         val fullscreenProcessor = SolitaireGame.instance.fullscreenWindowedInputProcessor
         
-        val windowedResolution = settings.windowedResolution
-        val isFullscreen = settings.fullscreen
+        val windowedResolution = this.windowedResolution
+        val isFullscreen = this.fullscreen
         
         if (isFullscreen.get()) {
             fullscreenProcessor.attemptFullscreen()
@@ -83,5 +103,15 @@ class VideoSettingsMenu(
         val graphics = Gdx.graphics
         graphics.setForegroundFPS(settings.maxFramerate.get())
         graphics.setVSync(settings.vsyncEnabled.get())
+    }
+    
+    private fun resetResolutionVarsToSettings() {
+        this.windowedResolution.set(settings.windowedResolution.getOrCompute())
+        this.fullscreen.set(settings.fullscreen.get())
+    }
+    
+    private fun copyResolutionVarsToSettings() {
+        settings.windowedResolution.set(this.windowedResolution.getOrCompute())
+        settings.fullscreen.set(this.fullscreen.get())
     }
 }
