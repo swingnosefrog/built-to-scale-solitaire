@@ -32,6 +32,14 @@ class GameInputActionListener(private val input: GameInput) : InputActionListene
             InputActions.DirectionRight -> {
                 return input.updateFromDirectionPress(Direction.RIGHT)
             }
+            
+            InputActions.JumpToTopOfStack -> {
+                return input.updateFromDirectionPress(Direction.UP, jump = true)
+            }
+            
+            InputActions.JumpToBottomOfStack -> {
+                return input.updateFromDirectionPress(Direction.DOWN, jump = true)
+            }
 
             InputActions.Select -> {
                 val currentCardCursor = input.getCurrentCardCursor()
@@ -60,7 +68,9 @@ class GameInputActionListener(private val input: GameInput) : InputActionListene
                 return input.cancelDrag()
             }
 
-            else -> {}
+            InputActions.Menu, InputActions.NewGame, InputActions.HowToPlay -> {
+                // UI-only -- no effect here
+            }
         }
 
         return false
