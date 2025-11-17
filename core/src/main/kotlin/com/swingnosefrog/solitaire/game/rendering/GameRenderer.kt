@@ -32,7 +32,6 @@ import paintbox.registry.AssetRegistry
 import paintbox.util.gdxutils.GdxRunnableTransition
 import paintbox.util.gdxutils.fillRect
 import paintbox.util.gdxutils.setColor
-import paintbox.util.wave.CosineWave
 import paintbox.util.wave.SineWave
 
 

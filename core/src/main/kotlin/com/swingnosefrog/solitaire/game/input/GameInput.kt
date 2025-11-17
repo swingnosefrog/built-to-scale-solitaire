@@ -8,7 +8,6 @@ import com.swingnosefrog.solitaire.game.logic.DragInfo
 import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.game.logic.ZoneCoordinates
 import paintbox.binding.BooleanVar
-import paintbox.binding.GenericVar
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 import kotlin.math.hypot
