@@ -96,4 +96,7 @@ class StatsAndAchievementsGameListener(
         foundationZone: CardZone,
     ) {
     }
+
+    override fun onCardsRecollected(gameLogic: GameLogic) {
+    }
 }

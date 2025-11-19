@@ -25,6 +25,8 @@ interface GameEventListener {
 
     fun onGameWon(gameLogic: GameLogic)
 
+    fun onCardsRecollected(gameLogic: GameLogic)
+    
 
     open class Adapter : GameEventListener {
 
@@ -82,6 +84,9 @@ interface GameEventListener {
         }
 
         override fun onGameWon(gameLogic: GameLogic) {
+        }
+
+        override fun onCardsRecollected(gameLogic: GameLogic) {
         }
     }
 }

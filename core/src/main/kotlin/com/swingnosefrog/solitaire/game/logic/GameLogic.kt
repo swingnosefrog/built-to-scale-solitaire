@@ -55,6 +55,10 @@ class GameLogic(val deckInitializer: DeckInitializer, initiallyMouseBased: Boole
                 }
             }
             
+            enqueueSlightDelayAnimation(durationSec = 0f) {
+                eventDispatcher.onCardsRecollected(this)
+            }
+            
             // Suck in cards into deal zone
             val shuffledDeckIndices = deck.shuffled().withIndex().associate { it.value to it.index }
             (zones.freeCellZones + zones.foundationZones).forEach { zone ->
@@ -435,6 +439,10 @@ class GameLogic(val deckInitializer: DeckInitializer, initiallyMouseBased: Boole
 
         override fun onGameWon(gameLogic: GameLogic) {
             listeners.forEach { it.onGameWon(gameLogic) }
+        }
+
+        override fun onCardsRecollected(gameLogic: GameLogic) {
+            listeners.forEach { it.onCardsRecollected(gameLogic) }
         }
 
         //#endregion

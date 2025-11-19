@@ -118,4 +118,11 @@ class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disp
             player.gain = 0.75f
         }
     }
+
+    override fun onCardsRecollected(gameLogic: GameLogic) {
+        val sound = GameAssets.get<BeadsSound>("sfx_game_collection")
+        gameAudio.playSfx(sound) { player ->
+            player.gain = 0.9f
+        }
+    }
 }
