@@ -66,5 +66,7 @@ class GameAssetLoader : AssetLoaderBase<GameAssets>(GameAssets) {
         CardAssetKey.Slot.loadTexture()
         CardAssetKey.Silhouette.loadTexture()
         CardAssetKey.Hover.loadTexture()
+        CardAssetKey.CardCursorArrow.loadTexture()
+        CardAssetKey.CardCursorArrowPressed.loadTexture()
     }
 }

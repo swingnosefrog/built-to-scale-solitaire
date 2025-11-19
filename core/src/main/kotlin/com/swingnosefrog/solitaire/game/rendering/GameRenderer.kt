@@ -28,7 +28,6 @@ import paintbox.binding.LongVar
 import paintbox.binding.ReadOnlyBooleanVar
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
-import paintbox.registry.AssetRegistry
 import paintbox.util.gdxutils.GdxRunnableTransition
 import paintbox.util.gdxutils.fillRect
 import paintbox.util.gdxutils.setColor
@@ -194,9 +193,11 @@ class GameRenderer(
         batch.setColor(cursorSelectionColor, alpha = MathUtils.lerp(0.3f, 0.6f, blinkProgress))
         renderCardTex(CardAssetKey.Hover, x, y)
 
-        val cursorTexKey = if (currentDragInfo is DragInfo.Dragging) "ui_cursor_invert_pressed" else "ui_cursor_invert"
-        val cursorTex = AssetRegistry.get<Texture>(cursorTexKey)
-        val cursorWidth = CARD_WIDTH * 0.5f
+        val cursorTexAsset = if (currentDragInfo is DragInfo.Dragging)
+            CardAssetKey.CardCursorArrowPressed 
+        else CardAssetKey.CardCursorArrow
+        val cursorTex = GameAssets.get<Texture>(cursorTexAsset.getAssetKey(currentCardSkin.getOrCompute()))
+        val cursorWidth = CARD_WIDTH * 0.4f
         val cursorHeight = cursorWidth * (cursorTex.height.toFloat() / cursorTex.width)
         batch.setColor(1f, 1f, 1f, 1f)
         batch.draw(cursorTex, x + CARD_WIDTH * 1.025f, -(y + CARD_HEIGHT * 0.0125f), cursorWidth, cursorHeight)
