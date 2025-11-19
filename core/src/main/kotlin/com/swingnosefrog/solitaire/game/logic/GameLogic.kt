@@ -1,6 +1,7 @@
 package com.swingnosefrog.solitaire.game.logic
 
 
+import com.badlogic.gdx.math.MathUtils
 import com.swingnosefrog.solitaire.game.Card
 import com.swingnosefrog.solitaire.game.CardSymbol
 import com.swingnosefrog.solitaire.game.animation.AnimationContainer
@@ -37,12 +38,52 @@ class GameLogic(val deckInitializer: DeckInitializer, initiallyMouseBased: Boole
     }
 
     init {
-        val dealZoneCardList = zones.dealZone.cardStack.cardList
-        dealZoneCardList.addAll(deck)
+        val startFromWonState = deckInitializer.startFromWonState
+
+        val deck = deck
+        if (startFromWonState) {
+            // Distribute cards into zones -- only count matters
+            var deckIndex = 0
+            zones.freeCellZones.forEach { zone ->
+                repeat(3) {
+                    zone.cardStack.cardList.add(deck[deckIndex++])
+                }
+            }
+            zones.foundationZones.forEach { zone ->
+                repeat(8) {
+                    zone.cardStack.cardList.add(deck[deckIndex++])
+                }
+            }
+            
+            // Suck in cards into deal zone
+            val shuffledDeckIndices = deck.shuffled().withIndex().associate { it.value to it.index }
+            (zones.freeCellZones + zones.foundationZones).forEach { zone ->
+                zone.isFlippedOver = true
+                
+                val maxDelay = 0.4f
+                val travelTime = 0.2f
+                val zoneCardList = zone.cardStack.cardList
+                zoneCardList.forEach { card ->
+                    val delay = maxDelay * (shuffledDeckIndices.getValue(card).toFloat() / deck.size).coerceAtLeast(0f)
+                    animationContainer.enqueueAnimation(
+                        CardAnimation(
+                            card, zone, zones.dealZone, travelTime, delay,
+                            blockAnimationForSec = 0f,
+                            isFlippedOver = true,
+                        )
+                    )
+                }
+            }
+
+            enqueueSlightDelayAnimation(durationSec = 0.2f)
+        } else {
+            val dealZoneCardList = zones.dealZone.cardStack.cardList
+            dealZoneCardList.addAll(deck)
+        }
 
         val numPlayerZones = zones.playerZones.size
         var playerZoneIndex = 0
-        for ((cardIndex, card) in dealZoneCardList.withIndex()) {
+        for ((cardIndex, card) in deck.withIndex()) {
             val newZone = if (card.symbol == CardSymbol.SPARE) {
                 zones.spareZone
             } else {
@@ -50,13 +91,18 @@ class GameLogic(val deckInitializer: DeckInitializer, initiallyMouseBased: Boole
             }
 
             val isFirst = cardIndex == 0
-            val isLast = cardIndex == dealZoneCardList.size - 1
+            val isLast = cardIndex == deck.size - 1
 
             var onStart: (() -> Unit)? = null
             var onComplete: (() -> Unit)? = null
 
             if (isFirst) {
-                onStart = { eventDispatcher.onDealingStart(this) }
+                onStart = { 
+                    eventDispatcher.onDealingStart(this)
+                    (zones.freeCellZones + zones.foundationZones).forEach { zone -> 
+                        zone.isFlippedOver = false
+                    }
+                }
             }
             if (isLast) {
                 onComplete = { eventDispatcher.onDealingEnd(this) }
@@ -70,8 +116,10 @@ class GameLogic(val deckInitializer: DeckInitializer, initiallyMouseBased: Boole
                 )
             )
         }
-        
-        enqueueSlightDelayAnimation()
+
+        enqueueSlightDelayAnimation {
+            (isStillDealing as BooleanVar).set(false)
+        }
     }
 
     fun renderUpdate(deltaSec: Float) {
@@ -206,10 +254,11 @@ class GameLogic(val deckInitializer: DeckInitializer, initiallyMouseBased: Boole
         )
     }
 
-    private fun enqueueSlightDelayAnimation(durationSec: Float? = null) {
+    private fun enqueueSlightDelayAnimation(durationSec: Float? = null, onComplete: () -> Unit = {}) {
         animationContainer.enqueueAnimation(object : GameAnimation(durationSec = durationSec ?: 0.15f, 0f) {
+            
             override fun onComplete() {
-                (isStillDealing as BooleanVar).set(false)
+                onComplete()
             }
         })
     }

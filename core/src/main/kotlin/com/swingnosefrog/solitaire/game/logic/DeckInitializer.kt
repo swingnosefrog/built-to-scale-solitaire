@@ -9,11 +9,10 @@ import java.util.*
 sealed class DeckInitializer {
     
     data class RandomSeed(
-        val randomSeed: Long,
+        val randomSeed: Long = System.currentTimeMillis(),
+        override val startFromWonState: Boolean = false,
     ) : DeckInitializer() {
         
-        constructor(randomSeed: Long? = null) : this(randomSeed = randomSeed ?: System.currentTimeMillis())
-
         override fun initializeDeck(startingDeck: List<Card>): List<Card> {
             return startingDeck.shuffled(Random(this.randomSeed))
         }
@@ -60,6 +59,8 @@ sealed class DeckInitializer {
             } + interleaved
         }
     }
+    
+    open val startFromWonState: Boolean get() = false
     
     abstract fun initializeDeck(startingDeck: List<Card>): List<Card>
     

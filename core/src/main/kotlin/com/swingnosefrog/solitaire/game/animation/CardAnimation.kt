@@ -16,6 +16,7 @@ class CardAnimation(
     blockAnimationForSec: Float = delaySec + durationSec,
     val onStartAction: () -> Unit = {},
     val onCompleteAction: () -> Unit = {},
+    val isFlippedOver: Boolean = false,
 ) : GameAnimation(durationSec, delaySec, blockAnimationForSec) {
 
     override fun toPlayingAnimation(): CardPlayingAnimation {

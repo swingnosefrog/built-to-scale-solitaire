@@ -17,6 +17,7 @@ class GameAssetLoader : AssetLoaderBase<GameAssets>(GameAssets) {
         addCardTextures(CardSkin.CLASSIC, "classic", linearFiltering = false)
 
         registry.loadAsset<BeadsSound>("sfx_game_dealing_loop", "sounds/game/dealing_loop.wav")
+        registry.loadAsset<BeadsSound>("sfx_game_collection", "sounds/game/collection.wav")
         registry.loadAsset<BeadsSound>("sfx_game_pickup1", "sounds/game/pickup1.wav")
         registry.loadAsset<BeadsSound>("sfx_game_pickup2", "sounds/game/pickup2.wav")
         registry.loadAsset<BeadsSound>("sfx_game_pickup3", "sounds/game/pickup3.wav")

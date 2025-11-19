@@ -255,7 +255,8 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         }
 
         override fun startNewGame() {
-            mainGameScreen.startNewGame(DeckInitializer.RandomSeed())
+            val startFromWonState = mainGameScreen.gameContainer.getOrCompute().gameLogic.gameWon.get()
+            mainGameScreen.startNewGame(DeckInitializer.RandomSeed(startFromWonState = startFromWonState))
         }
 
         override fun skipDealingAnimation(): Boolean {

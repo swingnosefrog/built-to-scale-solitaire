@@ -117,7 +117,7 @@ class GameRenderer(
                 playingAnimation.cardAnimation.card.render(
                     playingAnimation.currentX,
                     playingAnimation.currentY,
-                    flippedOver = false,
+                    flippedOver = playingAnimation.cardAnimation.isFlippedOver,
                     renderShadow = true
                 )
             }
