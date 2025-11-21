@@ -132,9 +132,10 @@ class GameLogic(val deckInitializer: DeckInitializer, initiallyMouseBased: Boole
             checkTableauAfterActivity()
         }
 
-        val shouldInputsBeDisabled = gameWon.get() || animationContainer.getPlayingAnimations().isNotEmpty()
+        val shouldInputsBeDisabled =
+            gameWon.get() || animationContainer.getPlayingAnimations().isNotEmpty() || isStillDealing.get()
         gameInput.inputsDisabled.set(shouldInputsBeDisabled)
-        
+
         gamePlayStats.renderUpdate(deltaSec)
     }
 
