@@ -1,6 +1,7 @@
 package com.swingnosefrog.solitaire.game.assets
 
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.assets.loaders.TextureLoader
 import com.badlogic.gdx.graphics.Texture
 import com.swingnosefrog.solitaire.assets.AssetLoaderBase
 import com.swingnosefrog.solitaire.game.CardSuit
@@ -11,14 +12,22 @@ class GameAssetLoader : AssetLoaderBase<GameAssets>(GameAssets) {
 
     override fun addManagedAssets(manager: AssetManager) {
         super.addManagedAssets(manager)
+        
+        fun mipmappedLinearTexture() = TextureLoader.TextureParameter().apply {
+            this.genMipMaps = true
+            this.minFilter = Texture.TextureFilter.MipMapNearestLinear
+            this.magFilter = Texture.TextureFilter.Linear
+        }
 
         val registry = assetRegistryInstance
 
-        addCardTextures(CardSkin.MODERN, "modern", linearFiltering = true)
-        addCardTextures(CardSkin.CLASSIC, "classic", linearFiltering = false)
+        addCardTextures(CardSkin.MODERN, "modern", textureParameterFactory = {
+            mipmappedLinearTexture()
+        })
+        addCardTextures(CardSkin.CLASSIC, "classic", textureParameterFactory = { null })
 
-        registry.loadAsset<Texture>("vfx_slam_large", "textures/game/vfx/slam_large.png", linearTexture())
-        registry.loadAsset<Texture>("vfx_slam_small", "textures/game/vfx/slam_small.png", linearTexture())
+        registry.loadAsset<Texture>("vfx_slam_large", "textures/game/vfx/slam_large.png", mipmappedLinearTexture())
+        registry.loadAsset<Texture>("vfx_slam_small", "textures/game/vfx/slam_small.png", mipmappedLinearTexture())
         
         registry.loadAsset<BeadsSound>("sfx_game_dealing_loop", "sounds/game/dealing_loop.wav")
         registry.loadAsset<BeadsSound>("sfx_game_reshuffle", "sounds/game/reshuffle.wav")
@@ -48,12 +57,16 @@ class GameAssetLoader : AssetLoaderBase<GameAssets>(GameAssets) {
         registry.loadAsset<BeadsSound>("music_gameplay_stem_side", "music/gameplay/stem_side.ogg")
     }
 
-    private fun addCardTextures(skin: CardSkin, subdir: String, linearFiltering: Boolean) {
+    private fun addCardTextures(
+        skin: CardSkin,
+        subdir: String,
+        textureParameterFactory: (CardAssetKey) -> TextureLoader.TextureParameter? = { null },
+    ) {
         fun CardAssetKey.loadTexture() {
             assetRegistryInstance.loadAsset(
                 this.getAssetKey(skin),
                 "textures/game/${subdir}/${this.skinlessAssetKey}.png",
-                if (linearFiltering) linearTexture() else null
+                textureParameterFactory(this)
             )
         }
 
