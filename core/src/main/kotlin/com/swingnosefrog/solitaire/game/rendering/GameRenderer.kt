@@ -187,8 +187,7 @@ class GameRenderer(
         val gameInput = logic.gameInput
         val cardCursor = gameInput.getCurrentCardCursor()
 
-        if (gameInput.inputsDisabled.get() || 
-            logic.gameWon.get() || 
+        if (gameInput.inputsDisabled.get() || logic.gameWon.get() || logic.isStillDealing.get() ||
             (cardCursor.isMouseBased && 
                     (!showCardCursorInMouseModeSetting.get() || cardCursor.lastMouseZoneCoordinates == null))) {
             wasCardCursorRenderedLastFrame.set(false)
