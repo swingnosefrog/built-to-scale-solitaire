@@ -23,9 +23,9 @@ class DebugInputAdapter(
                 when (keycode) {
                     Input.Keys.G if !Gdx.input.isControlDown() && !Gdx.input.isAltDown() -> {
                         if (Gdx.input.isShiftDown()) {
-                            mainGameScreen.startNewGame(gameLogic.deckInitializer)
+                            mainGameScreen.startNewGame(gameLogic.deckInitializer, breakWinStreakIfNotWon = false)
                         } else {
-                            mainGameScreen.startNewGame(DeckInitializer.DebugAutoWin)
+                            mainGameScreen.startNewGame(DeckInitializer.DebugAutoWin, breakWinStreakIfNotWon = false)
                         }
 
                         return true

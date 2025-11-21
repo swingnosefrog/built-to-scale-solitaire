@@ -66,11 +66,11 @@ class MainGameScreen(
         
         inputManager.addInputActionListener(ui.inputActionListener, index = 0)
 
-        startNewGame(DeckInitializer.RandomSeed())
+        startNewGame(DeckInitializer.RandomSeed(), breakWinStreakIfNotWon = false)
         soundSystem.startRealtime()
     }
 
-    fun startNewGame(deckInitializer: DeckInitializer) {
+    fun startNewGame(deckInitializer: DeckInitializer, breakWinStreakIfNotWon: Boolean) {
         val newContainer =
             GameContainer(
                 { GameLogic(deckInitializer, initiallyMouseBased = !Steamworks.isRunningOnSteamDeck()) },
@@ -81,6 +81,12 @@ class MainGameScreen(
         backingGameContainer.setNewGameContainer(newContainer)
 
         gameMusic.transitionToStemMix(GameMusic.StemMixes.ALL, 1f)
+        
+        val stats = main.stats
+        if (breakWinStreakIfNotWon && !deckInitializer.startFromWonState) {
+            stats.currentWinStreak.setValue(0)
+            stats.persist()
+        }
     }
     
 

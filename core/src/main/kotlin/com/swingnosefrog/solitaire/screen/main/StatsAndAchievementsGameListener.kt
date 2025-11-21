@@ -16,11 +16,14 @@ class StatsAndAchievementsGameListener(
     private val stats: StatsImpl,
     private val gameContainer: GameContainer,
 ) : GameEventListener {
-
-    override fun onGameWon(gameLogic: GameLogic) {
+    
+    private fun handleStatsOnGameWon(gameLogic: GameLogic) {
         stats.gamesWon.increment()
+        stats.currentWinStreak.increment()
+        val gamePlayStats = gameLogic.gamePlayStats
+        stats.pushGameWinRollingStat(gamePlayStats.movesMade.get(), gamePlayStats.timeElapsedSec.get())
         stats.persist()
-        
+
         val steamStats = SteamStats
         steamStats.triggerAchievementProgress(stats)
         steamStats.updateStatCache(stats)
@@ -31,6 +34,10 @@ class StatsAndAchievementsGameListener(
         }
 
         steamStats.persistStats()
+    }
+
+    override fun onGameWon(gameLogic: GameLogic) {
+        handleStatsOnGameWon(gameLogic)
     }
 
     override fun onDealingEnd(gameLogic: GameLogic) {

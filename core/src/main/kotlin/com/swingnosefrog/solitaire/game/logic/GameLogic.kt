@@ -1,7 +1,6 @@
 package com.swingnosefrog.solitaire.game.logic
 
 
-import com.badlogic.gdx.math.MathUtils
 import com.swingnosefrog.solitaire.game.Card
 import com.swingnosefrog.solitaire.game.CardSymbol
 import com.swingnosefrog.solitaire.game.animation.AnimationContainer
