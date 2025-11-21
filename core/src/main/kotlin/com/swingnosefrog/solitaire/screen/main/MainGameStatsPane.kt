@@ -89,7 +89,7 @@ class MainGameStatsPane(
                     this[2].setUpStatBox(stats.longestGameTime)
                 }
             }
-            this += TextLabel(Localization["statistics.averageNote", listOf(StatsImpl.ROLLING_AVERAGE_GAME_COUNT)]).apply {
+            this += TextLabel(Localization["statistics.averageFootnote", listOf(StatsImpl.ROLLING_AVERAGE_GAME_COUNT)]).apply {
                 this.bounds.height.set(32f)
                 this.bindVarToParentHeight(this.bounds.y)
                 this.renderAlign.set(RenderAlign.top)

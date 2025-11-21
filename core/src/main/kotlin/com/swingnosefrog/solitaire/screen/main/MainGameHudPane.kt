@@ -7,6 +7,8 @@ import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.game.GameContainer
 import com.swingnosefrog.solitaire.settings.SolitaireSettings
+import com.swingnosefrog.solitaire.statistics.formatter.DurationMsStatFormatter
+import paintbox.binding.IntVar
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 import paintbox.font.Markup
@@ -46,21 +48,12 @@ class MainGameHudPane(
             settings.gameplayShowMoveCounter.use()
         }
         
-        elapsedTimeClock = Var {
+        elapsedTimeClock = DurationMsStatFormatter.format(IntVar {
             val gameContainer = gameContainer.use()
             val gameStats = gameContainer.gamePlayStats
 
-            val elapsedSec = gameStats.timeElapsedSec.use()
-            val elapsedSecondsInt = elapsedSec.toInt()
-            val elapsedMinutesPart = elapsedSecondsInt/ 60
-            val elapsedSecondsPart = elapsedSecondsInt % 60
-            val elapsedMillisPart = (elapsedSec % 1f * 1000).toInt()
-            val elapsedCentisecondsPart = elapsedMillisPart / 10
-            var clockPortion =
-                "${DecimalFormats.format("00", elapsedMinutesPart)}:${DecimalFormats.format("00", elapsedSecondsPart)}[scale=0.75].${DecimalFormats.format("00", elapsedCentisecondsPart)}[]"
-
-            clockPortion
-        }
+            (gameStats.timeElapsedSec.use() * 1000).toInt()
+        })
         
         movesMadeString = Var {
             val gameContainer = gameContainer.use()

@@ -7,14 +7,14 @@ import paintbox.binding.Var
 import paintbox.i18n.ILocalization
 import paintbox.util.DecimalFormats
 
-class DurationStatFormatter(
+class DurationSecStatFormatter(
     val localizationKey: String,
     val localizationBase: ILocalization = Localization,
 ) : StatFormatter {
 
     companion object {
 
-        val DEFAULT: DurationStatFormatter = DurationStatFormatter("statistics.formatter.duration", Localization)
+        val DEFAULT: DurationSecStatFormatter = DurationSecStatFormatter("statistics.formatter.duration", Localization)
     }
 
     override fun format(value: ReadOnlyIntVar): ReadOnlyVar<String> {

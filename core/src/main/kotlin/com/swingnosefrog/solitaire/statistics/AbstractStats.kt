@@ -38,7 +38,7 @@ abstract class AbstractStats {
         }
     }
 
-    fun fromJson(rootObj: JsonObject) {
+    open fun fromJson(rootObj: JsonObject) {
         resetToInitialValues()
 
         val statsObj = rootObj["stats"].asObject()
@@ -59,6 +59,23 @@ abstract class AbstractStats {
         }
     }
 
+    open fun toJson(rootObj: JsonObject) {
+        rootObj.add("stats_format_version", STATS_FORMAT_VERSION)
+        rootObj.add("stats", Json.`object`().also { obj ->
+            statMap.values.forEach { stat ->
+                val value = stat.value.get()
+                if (value != stat.initialValue) {
+                    obj.add(stat.id, value)
+                }
+            }
+            unknownStatMap.values.forEach { unk ->
+                if (unk.id !in statMap.keys && obj.get(unk.id) == null) {
+                    obj.add(unk.id, unk.value)
+                }
+            }
+        })
+    }
+
     /**
      * Returns true if the stats were loaded successfully or if there was no file.
      * Returns false if an exception occurred.
@@ -75,23 +92,6 @@ abstract class AbstractStats {
             e.printStackTrace()
             false
         }
-    }
-
-    fun toJson(rootObj: JsonObject) {
-        rootObj.add("stats_format_version", STATS_FORMAT_VERSION)
-        rootObj.add("stats", Json.`object`().also { obj ->
-            statMap.values.forEach { stat ->
-                val value = stat.value.get()
-                if (value != stat.initialValue) {
-                    obj.add(stat.id, value)
-                }
-            }
-            unknownStatMap.values.forEach { unk ->
-                if (unk.id !in statMap.keys && obj.get(unk.id) == null) {
-                    obj.add(unk.id, unk.value)
-                }
-            }
-        })
     }
 
     fun toJsonFile(file: FileHandle) {
