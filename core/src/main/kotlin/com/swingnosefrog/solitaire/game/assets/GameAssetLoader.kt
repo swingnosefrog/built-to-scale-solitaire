@@ -15,7 +15,7 @@ class GameAssetLoader : AssetLoaderBase<GameAssets>(GameAssets) {
         
         fun mipmappedLinearTexture() = TextureLoader.TextureParameter().apply {
             this.genMipMaps = true
-            this.minFilter = Texture.TextureFilter.MipMapNearestLinear
+            this.minFilter = Texture.TextureFilter.MipMapLinearLinear
             this.magFilter = Texture.TextureFilter.Linear
         }
 
