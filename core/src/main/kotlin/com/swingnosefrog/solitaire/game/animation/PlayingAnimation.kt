@@ -50,7 +50,7 @@ open class PlayingAnimation(val animation: GameAnimation) {
     protected open fun onComplete() {
     }
     
-    protected fun getProgress(): Float {
+    fun getProgress(): Float {
         if (animation.durationSec <= 0f) return 1f
         
         return (secondsElapsed / animation.durationSec).coerceIn(0f, 1f)

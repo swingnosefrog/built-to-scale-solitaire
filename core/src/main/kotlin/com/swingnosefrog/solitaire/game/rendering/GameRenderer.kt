@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.game.Card
+import com.swingnosefrog.solitaire.game.animation.AnimationContainer
 import com.swingnosefrog.solitaire.game.animation.CardPlayingAnimation
 import com.swingnosefrog.solitaire.game.assets.CardAssetKey
 import com.swingnosefrog.solitaire.game.assets.CardSkin
@@ -23,6 +24,8 @@ import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.game.logic.GameLogic.Companion.CARD_HEIGHT
 import com.swingnosefrog.solitaire.game.logic.GameLogic.Companion.CARD_WIDTH
 import com.swingnosefrog.solitaire.game.logic.StackDirection
+import com.swingnosefrog.solitaire.game.rendering.vfx.SlamVfxAnimation
+import com.swingnosefrog.solitaire.game.rendering.vfx.SlamVfxPlayingAnimation
 import paintbox.binding.BooleanVar
 import paintbox.binding.LongVar
 import paintbox.binding.ReadOnlyBooleanVar
@@ -66,7 +69,7 @@ class GameRenderer(
         SolitaireGame.instance.settings.gameplayCardSkin.use()
     }
     
-    private val tallStackEventListener: TallStackEventListener = TallStackEventListener()
+    private val rendererEventListener: RendererEventListener = RendererEventListener()
     
     private val showCardCursorInMouseModeSetting: ReadOnlyBooleanVar = BooleanVar {
         SolitaireGame.instance.settings.gameplayShowCardCursorInMouseMode.use()
@@ -74,14 +77,18 @@ class GameRenderer(
     private val wasCardCursorRenderedLastFrame: BooleanVar = BooleanVar(false)
     private val cardCursorBlinkOffsetMs: LongVar = LongVar(0L)
     
+    private val vfxAnimationContainer: AnimationContainer = AnimationContainer()
+    
     init {
-        logic.eventDispatcher.addListener(tallStackEventListener)
+        logic.eventDispatcher.addListener(rendererEventListener)
         wasCardCursorRenderedLastFrame.addListener { 
             cardCursorBlinkOffsetMs.set(System.currentTimeMillis())
         }
     }
 
     override fun render(deltaSec: Float) {
+        vfxAnimationContainer.renderUpdate(deltaSec)
+        
         val cam = this.camera
         val camWidth = cam.viewportWidth
         val camHeight = cam.viewportHeight
@@ -110,16 +117,29 @@ class GameRenderer(
         }
         batch.setColor(1f, 1f, 1f, 1f)
 
+        for (playingAnimation in this.vfxAnimationContainer.getPlayingAnimations()) {
+            if (playingAnimation.secondsElapsed < 0f) continue
+
+            when (playingAnimation) {
+                is SlamVfxPlayingAnimation -> {
+                    renderSlamVfx(playingAnimation)
+                }
+            }
+        }
+        batch.setColor(1f, 1f, 1f, 1f)
+        
         for (playingAnimation in logic.animationContainer.getPlayingAnimations()) {
             if (playingAnimation.secondsElapsed < 0f) continue
 
-            if (playingAnimation is CardPlayingAnimation) {
-                playingAnimation.cardAnimation.card.render(
-                    playingAnimation.currentX,
-                    playingAnimation.currentY,
-                    flippedOver = playingAnimation.cardAnimation.isFlippedOver,
-                    renderShadow = true
-                )
+            when (playingAnimation) {
+                is CardPlayingAnimation -> {
+                    playingAnimation.cardAnimation.card.render(
+                        playingAnimation.currentX,
+                        playingAnimation.currentY,
+                        flippedOver = playingAnimation.cardAnimation.isFlippedOver,
+                        renderShadow = true
+                    )
+                }
             }
         }
         batch.setColor(1f, 1f, 1f, 1f)
@@ -202,16 +222,32 @@ class GameRenderer(
         batch.setColor(1f, 1f, 1f, 1f)
         batch.draw(cursorTex, x + CARD_WIDTH * 1.025f, -(y + CARD_HEIGHT * 0.0125f), cursorWidth, cursorHeight)
     }
+    
+    private fun renderSlamVfx(animation: SlamVfxPlayingAnimation) {
+        val slamVfx = animation.slamVfx
+        val tex = GameAssets.get<Texture>(if (slamVfx.isLarge) "vfx_slam_large" else "vfx_slam_small")
 
-    private inner class TallStackEventListener : GameEventListener.Adapter() {
+        val zoneX = slamVfx.cardZone.x.get()
+        val zoneY = slamVfx.cardZone.y.get()
+        val zoneWidth = CARD_WIDTH
+        val zoneHeight = CARD_HEIGHT
+
+        val batch = batch
+        val vfxWidth = (475f / 720f) * zoneWidth
+        val vfxHeight = (1504f / 1080f) * zoneHeight
+        val alphaInterpolation = Interpolation.linear
+        batch.setColor(1f, 1f, 1f, alphaInterpolation.apply(1f, 0f, animation.getProgress()))
+        batch.draw(tex, zoneX - vfxWidth, -(zoneY + (zoneHeight + vfxHeight) / 2), vfxWidth, vfxHeight)
+        batch.draw(tex, zoneX + zoneWidth + vfxWidth, -(zoneY + (zoneHeight + vfxHeight) / 2), -vfxWidth, vfxHeight)
+        
+        batch.setColor(1f, 1f, 1f, 1f)
+    }
+
+    private inner class RendererEventListener : GameEventListener.Adapter() {
 
         private var didZoomOut: Boolean = false
-
-        override fun onCardStackPlacedDown(
-            gameLogic: GameLogic,
-            cardStack: CardStack,
-            toZone: CardZone,
-        ) {
+        
+        private fun checkZoomOut(gameLogic: GameLogic, toZone: CardZone) {
             if (!didZoomOut && gameLogic.isPlayerZoneAndTallStack(toZone)) {
                 didZoomOut = true
                 Gdx.app.postRunnable(
@@ -219,11 +255,35 @@ class GameRenderer(
                         startValue = 0f,
                         endValue = 1f,
                         durationSec = 1.5f,
-                        interpolation = Interpolation.pow3Out,
+                        interpolation = Interpolation.pow3In,
                     ) { currentValue, _ ->
                         DEFAULT_CAMERA_POSITION.lerp(ZOOMED_OUT_CAMERA_POSITION, currentValue).applyToCamera(camera)
                     })
             }
+        }
+        
+        private fun playSlamVfx(large: Boolean, cardZone: CardZone) {
+            vfxAnimationContainer.enqueueAnimation(
+                SlamVfxAnimation(cardZone, large, durationSec = 0.25f, delaySec = 0f)
+            )
+        }
+
+        override fun onCardStackPlacedDown(gameLogic: GameLogic, cardStack: CardStack, toZone: CardZone) {
+            checkZoomOut(gameLogic, toZone)
+        }
+
+        override fun onWidgetSetCompleted(gameLogic: GameLogic, freeCellZone: CardZone) {
+            playSlamVfx(true, freeCellZone)
+        }
+
+        override fun onCardPlacedInFoundation(gameLogic: GameLogic, card: Card, foundationZone: CardZone) {
+            if (card.symbol.isNumeric()) {
+                playSlamVfx(false, foundationZone)
+            }
+        }
+
+        override fun onFoundationZoneCompleted(gameLogic: GameLogic, foundationZone: CardZone) {
+            playSlamVfx(true, foundationZone)
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.swingnosefrog.solitaire.game.assets
 
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.graphics.Texture
 import com.swingnosefrog.solitaire.assets.AssetLoaderBase
 import com.swingnosefrog.solitaire.game.CardSuit
 import com.swingnosefrog.solitaire.game.CardSymbol
@@ -16,6 +17,9 @@ class GameAssetLoader : AssetLoaderBase<GameAssets>(GameAssets) {
         addCardTextures(CardSkin.MODERN, "modern", linearFiltering = true)
         addCardTextures(CardSkin.CLASSIC, "classic", linearFiltering = false)
 
+        registry.loadAsset<Texture>("vfx_slam_large", "textures/game/vfx/slam_large.png", linearTexture())
+        registry.loadAsset<Texture>("vfx_slam_small", "textures/game/vfx/slam_small.png", linearTexture())
+        
         registry.loadAsset<BeadsSound>("sfx_game_dealing_loop", "sounds/game/dealing_loop.wav")
         registry.loadAsset<BeadsSound>("sfx_game_reshuffle", "sounds/game/reshuffle.wav")
         registry.loadAsset<BeadsSound>("sfx_game_pickup1", "sounds/game/pickup1.wav")
