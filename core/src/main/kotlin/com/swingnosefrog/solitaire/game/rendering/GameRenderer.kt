@@ -264,7 +264,7 @@ class GameRenderer(
         
         private fun playSlamVfx(large: Boolean, cardZone: CardZone) {
             vfxAnimationContainer.enqueueAnimation(
-                SlamVfxAnimation(cardZone, large, durationSec = 0.25f, delaySec = 0f)
+                SlamVfxAnimation(cardZone, large, durationSec = 0.2f, delaySec = 0f)
             )
         }
 
