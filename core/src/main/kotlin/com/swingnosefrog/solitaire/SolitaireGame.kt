@@ -13,6 +13,7 @@ import com.swingnosefrog.solitaire.screen.main.MainGameScreen
 import com.swingnosefrog.solitaire.settings.SolitaireSettings
 import com.swingnosefrog.solitaire.settings.VolumeGain
 import com.swingnosefrog.solitaire.statistics.StatsImpl
+import com.swingnosefrog.solitaire.steamworks.SteamStats
 import com.swingnosefrog.solitaire.steamworks.Steamworks
 import com.swingnosefrog.solitaire.util.WindowSizeUtils
 import paintbox.IPaintboxSettings
@@ -160,7 +161,7 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
         super.dispose()
         settings.persist()
         stats.persist()
-        Steamworks.getSteamInterfaces()?.stats?.storeStats()
+        SteamStats.persistStats()
         Steamworks.shutdown()
     }
 }

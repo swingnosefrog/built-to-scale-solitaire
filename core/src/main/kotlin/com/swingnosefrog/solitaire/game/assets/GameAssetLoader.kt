@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.Texture
 import com.swingnosefrog.solitaire.assets.AssetLoaderBase
 import com.swingnosefrog.solitaire.game.CardSuit
 import com.swingnosefrog.solitaire.game.CardSymbol
+import com.swingnosefrog.solitaire.game.audio.music.Track.Gameplay.GameplayStems
+import com.swingnosefrog.solitaire.game.audio.music.Track.Practice.PracticeStems
 import com.swingnosefrog.solitaire.soundsystem.beads.BeadsSound
 
 class GameAssetLoader : AssetLoaderBase<GameAssets>(GameAssets) {
@@ -51,10 +53,14 @@ class GameAssetLoader : AssetLoaderBase<GameAssets>(GameAssets) {
         registry.loadAsset<BeadsSound>("sfx_game_foundation_scale_6", "sounds/game/note_B3.ogg")
         registry.loadAsset<BeadsSound>("sfx_game_foundation_scale_7", "sounds/game/note_C4.ogg")
         
-        registry.loadAsset<BeadsSound>("music_gameplay_stem_drums", "music/gameplay/stem_drums.ogg")
-        registry.loadAsset<BeadsSound>("music_gameplay_stem_keys", "music/gameplay/stem_keys.ogg")
-        registry.loadAsset<BeadsSound>("music_gameplay_stem_lead", "music/gameplay/stem_lead.ogg")
-        registry.loadAsset<BeadsSound>("music_gameplay_stem_side", "music/gameplay/stem_side.ogg")
+        registry.loadAsset<BeadsSound>(GameplayStems.DRUMS.assetKey, "music/gameplay/stem_drums.ogg")
+        registry.loadAsset<BeadsSound>(GameplayStems.KEYS.assetKey, "music/gameplay/stem_keys.ogg")
+        registry.loadAsset<BeadsSound>(GameplayStems.LEAD.assetKey, "music/gameplay/stem_lead.ogg")
+        registry.loadAsset<BeadsSound>(GameplayStems.SIDE.assetKey, "music/gameplay/stem_side.ogg")
+        registry.loadAsset<BeadsSound>(PracticeStems.BASS.assetKey, "music/tutorial/stem_bass.ogg")
+        registry.loadAsset<BeadsSound>(PracticeStems.DRUMS.assetKey, "music/tutorial/stem_drums.ogg")
+        registry.loadAsset<BeadsSound>(PracticeStems.KEYS.assetKey, "music/tutorial/stem_keys.ogg")
+        registry.loadAsset<BeadsSound>(PracticeStems.SIDE.assetKey, "music/tutorial/stem_side.ogg")
     }
 
     private fun addCardTextures(

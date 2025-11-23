@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.swingnosefrog.solitaire.game.audio.GameAudio
-import com.swingnosefrog.solitaire.game.audio.GameMusic
+import com.swingnosefrog.solitaire.game.audio.music.GameMusic
 import com.swingnosefrog.solitaire.game.input.GameInput
 import com.swingnosefrog.solitaire.game.input.GameGdxInputProcessor
 import com.swingnosefrog.solitaire.game.input.GameInputActionListener

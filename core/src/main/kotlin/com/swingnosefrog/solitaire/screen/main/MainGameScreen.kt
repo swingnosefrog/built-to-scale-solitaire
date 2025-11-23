@@ -13,7 +13,8 @@ import com.badlogic.gdx.utils.viewport.StretchViewport
 import com.swingnosefrog.solitaire.Solitaire
 import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.game.GameContainer
-import com.swingnosefrog.solitaire.game.audio.GameMusic
+import com.swingnosefrog.solitaire.game.audio.music.GameMusic
+import com.swingnosefrog.solitaire.game.audio.music.StemMixScenario
 import com.swingnosefrog.solitaire.game.logic.DeckInitializer
 import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.inputmanager.InputManager
@@ -80,7 +81,8 @@ class MainGameScreen(
             )
         backingGameContainer.setNewGameContainer(newContainer)
 
-        gameMusic.transitionToStemMix(GameMusic.StemMixes.ALL, 1f)
+        // Resume music
+        gameMusic.transitionToStemMix(1f, StemMixScenario.GAMEPLAY)
         
         val stats = main.stats
         if (breakWinStreakIfNotWon && !deckInitializer.startFromWonState) {
