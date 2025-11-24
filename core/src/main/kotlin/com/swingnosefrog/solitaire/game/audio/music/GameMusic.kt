@@ -21,7 +21,7 @@ import paintbox.util.gdxutils.GdxRunnableTransition
 
 class GameMusic(soundSystem: SoundSystem) : Disposable {
 
-    private val allTracks: List<Track> = listOf(Track.Gameplay, Track.Practice)
+    private val allTracks: List<Track> = listOf(Track.Default, Track.Practice)
     private val stemAudio: Map<StemType, BeadsSound> =
         allTracks.flatMap { it.allStemTypes }.distinct().associateWith { type ->
             GameAssets.get<BeadsSound>(type.assetKey)

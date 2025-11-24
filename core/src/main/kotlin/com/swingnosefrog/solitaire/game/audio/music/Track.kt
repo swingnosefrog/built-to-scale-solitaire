@@ -3,9 +3,9 @@ package com.swingnosefrog.solitaire.game.audio.music
 
 sealed class Track {
 
-    data object Gameplay : Track() {
+    data object Default : Track() {
 
-        enum class GameplayStems(override val assetKey: String) : StemType {
+        enum class Stems(override val assetKey: String) : StemType {
 
             DRUMS("music_gameplay_stem_drums"),
             KEYS("music_gameplay_stem_keys"),
@@ -14,20 +14,20 @@ sealed class Track {
         }
 
         override val name: String = "gameplay"
-        override val allStemTypes: List<StemType> = GameplayStems.entries.toList()
+        override val allStemTypes: List<StemType> = Stems.entries.toList()
 
         override fun getStemMixForScenario(scenario: StemMixScenario): StemMix {
             return when (scenario) {
                 StemMixScenario.NONE -> emptySet()
-                StemMixScenario.GAMEPLAY -> setOf(GameplayStems.DRUMS, GameplayStems.KEYS, GameplayStems.LEAD, GameplayStems.SIDE)
-                StemMixScenario.AFTER_WIN -> setOf(GameplayStems.DRUMS, GameplayStems.SIDE)
+                StemMixScenario.GAMEPLAY -> setOf(Stems.DRUMS, Stems.KEYS, Stems.LEAD, Stems.SIDE)
+                StemMixScenario.AFTER_WIN -> setOf(Stems.DRUMS, Stems.SIDE)
             }
         }
     }
 
     data object Practice : Track() {
 
-        enum class PracticeStems(override val assetKey: String) : StemType {
+        enum class Stems(override val assetKey: String) : StemType {
 
             BASS("music_tutorial_stem_bass"),
             DRUMS("music_tutorial_stem_drums"),
@@ -36,13 +36,13 @@ sealed class Track {
         }
 
         override val name: String = "practice"
-        override val allStemTypes: List<StemType> = PracticeStems.entries.toList()
+        override val allStemTypes: List<StemType> = Stems.entries.toList()
 
         override fun getStemMixForScenario(scenario: StemMixScenario): StemMix {
             return when (scenario) {
                 StemMixScenario.NONE -> emptySet()
-                StemMixScenario.GAMEPLAY -> setOf(PracticeStems.DRUMS, PracticeStems.KEYS, PracticeStems.BASS, PracticeStems.SIDE)
-                StemMixScenario.AFTER_WIN -> setOf(PracticeStems.DRUMS, PracticeStems.SIDE)
+                StemMixScenario.GAMEPLAY -> setOf(Stems.DRUMS, Stems.KEYS, Stems.BASS, Stems.SIDE)
+                StemMixScenario.AFTER_WIN -> setOf(Stems.DRUMS, Stems.SIDE)
             }
         }
     }
