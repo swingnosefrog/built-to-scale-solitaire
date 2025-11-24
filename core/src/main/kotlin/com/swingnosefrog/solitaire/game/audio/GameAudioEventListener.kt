@@ -100,9 +100,7 @@ class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disp
         gameLogic: GameLogic,
         freeCellZone: CardZone,
     ) {
-        gameAudio.playSfx(GameAssets.get<BeadsSound>("sfx_game_foundation_widget")) { player ->
-            player.gain = 0.65f
-        }
+        gameAudio.playSfx(GameAssets.get<BeadsSound>("sfx_game_foundation_widget"))
     }
 
     override fun onFoundationZoneCompleted(
