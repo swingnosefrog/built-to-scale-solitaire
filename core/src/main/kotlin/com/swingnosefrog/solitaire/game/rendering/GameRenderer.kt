@@ -257,7 +257,8 @@ class GameRenderer(
                         interpolation = Interpolation.pow3In,
                     ) { currentValue, _ ->
                         DEFAULT_CAMERA_POSITION.lerp(ZOOMED_OUT_CAMERA_POSITION, currentValue).applyToCamera(camera)
-                    })
+                    }.toRunnable()
+                )
             }
         }
         

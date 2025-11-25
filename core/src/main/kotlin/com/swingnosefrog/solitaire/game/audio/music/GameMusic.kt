@@ -36,7 +36,7 @@ class GameMusic(soundSystem: SoundSystem) : Disposable {
     private var currentStemMixScenario: StemMixScenario = StemMixScenario.NONE
     private var currentTrack: Track = Track.Practice // TODO change
     private var currentStemMix: StemMix = emptySet()
-    private var currentStemMixTransition: GdxRunnableTransition? = null
+    private var currentStemMixTransition: GdxRunnableTransition.State? = null
     private val stemPlayers: Map<StemType, PlayerLike>
 
     val gameEventListener: GameEventListener = this.GameListener()
@@ -66,7 +66,7 @@ class GameMusic(soundSystem: SoundSystem) : Disposable {
 
         audioContext.out.addInput(commonUgen)
 
-        transitionToStemMix(0.1f, StemMixScenario.GAMEPLAY)
+        transitionToStemMix(0.2f, StemMixScenario.GAMEPLAY)
     }
 
     fun transitionToStemMix(transitionTimeSec: Float, scenario: StemMixScenario, track: Track? = null) {
@@ -103,35 +103,11 @@ class GameMusic(soundSystem: SoundSystem) : Disposable {
                 stemPlayers.getValue(stemType).gain =
                     interpolation.apply(startingGainObj.startingGain, startingGainObj.endingGain, progress)
             }
-        }
+        }.toRunnable()
         currentStemMixTransition = newTransition
         Gdx.app.postRunnable(newTransition)
 
         this.currentStemMix = newStemMix
-    }
-
-    fun attenuateMusicForGameWinSfx(
-        sfxDuration: Float = 3f,
-        softenedGain: Float = 0.2f,
-        attenuationTransitionSec: Float = 0.125f,
-        resumeTransitionSec: Float = 1f,
-    ) {
-        val multiplierVar = musicAttenuationMultiplier
-
-        Gdx.app.postRunnable(
-            GdxRunnableTransition(
-                multiplierVar.get(),
-                softenedGain,
-                attenuationTransitionSec
-            ) { v, _ ->
-                multiplierVar.set(v)
-            })
-
-        Gdx.app.postRunnable(GdxDelayedRunnable(sfxDuration) {
-            Gdx.app.postRunnable(GdxRunnableTransition(softenedGain, 1f, resumeTransitionSec) { v, _ ->
-                multiplierVar.set(v)
-            })
-        })
     }
 
     override fun dispose() {
@@ -143,8 +119,35 @@ class GameMusic(soundSystem: SoundSystem) : Disposable {
     private inner class GameListener : GameEventListener.Adapter() {
 
         override fun onGameWon(gameLogic: GameLogic) {
+            transitionToStemMix(0.5f, StemMixScenario.AFTER_WIN) // TODO change track during gameplay point
             attenuateMusicForGameWinSfx()
-            transitionToStemMix(0.5f, StemMixScenario.AFTER_WIN)
+        }
+
+        private fun attenuateMusicForGameWinSfx(
+            sfxDuration: Float = 3f,
+            softenedGain: Float = 0.2f,
+            attenuationTransitionSec: Float = 0.125f,
+            resumeTransitionSec: Float = 1f,
+        ) {
+            val multiplierVar = musicAttenuationMultiplier
+
+            Gdx.app.postRunnable(
+                GdxRunnableTransition(
+                    startValue = multiplierVar.get(),
+                    endValue = softenedGain,
+                    durationSec = attenuationTransitionSec
+                ) { v, _ ->
+                    multiplierVar.set(v)
+                }.toRunnable()
+            )
+
+            Gdx.app.postRunnable(
+                GdxRunnableTransition(
+                    startValue = softenedGain, endValue = 1f, durationSec = resumeTransitionSec, delaySec = sfxDuration,
+                ) { v, _ ->
+                    multiplierVar.set(v)
+                }.toRunnable()
+            )
         }
     }
 }
