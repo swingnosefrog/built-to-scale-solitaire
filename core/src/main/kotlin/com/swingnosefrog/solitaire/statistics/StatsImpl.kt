@@ -19,10 +19,26 @@ class StatsImpl : AbstractStats() {
 
         const val ROLLING_AVERAGE_GAME_COUNT: Int = 20
     }
-    
+
     private data class RollingGameStat(val movesMade: Int, val timeElapsedMs: Int)
 
-    private val storageLoc: FileHandle by lazy { FileHandle(GameSaveLocationHelper.saveDirectory.resolve("statistics.json")) }
+    private val storageLoc: FileHandle by lazy {
+        val currentStatsFile =
+            FileHandle(GameSaveLocationHelper.saveDirectory.resolve("stats.${GameSaveLocationHelper.SAVE_FILE_EXTENSION}"))
+        val oldStatsFile = FileHandle(GameSaveLocationHelper.saveDirectory.resolve("statistics.json"))
+
+        if (oldStatsFile.exists() && !oldStatsFile.isDirectory && !currentStatsFile.exists()) {
+            try {
+                currentStatsFile.file().createNewFile()
+                oldStatsFile.copyTo(currentStatsFile)
+                oldStatsFile.delete()
+            } catch (t: Throwable) {
+                t.printStackTrace()
+            }
+        }
+        
+        currentStatsFile
+    }
 
     //region Stat registration
 
