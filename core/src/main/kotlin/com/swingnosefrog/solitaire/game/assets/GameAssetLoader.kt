@@ -52,6 +52,7 @@ class GameAssetLoader : AssetLoaderBase<GameAssets>(GameAssets) {
         registry.loadAsset<BeadsSound>("sfx_game_foundation_scale_5", "sounds/game/note_A3.wav")
         registry.loadAsset<BeadsSound>("sfx_game_foundation_scale_6", "sounds/game/note_B3.wav")
         registry.loadAsset<BeadsSound>("sfx_game_foundation_scale_7", "sounds/game/note_C4.wav")
+        registry.loadAsset<BeadsSound>("sfx_game_foundation_finish", "sounds/game/foundation_finish.ogg")
         
         registry.loadAsset<BeadsSound>(DefaultStems.DRUMS.assetKey, "music/gameplay/stem_drums.ogg")
         registry.loadAsset<BeadsSound>(DefaultStems.KEYS.assetKey, "music/gameplay/stem_keys.ogg")

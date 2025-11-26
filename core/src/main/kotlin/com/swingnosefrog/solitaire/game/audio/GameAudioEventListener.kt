@@ -107,7 +107,10 @@ class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disp
         gameLogic: GameLogic,
         foundationZone: CardZone,
     ) {
-        gameAudio.playSfx(GameAssets.get<BeadsSound>("sfx_game_foundation_scale_7"))
+        gameAudio.playSfx(GameAssets.get<BeadsSound>("sfx_game_foundation_scale_7")) { player ->
+            player.position = -37.5
+        }
+        gameAudio.playSfx(GameAssets.get<BeadsSound>("sfx_game_foundation_finish"))
     }
 
     override fun onGameWon(gameLogic: GameLogic) {

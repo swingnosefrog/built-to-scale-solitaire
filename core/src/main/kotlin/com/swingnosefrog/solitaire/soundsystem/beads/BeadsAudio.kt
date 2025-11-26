@@ -1,5 +1,6 @@
 package com.swingnosefrog.solitaire.soundsystem.beads
 
+import com.swingnosefrog.solitaire.soundsystem.sample.DelayableSamplePlayer
 import com.swingnosefrog.solitaire.soundsystem.sample.MusicSample
 import com.swingnosefrog.solitaire.soundsystem.sample.MusicSamplePlayer
 import com.swingnosefrog.solitaire.soundsystem.sample.PlayerLike
@@ -21,7 +22,7 @@ abstract class BeadsAudio(val channels: Int, val sampleRate: Float) {
 class BeadsSound(val sample: Sample) : BeadsAudio(sample.numChannels, sample.sampleRate) {
 
     override fun createPlayer(context: AudioContext): SamplePlayerWrapper {
-        return SamplePlayerWrapper(SamplePlayer(context, sample))
+        return SamplePlayerWrapper(DelayableSamplePlayer(context, sample))
     }
 
 }
