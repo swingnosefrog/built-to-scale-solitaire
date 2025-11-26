@@ -83,7 +83,9 @@ class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disp
         targetZone: CardZone,
     ) {
         val sound = GameAssets.get<BeadsSound>("sfx_game_whoosh${MathUtils.random(1, 3)}")
-        gameAudio.playSfx(sound)
+        gameAudio.playSfx(sound) { player ->
+            player.gain = 0.875f
+        }
     }
 
     override fun onCardPlacedInFoundation(
