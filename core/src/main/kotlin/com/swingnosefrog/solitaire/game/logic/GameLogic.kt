@@ -127,21 +127,23 @@ class GameLogic(val deckInitializer: DeckInitializer, initiallyMouseBased: Boole
 
     fun renderUpdate(deltaSec: Float) {
         val didAnimate = animationContainer.renderUpdate(deltaSec)
-
+        
+        var didEnqueueAnimationAfterTableauCheck = false
         if (didAnimate && !animationContainer.anyAnimationsQueuedOrPlaying()) {
-            checkTableauAfterActivity()
+            didEnqueueAnimationAfterTableauCheck = checkTableauAfterActivity()
         }
 
         val shouldInputsBeDisabled =
-            gameWon.get() || animationContainer.getPlayingAnimations().isNotEmpty() || isStillDealing.get()
+            gameWon.get() || animationContainer.getPlayingAnimations().isNotEmpty() || 
+                    isStillDealing.get() || didEnqueueAnimationAfterTableauCheck
         gameInput.inputsDisabled.set(shouldInputsBeDisabled)
 
         gamePlayStats.renderUpdate(deltaSec)
     }
 
-    fun checkTableauAfterActivity() {
+    fun checkTableauAfterActivity(): Boolean {
         if (gameWon.get()) {
-            return
+            return false
         }
 
         // Flip over completed widgets in free cells
@@ -164,7 +166,7 @@ class GameLogic(val deckInitializer: DeckInitializer, initiallyMouseBased: Boole
             eventDispatcher.onGameWon(this)
             
             // TODO animation on win
-            return
+            return false
         }
 
         // Possible animations for auto-placing into the foundation pile
@@ -180,7 +182,7 @@ class GameLogic(val deckInitializer: DeckInitializer, initiallyMouseBased: Boole
                     gameInput.cancelDrag()
                     eventDispatcher.onCardAutoMoved(this, tail, spareZone)
                     enqueueDefaultCardMoveAnimation(tail, zone, spareZone)
-                    return
+                    return true
                 } else if (!tail.symbol.isNumeric()) {
                     continue
                 }
@@ -213,7 +215,7 @@ class GameLogic(val deckInitializer: DeckInitializer, initiallyMouseBased: Boole
                     gameInput.cancelDrag()
                     eventDispatcher.onCardAutoMoved(this, tail, targetFoundation)
                     enqueueDefaultCardMoveAnimation(tail, zone, targetFoundation)
-                    return
+                    return true
                 }
             }
         }
@@ -230,9 +232,11 @@ class GameLogic(val deckInitializer: DeckInitializer, initiallyMouseBased: Boole
                 gameInput.cancelDrag()
                 eventDispatcher.onCardAutoMoved(this, tail, targetFoundation)
                 enqueueDefaultCardMoveAnimation(tail, spareZone, targetFoundation, durationSec = 0.333f)
-                return
+                return true
             }
         }
+        
+        return false
     }
 
     private fun enqueueDefaultCardMoveAnimation(
