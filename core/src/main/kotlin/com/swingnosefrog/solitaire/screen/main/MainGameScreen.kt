@@ -14,11 +14,16 @@ import com.swingnosefrog.solitaire.Solitaire
 import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.game.GameContainer
 import com.swingnosefrog.solitaire.game.audio.music.GameMusic
+import com.swingnosefrog.solitaire.game.audio.music.MusicTrackSetting
+import com.swingnosefrog.solitaire.game.audio.music.ProgressBasedTrackManager
 import com.swingnosefrog.solitaire.game.audio.music.StemMixScenario
+import com.swingnosefrog.solitaire.game.audio.music.TrackManager
 import com.swingnosefrog.solitaire.game.logic.DeckInitializer
 import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.inputmanager.InputManager
+import com.swingnosefrog.solitaire.progress.ProgressGameListener
 import com.swingnosefrog.solitaire.screen.AbstractGameScreen
+import com.swingnosefrog.solitaire.settings.SolitaireSettings
 import com.swingnosefrog.solitaire.soundsystem.SoundSystem
 import com.swingnosefrog.solitaire.steamworks.Steamworks
 import paintbox.binding.BooleanVar
@@ -36,6 +41,8 @@ class MainGameScreen(
         
         private const val GAME_BUFFER_INDEX: Int = 0
     }
+    
+    private val settings: SolitaireSettings get() = main.settings
 
     private val batch: SpriteBatch = main.batch
     
@@ -45,7 +52,8 @@ class MainGameScreen(
     val inputManager: InputManager = main.inputManagerFactory.create()
 
     private val soundSystem: SoundSystem = SoundSystem.createDefaultSoundSystem()
-    private val gameMusic: GameMusic = GameMusic(soundSystem)
+    private val trackManager: TrackManager = ProgressBasedTrackManager(main)
+    private val gameMusic: GameMusic = GameMusic(soundSystem, trackManager)
 
     private val backingGameContainer: BackingGameContainer = BackingGameContainer()
     val gameContainer: ReadOnlyVar<GameContainer> get() = backingGameContainer.currentContainer
@@ -70,7 +78,7 @@ class MainGameScreen(
         startNewGame(DeckInitializer.RandomSeed(), breakWinStreakIfNotWon = false)
         soundSystem.startRealtime()
     }
-
+    
     fun startNewGame(deckInitializer: DeckInitializer, breakWinStreakIfNotWon: Boolean) {
         val newContainer =
             GameContainer(
@@ -79,9 +87,13 @@ class MainGameScreen(
                 soundSystem,
                 gameMusic
             )
-        backingGameContainer.setNewGameContainer(newContainer)
+        val isFirstTimeSetting = 
+            backingGameContainer.setNewGameContainer(newContainer)
 
         // Resume music
+        if (!isFirstTimeSetting && settings.audioMusicTrackSetting.getOrCompute() == MusicTrackSetting.SHUFFLE_AFTER_WIN) {
+            trackManager.shuffleTrack()
+        }
         gameMusic.transitionToStemMix(1f, StemMixScenario.GAMEPLAY)
         
         val stats = main.stats
@@ -190,11 +202,13 @@ src: ${inputManager.mostRecentActionSource.getOrCompute().sourceName}
     ) : Disposable, InputProcessor by gameGdxInputMultiplexer {
         
         private var statsAndAchievementsGameListener: StatsAndAchievementsGameListener? = null
+        private var progressGameListener: ProgressGameListener? = null
         
         private var _container: GameContainer? = null
         private var current: GameContainer
             set(newValue) {
                 val stats = main.stats
+                val progress = main.progress
                 
                 val oldValue = _container
                 if (oldValue != null) {
@@ -202,7 +216,10 @@ src: ${inputManager.mostRecentActionSource.getOrCompute().sourceName}
                     oldInputActionListener.enabled.set(false)
                     inputManager.removeInputActionListener(oldInputActionListener)
                     this.gameGdxInputMultiplexer.removeProcessor(oldValue.gdxInputProcessor)
+                    
                     statsAndAchievementsGameListener?.let { oldValue.gameLogic.eventDispatcher.removeListener(it) }
+                    progressGameListener?.let { oldValue.gameLogic.eventDispatcher.removeListener(it) }
+                    
                     stats.persist()
                 }
 
@@ -213,9 +230,14 @@ src: ${inputManager.mostRecentActionSource.getOrCompute().sourceName}
                 newInputActionListener.enabled.bind(gameInputsEnabled)
                 inputManager.addInputActionListener(newInputActionListener)
                 this.gameGdxInputMultiplexer.addProcessor(newValue.gdxInputProcessor)
+                
                 val newStatsListener = StatsAndAchievementsGameListener(stats, newValue)
                 newValue.gameLogic.eventDispatcher.addListener(newStatsListener)
                 statsAndAchievementsGameListener = newStatsListener
+                
+                val newProgressListener = ProgressGameListener(progress)
+                newValue.gameLogic.eventDispatcher.addListener(newProgressListener)
+                progressGameListener = newProgressListener
                 
                 _container = newValue
                 (currentContainer as Var).set(newValue)
@@ -227,11 +249,16 @@ src: ${inputManager.mostRecentActionSource.getOrCompute().sourceName}
         val currentContainer: ReadOnlyVar<GameContainer> by lazy { Var(current) }
 
         constructor() : this(InputMultiplexer())
-        
-        fun setNewGameContainer(newValue: GameContainer) {
+
+        /**
+         * Returns true if first time setting.
+         */
+        fun setNewGameContainer(newValue: GameContainer): Boolean {
+            val isFirstTimeSetting = _container == null
             this.current = newValue
+            return isFirstTimeSetting
         }
-        
+
         override fun dispose() {
             current.dispose()
         }

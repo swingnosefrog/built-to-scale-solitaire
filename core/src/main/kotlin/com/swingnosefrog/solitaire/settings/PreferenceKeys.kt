@@ -22,5 +22,7 @@ object PreferenceKeys {
     val SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER = "settings_gameplay_showMoveCounter"
     val SETTINGS_GAMEPLAY_SHOW_TIMER = "settings_gameplay_showTimer"
     val SETTINGS_GAMEPLAY_SHOW_HOW_TO_PLAY_BUTTON = "settings_gameplay_showHowToPlayButton"
+    
+    val SETTINGS_AUDIO_MUSIC_TRACK = "settings_audio_musicTrack"
 
 }

@@ -1,8 +1,11 @@
 package com.swingnosefrog.solitaire.screen.main.menu
 
 import com.swingnosefrog.solitaire.Localization
+import com.swingnosefrog.solitaire.SolitaireGame
+import com.swingnosefrog.solitaire.game.audio.music.MusicTrackSetting
 import com.swingnosefrog.solitaire.menu.MenuOption
 import paintbox.binding.*
+import paintbox.ui.StringVarConverter
 
 class AudioSettingsMenu(
     id: String
@@ -27,6 +30,10 @@ class AudioSettingsMenu(
     val minVolumeValue: ReadOnlyFloatVar = ReadOnlyFloatVar.const(0f)
     val maxVolumeValue: ReadOnlyFloatVar = ReadOnlyFloatVar.const(100f)
     val tickVolumeValue: ReadOnlyFloatVar = ReadOnlyFloatVar.const(5f)
+    
+    private val unlockedMusicTrackChanging: ReadOnlyBooleanVar = BooleanVar {
+        SolitaireGame.instance.progress.unlockedMusicTrackChanging.use()
+    }
 
     override val options: List<MenuOption>
 
@@ -43,14 +50,38 @@ class AudioSettingsMenu(
                 convertIntVolumeToFloatVar(intVolume)
             )
         }
-        
+
         options = listOf(
             createSliderOption(Localization["game.menu.audioSettings.option.masterVolume"], settings.masterVolume),
             createSliderOption(Localization["game.menu.audioSettings.option.musicVolume"], settings.musicVolume),
             createSliderOption(Localization["game.menu.audioSettings.option.sfxVolume"], settings.sfxVolume),
+
+            MenuOption.Separator(),
+
+            MenuOption.OptionWidget.Cycle(
+                Localization["game.menu.audioSettings.option.musicTrackSetting"],
+                ReadOnlyVar.const(MusicTrackSetting.entries.toList()),
+                settings.audioMusicTrackSetting,
+                StringVarConverter { setting: MusicTrackSetting ->
+                    Var<String> {
+                        if (!unlockedMusicTrackChanging.use()) {
+                            Localization["game.menu.audioSettings.option.musicTrackSetting.notUnlockedYet"]
+                        } else {
+                            when (setting) {
+                                MusicTrackSetting.SHUFFLE_AFTER_WIN -> Localization["game.menu.audioSettings.option.musicTrackSetting.shuffleAfterWin"]
+                                MusicTrackSetting.BGM_DEFAULT -> Localization["game.menu.audioSettings.option.musicTrackSetting.default"]
+                                MusicTrackSetting.BGM_PRACTICE -> Localization["game.menu.audioSettings.option.musicTrackSetting.practice"]
+                            }
+                        }.use()
+                    }
+                }
+            ).apply { 
+                this.disabled.bind { !unlockedMusicTrackChanging.use() }
+            },
+
             MenuOption.Back(),
         )
-        
+
         this.menuSizeAdjustment.set(3)
     }
 }

@@ -3,7 +3,9 @@ package com.swingnosefrog.solitaire.settings
 import com.badlogic.gdx.Preferences
 import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.game.assets.CardSkin
+import com.swingnosefrog.solitaire.game.audio.music.MusicTrackSetting
 import com.swingnosefrog.solitaire.game.input.MouseMode
+import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_AUDIO_MUSIC_TRACK
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_FULLSCREEN
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_FULLSCREEN_MONITOR
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_CARD_SKIN
@@ -54,6 +56,8 @@ class SolitaireSettings(
     val gameplayShowMoveCounter: BooleanVar
     val gameplayShowTimer: BooleanVar
     val gameplayShowHowToPlayButton: BooleanVar
+    
+    val audioMusicTrackSetting: Var<MusicTrackSetting>
 
     init {
         val definitelyOnSteamDeck = isRunningOnSteamDeckHint == true
@@ -79,6 +83,8 @@ class SolitaireSettings(
             gameplayShowMoveCounter = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER, true).add().value
             gameplayShowTimer = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_TIMER, true).add().value
             gameplayShowHowToPlayButton = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_HOW_TO_PLAY_BUTTON, true).add().value
+            
+            audioMusicTrackSetting = KeyValue.Enum<MusicTrackSetting>(SETTINGS_AUDIO_MUSIC_TRACK, MusicTrackSetting.SHUFFLE_AFTER_WIN).add().value
         }
 
         allKeyValues = initScope.allKeyValues.toList()
