@@ -43,7 +43,7 @@ class GameAssetLoader : AssetLoaderBase<GameAssets>(GameAssets) {
         registry.loadAsset<BeadsSound>("sfx_game_whoosh3", "sounds/game/whoosh3.wav")
         registry.loadAsset<BeadsSound>("sfx_game_won", "sounds/game/win.ogg")
 
-        registry.loadAsset<BeadsSound>("sfx_game_widget_assemble", "sounds/game/widget.wav")
+        registry.loadAsset<BeadsSound>("sfx_game_widget_assemble", "sounds/game/widget.ogg")
         registry.loadAsset<BeadsSound>("sfx_game_foundation_finish", "sounds/game/foundation_finish.ogg")
         
         registry.loadAsset<BeadsSound>("sfx_game_note_A2", "sounds/game/notes/note_A2.ogg")
@@ -71,6 +71,10 @@ class GameAssetLoader : AssetLoaderBase<GameAssets>(GameAssets) {
         registry.loadAsset<BeadsSound>("sfx_game_note_G4", "sounds/game/notes/note_G4.ogg")
         registry.loadAsset<BeadsSound>("sfx_game_note_Gs2", "sounds/game/notes/note_Gs2.ogg")
         registry.loadAsset<BeadsSound>("sfx_game_note_Gs3", "sounds/game/notes/note_Gs3.ogg")
+        registry.loadAsset<BeadsSound>("sfx_game_flick_note_C5", "sounds/game/notes/flick_note_C5.ogg")
+        registry.loadAsset<BeadsSound>("sfx_game_flick_note_Cs5", "sounds/game/notes/flick_note_Cs5.ogg")
+        registry.loadAsset<BeadsSound>("sfx_game_flick_note_G4", "sounds/game/notes/flick_note_G4.ogg")
+        registry.loadAsset<BeadsSound>("sfx_game_flick_note_G5", "sounds/game/notes/flick_note_G5.ogg")
         
         registry.loadAsset<BeadsSound>(DefaultStems.DRUMS.assetKey, "music/gameplay/stem_drums.ogg")
         registry.loadAsset<BeadsSound>(DefaultStems.KEYS.assetKey, "music/gameplay/stem_keys.ogg")

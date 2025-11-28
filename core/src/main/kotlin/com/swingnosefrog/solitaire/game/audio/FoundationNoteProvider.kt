@@ -23,7 +23,7 @@ interface FoundationNoteProvider {
             "sfx_game_note_B3",
             "sfx_game_note_C4",
             // Widget
-            "sfx_game_note_G4",
+            "sfx_game_flick_note_G5",
         )
     }
 }
