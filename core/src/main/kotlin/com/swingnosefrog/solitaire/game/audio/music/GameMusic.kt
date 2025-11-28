@@ -20,7 +20,7 @@ import paintbox.binding.Var
 import paintbox.util.gdxutils.GdxRunnableTransition
 
 
-class GameMusic(soundSystem: SoundSystem, private val trackManager: TrackManager) : Disposable {
+class GameMusic(soundSystem: SoundSystem, val trackManager: TrackManager) : Disposable {
 
     private val stemAudio: Map<StemType, BeadsSound> =
         trackManager.allTracks.flatMap { it.allStemTypes }.distinct().associateWith { type ->

@@ -1,15 +1,19 @@
 package com.swingnosefrog.solitaire.game.audio.music
 
 import com.swingnosefrog.solitaire.SolitaireGame
+import com.swingnosefrog.solitaire.game.audio.FoundationNoteProvider
 import com.swingnosefrog.solitaire.progress.Progress
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 
 
-interface TrackManager {
+interface TrackManager : FoundationNoteProvider {
 
     val allTracks: List<Track>
     val currentTrack: ReadOnlyVar<Track>
+
+    override val notesAssetKeys: List<String>
+        get() = currentTrack.getOrCompute().notesAssetKeys
 
     fun changeTrack(track: Track)
 

@@ -4,6 +4,7 @@ import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.swingnosefrog.solitaire.game.audio.FoundationNoteProvider
 import com.swingnosefrog.solitaire.game.audio.GameAudio
 import com.swingnosefrog.solitaire.game.audio.music.GameMusic
 import com.swingnosefrog.solitaire.game.input.GameInput
@@ -29,12 +30,13 @@ class GameContainer(
     
     val gameRenderer: IGameRenderer = GameRenderer(gameLogic, batch)
     val viewport: Viewport get() = gameRenderer.viewport
-    
+
     val gdxInputProcessor: InputProcessor = GameGdxInputProcessor(gameInput, viewport)
     val inputActionListener: GameInputActionListener = GameInputActionListener(gameInput)
-    
-    val gameAudio: GameAudio = GameAudio(gameLogic, soundSystem)
-    
+
+    val gameAudio: GameAudio =
+        GameAudio(gameLogic, soundSystem, gameMusic?.trackManager ?: FoundationNoteProvider.Default)
+
     init {
         val gameMusicEventListener = gameMusic?.gameEventListener
         if (gameMusicEventListener != null) {

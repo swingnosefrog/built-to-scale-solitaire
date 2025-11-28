@@ -12,7 +12,10 @@ import com.swingnosefrog.solitaire.game.logic.GameLogic
 import com.swingnosefrog.solitaire.soundsystem.beads.BeadsSound
 
 
-class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disposable {
+class GameAudioEventListener(
+    val gameAudio: GameAudio,
+    private val foundationNoteProvider: FoundationNoteProvider
+) : GameEventListener, Disposable {
 
     private val dealing: BeadsSound get() = GameAssets.get<BeadsSound>("sfx_game_dealing_loop")
     private var dealingLoopSoundId: Long = -1
@@ -94,7 +97,9 @@ class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disp
         foundationZone: CardZone,
     ) {
         if (card.symbol in CardSymbol.SCALE_CARDS) {
-            gameAudio.playSfx(GameAssets.get<BeadsSound>("sfx_game_foundation_scale_${card.symbol.scaleOrder}"))
+            val notesAssetKeys = foundationNoteProvider.notesAssetKeys
+            val index = card.symbol.scaleOrder.coerceIn(0, 6)
+            gameAudio.playSfx(GameAssets.get<BeadsSound>(notesAssetKeys[index]))
         }
     }
 
@@ -102,14 +107,17 @@ class GameAudioEventListener(val gameAudio: GameAudio) : GameEventListener, Disp
         gameLogic: GameLogic,
         freeCellZone: CardZone,
     ) {
-        gameAudio.playSfx(GameAssets.get<BeadsSound>("sfx_game_foundation_widget"))
+        val notesAssetKeys = foundationNoteProvider.notesAssetKeys
+        gameAudio.playSfx(GameAssets.get<BeadsSound>(notesAssetKeys.last()))
+        gameAudio.playSfx(GameAssets.get<BeadsSound>("sfx_game_widget_assemble"))
     }
 
     override fun onFoundationZoneCompleted(
         gameLogic: GameLogic,
         foundationZone: CardZone,
     ) {
-        gameAudio.playSfx(GameAssets.get<BeadsSound>("sfx_game_foundation_scale_7")) { player ->
+        val notesAssetKeys = foundationNoteProvider.notesAssetKeys
+        gameAudio.playSfx(GameAssets.get<BeadsSound>(notesAssetKeys[7])) { player ->
             player.position = -37.5
         }
         gameAudio.playSfx(GameAssets.get<BeadsSound>("sfx_game_foundation_finish"))

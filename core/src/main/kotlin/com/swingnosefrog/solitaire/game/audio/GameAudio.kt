@@ -14,9 +14,10 @@ import paintbox.binding.ReadOnlyFloatVar
 class GameAudio(
     val gameLogic: GameLogic,
     private val soundSystem: SoundSystem,
+    private val foundationNoteProvider: FoundationNoteProvider,
 ) : Disposable {
 
-    val eventListener: GameAudioEventListener = GameAudioEventListener(this)
+    val eventListener: GameAudioEventListener = GameAudioEventListener(this, foundationNoteProvider)
 
     private val sfxGain: ReadOnlyFloatVar = FloatVar { SolitaireGame.globalVolumeGain.sfxVolumeGain.use() }
     

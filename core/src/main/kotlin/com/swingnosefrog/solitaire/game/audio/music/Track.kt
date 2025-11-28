@@ -1,7 +1,9 @@
 package com.swingnosefrog.solitaire.game.audio.music
 
+import com.swingnosefrog.solitaire.game.audio.FoundationNoteProvider
 
-sealed class Track {
+
+sealed class Track : FoundationNoteProvider {
 
     data object Default : Track() {
 
@@ -15,6 +17,20 @@ sealed class Track {
 
         override val name: String = "gameplay"
         override val allStemTypes: List<StemType> = Stems.entries.toList()
+
+        override val notesAssetKeys: List<String> = listOf(
+            // Foundation
+            "sfx_game_note_G2",
+            "sfx_game_note_A2",
+            "sfx_game_note_As2",
+            "sfx_game_note_C3",
+            "sfx_game_note_D3",
+            "sfx_game_note_Ds3",
+            "sfx_game_note_F3",
+            "sfx_game_note_G3",
+            // Widget
+            "sfx_game_note_G3",
+        )
 
         override fun getStemMixForScenario(scenario: StemMixScenario): StemMix {
             return when (scenario) {
@@ -37,6 +53,20 @@ sealed class Track {
 
         override val name: String = "practice"
         override val allStemTypes: List<StemType> = Stems.entries.toList()
+        
+        override val notesAssetKeys: List<String> = listOf(
+            // Foundation
+            "sfx_game_note_Cs3",
+            "sfx_game_note_Ds3",
+            "sfx_game_note_F3",
+            "sfx_game_note_Fs3",
+            "sfx_game_note_Gs3",
+            "sfx_game_note_As3",
+            "sfx_game_note_C4",
+            "sfx_game_note_Cs4",
+            // Widget
+            "sfx_game_note_Cs4",
+        )
 
         override fun getStemMixForScenario(scenario: StemMixScenario): StemMix {
             return when (scenario) {
