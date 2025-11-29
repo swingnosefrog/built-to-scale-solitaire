@@ -81,7 +81,7 @@ class SolitaireSettings(
             gameplayShowCardCursorInMouseMode = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_CARD_CURSOR_IN_MOUSE_MODE, true).add().value
             gameplayCardSkin = KeyValue.Enum<CardSkin>(SETTINGS_GAMEPLAY_CARD_SKIN, CardSkin.MODERN).add().value
             gameplayShowMoveCounter = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER, true).add().value
-            gameplayShowTimer = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_TIMER, true).add().value
+            gameplayShowTimer = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_TIMER, false).add().value
             gameplayShowHowToPlayButton = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_HOW_TO_PLAY_BUTTON, true).add().value
             
             audioMusicTrackSetting = KeyValue.Enum<MusicTrackSetting>(SETTINGS_AUDIO_MUSIC_TRACK, MusicTrackSetting.BGM_PRACTICE).add().value
