@@ -29,7 +29,9 @@ sealed class Track : FoundationNoteProvider {
             "sfx_game_note_F3",
             "sfx_game_note_G3",
             // Widget
-            "sfx_game_flick_note_G4",
+            "sfx_game_note_G2",
+            "sfx_game_note_D3",
+            "sfx_game_note_G3",
         )
 
         override fun getStemMixForScenario(scenario: StemMixScenario): StemMix {
@@ -65,7 +67,9 @@ sealed class Track : FoundationNoteProvider {
             "sfx_game_note_C4",
             "sfx_game_note_Cs4",
             // Widget
-            "sfx_game_flick_note_Cs5",
+            "sfx_game_note_Cs3",
+            "sfx_game_note_Gs3",
+            "sfx_game_note_Cs4",
         )
 
         override fun getStemMixForScenario(scenario: StemMixScenario): StemMix {

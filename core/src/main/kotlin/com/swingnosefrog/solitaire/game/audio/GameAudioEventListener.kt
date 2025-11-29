@@ -108,7 +108,16 @@ class GameAudioEventListener(
         freeCellZone: CardZone,
     ) {
         val notesAssetKeys = foundationNoteProvider.notesAssetKeys
-        gameAudio.playSfx(GameAssets.get<BeadsSound>(notesAssetKeys.last()))
+        notesAssetKeys.takeLast(3).forEachIndexed { i, it ->
+            gameAudio.playSfx(GameAssets.get<BeadsSound>(it)) { player ->
+                player.position = -37.5 - (i * 30.0)
+                player.gain = when (i) {
+                    0 -> 0.75f
+                    1 -> 0.875f
+                    else -> 1f
+                }
+            }
+        }
         gameAudio.playSfx(GameAssets.get<BeadsSound>("sfx_game_widget_assemble"))
     }
 
