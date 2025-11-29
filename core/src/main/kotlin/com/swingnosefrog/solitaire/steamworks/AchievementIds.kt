@@ -15,7 +15,8 @@ object AchievementIds {
     const val TALL_STACK: String = "tall_stack"
     const val NO_NUMERICAL_CARDS_IN_FREE_SLOTS: String = "no_numerical_cards_in_free_slots"
     const val WIDGETS_LAST_TO_ASSEMBLE: String = "widgets_last_to_assemble"
-    const val ASSEMBLE_FULL_SUIT_MANUALLY: String = "assemble_full_suit_manually"
+    const val BUILD_FULL_SUIT_MANUALLY: String = "build_full_suit_manually"
     const val TRIPLE_SEVENS_FREE_CELL: String = "triple_sevens_free_cell"
     const val ASSEMBLE_WIDGET_HORIZONTAL: String = "assemble_widget_horizontal"
+    const val WIDGETS_FIRST_TO_ASSEMBLE: String = "widgets_first_to_assemble"
 }

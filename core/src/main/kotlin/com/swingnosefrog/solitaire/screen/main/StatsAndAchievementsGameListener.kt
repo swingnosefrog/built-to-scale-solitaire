@@ -1,6 +1,7 @@
 package com.swingnosefrog.solitaire.screen.main
 
 import com.swingnosefrog.solitaire.game.Card
+import com.swingnosefrog.solitaire.game.CardSymbol
 import com.swingnosefrog.solitaire.game.GameContainer
 import com.swingnosefrog.solitaire.game.logic.CardStack
 import com.swingnosefrog.solitaire.game.logic.CardZone
@@ -26,6 +27,7 @@ class StatsAndAchievementsGameListener(
 
     }
 
+    private var satisfiesNoNumericalCardsInFreeSlots: Boolean = true
 
     private fun getAchievementsGottenOnGameWin(gamePlayStats: GamePlayStats): List<String> {
         val movesMade = gamePlayStats.movesMade.get()
@@ -44,6 +46,10 @@ class StatsAndAchievementsGameListener(
             }
             if (timeElapsedSec <= WIN_GAME_FAST_2_THRESHOLD_SECONDS) {
                 this += AchievementIds.WIN_GAME_FAST_2
+            }
+            
+            if (satisfiesNoNumericalCardsInFreeSlots) {
+                this += AchievementIds.NO_NUMERICAL_CARDS_IN_FREE_SLOTS
             }
         }
     }
@@ -67,6 +73,14 @@ class StatsAndAchievementsGameListener(
         steamStats.persistStats()
     }
     
+    private fun tryAwardSingleAchievement(id: String) {
+        val steamStats = SteamStats
+        if (!steamStats.isAchievementUnlocked(id)) {
+            steamStats.markAchievementAsAchieved(id)
+            steamStats.persistStats()
+        }
+    }
+    
     override fun onGameWon(gameLogic: GameLogic) {
         handleStatsOnGameWon(gameLogic)
     }
@@ -87,13 +101,31 @@ class StatsAndAchievementsGameListener(
     override fun onCardStackPlacedDown(gameLogic: GameLogic, cardStack: CardStack, toZone: CardZone) {
         stats.movesMade.increment()
 
-        if (gameLogic.isPlayerZoneAndTallStack(toZone)) {
-            val steamStats = SteamStats
-            val id = AchievementIds.TALL_STACK
-            if (!steamStats.isAchievementUnlocked(id)) {
-                steamStats.markAchievementAsAchieved(id)
-                steamStats.persistStats()
+        if (toZone in gameLogic.zones.freeCellZones) {
+            if (satisfiesNoNumericalCardsInFreeSlots &&
+                cardStack.cardList.firstOrNull()?.symbol?.isNumeric() == true) {
+                satisfiesNoNumericalCardsInFreeSlots = false
             }
+
+            val allFreeZones = gameLogic.zones.freeCellZones // Assumed to be in left-to-right order!
+            if (allFreeZones.size == 3) {
+                val openCardsInFreeZones: List<Card?> = allFreeZones.map { it.cardStack.cardList.singleOrNull() }
+                
+                if (openCardsInFreeZones.all { it?.symbol == CardSymbol.NUM_7 }) {
+                    tryAwardSingleAchievement(AchievementIds.TRIPLE_SEVENS_FREE_CELL)
+                }
+                
+                if (openCardsInFreeZones.all { it != null && it.suit == openCardsInFreeZones.first()?.suit } && 
+                    openCardsInFreeZones[0]?.symbol == CardSymbol.WIDGET_HALF &&
+                    openCardsInFreeZones[1]?.symbol == CardSymbol.WIDGET_ROD &&
+                    openCardsInFreeZones[2]?.symbol == CardSymbol.WIDGET_HALF) {
+                    tryAwardSingleAchievement(AchievementIds.ASSEMBLE_WIDGET_HORIZONTAL)
+                }
+            }
+        }
+
+        if (gameLogic.isPlayerZoneAndTallStack(toZone)) {
+            tryAwardSingleAchievement(AchievementIds.TALL_STACK)
         }
     }
 
