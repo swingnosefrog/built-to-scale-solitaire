@@ -139,6 +139,9 @@ class StatsAndAchievementsGameListener(
     }
 
     override fun onFoundationZoneCompleted(gameLogic: GameLogic, foundationZone: CardZone) {
+        if (gameLogic.zones.foundationZones.filterNot { it == foundationZone }.all { it.cardStack.cardList.isEmpty() }) {
+            tryAwardSingleAchievement(AchievementIds.BUILD_FULL_SUIT_MANUALLY)
+        }
     }
 
     override fun onCardsRecollected(gameLogic: GameLogic) {
