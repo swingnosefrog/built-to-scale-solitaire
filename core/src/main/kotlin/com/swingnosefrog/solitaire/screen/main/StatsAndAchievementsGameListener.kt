@@ -23,7 +23,7 @@ class StatsAndAchievementsGameListener(
         private const val WIN_GAME_FEW_MOVES_THRESHOLD_MOVES: Int = 25
         private const val WIN_GAME_FEW_MOVES_2_THRESHOLD_MOVES: Int = 20
         private const val WIN_GAME_FAST_THRESHOLD_SECONDS: Float = 75f
-        private const val WIN_GAME_FAST_2_THRESHOLD_SECONDS: Float = 60f
+        private const val WIN_GAME_FAST_2_THRESHOLD_SECONDS: Float = 64f
 
     }
 
