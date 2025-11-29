@@ -2,6 +2,7 @@ package com.swingnosefrog.solitaire.credits
 
 import com.swingnosefrog.solitaire.Localization
 import paintbox.binding.ReadOnlyVar
+import paintbox.binding.Var
 import java.util.*
 
 
@@ -35,6 +36,14 @@ class CreditsInfo {
             "garbo",
             "Huebird",
         ).toVars(),
+        Localization["credits.category.specialThanks"] to listOf(
+            specialThanksSubheading("credits.category.specialThanks.subheading.steamDeckTesting",
+                abcSorted("spoopster", "NoahAmp", "TheAlternateDoctor")),
+            specialThanksSubheading("credits.category.specialThanks.subheading.steamAchievements",
+                abcSorted("Merch_Andise", "Kievit")),
+            specialThanksSubheading("credits.category.specialThanks.subheading.steamTrailer",
+                abcSorted("Merch_Andise", "Kievit")),
+        ),
         Localization["credits.category.resourcesAndTechnologies"] to listOf(
             "libGDX & LWJGL",
             "Kotlin",
@@ -63,4 +72,13 @@ class CreditsInfo {
     private fun abcSorted(vararg things: String): List<String> = things.sortedBy { it.lowercase(Locale.ROOT) }
     
     private fun List<String>.toVars(): List<ReadOnlyVar<String>> = this.map { ReadOnlyVar.const(it) }
+
+    private fun specialThanksSubheading(subheadingKey: String, names: List<String>): ReadOnlyVar<String> {
+        return Localization["credits.category.specialThanks.subheading", Var {
+            listOf(
+                Localization[subheadingKey].use(),
+                names.joinToString(separator = "\n")
+            )
+        }]
+    }
 }

@@ -50,8 +50,8 @@ class MainGameCreditsPane(
         val contentPane = Pane().apply {
             fun createTextLabel(creditsList: List<Pair<ReadOnlyVar<String>, List<ReadOnlyVar<String>>>>): TextLabel {
                 fun VarContext.addPair(pair: Pair<ReadOnlyVar<String>, List<ReadOnlyVar<String>>>): String {
-                    return "[color=#${creditsHeadingTextColor} lineheight=0.8]${Markup.escape(pair.first.use())}\n[][scale=0.8]${
-                        pair.second.joinToString(separator = "\n") { Markup.escape(it.use()) }
+                    return "[b color=#${creditsHeadingTextColor} lineheight=0.8]${Markup.escape(pair.first.use())}\n[][scale=0.8]${
+                        pair.second.joinToString(separator = "\n") { it.use() }
                     }\n[]"
                 }
                 return TextLabel("").apply {
