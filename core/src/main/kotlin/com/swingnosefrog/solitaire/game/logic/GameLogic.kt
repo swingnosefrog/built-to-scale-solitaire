@@ -169,58 +169,8 @@ class GameLogic(val deckInitializer: DeckInitializer, initiallyMouseBased: Boole
             return false
         }
 
-        // Possible animations for auto-placing into the foundation pile
-        val autoPlaceZones = zones.playerZones + zones.freeCellZones
-        val spareZone = zones.spareZone
-        for (zone in autoPlaceZones) {
-            // Check if last item in the zone can be put in the foundation pile
-            // Other cards cannot be played on top of it, and if its value is 3 or greater, all the cards with one less value must ALREADY be in the foundation
-            if (zone.canDragFrom && zone.cardStack.cardList.isNotEmpty()) {
-                val tail = zone.cardStack.cardList.last()
-                if (tail.symbol == CardSymbol.SPARE) {
-                    // If it is the spare card, move it immediately to the spare zone
-                    gameInput.cancelDrag()
-                    eventDispatcher.onCardAutoMoved(this, tail, spareZone)
-                    enqueueDefaultCardMoveAnimation(tail, zone, spareZone)
-                    return true
-                } else if (!tail.symbol.isNumeric()) {
-                    continue
-                }
-
-
-                val targetFoundation = zones.foundationZones.firstOrNull { fz ->
-                    if (tail.symbol == CardSymbol.NUM_1) {
-                        fz.cardStack.cardList.isEmpty()
-                    } else {
-                        val lastInFoundation = fz.cardStack.cardList.lastOrNull()
-                        lastInFoundation != null && lastInFoundation.suit == tail.suit && lastInFoundation.symbol.scaleOrder == tail.symbol.scaleOrder - 1
-                    }
-                }
-
-                val canMoveToFoundation: Boolean = when (tail.symbol) {
-                    CardSymbol.NUM_1 -> true
-                    CardSymbol.NUM_2 -> true
-                    else -> {
-                        // All other cards with value one less than tail should ALREADY be in a foundation
-                        // AKA: no cards with value one less than tail will be in the free zone/player zones
-                        autoPlaceZones.all { z ->
-                            z.cardStack.cardList.none { c ->
-                                c.symbol.scaleOrder == tail.symbol.scaleOrder - 1
-                            }
-                        }
-                    }
-                }
-
-                if (targetFoundation != null && canMoveToFoundation) {
-                    gameInput.cancelDrag()
-                    eventDispatcher.onCardAutoMoved(this, tail, targetFoundation)
-                    enqueueDefaultCardMoveAnimation(tail, zone, targetFoundation)
-                    return true
-                }
-            }
-        }
-
         // Check if a spare card can be placed to cap a foundation
+        val spareZone = zones.spareZone
         if (spareZone.cardStack.cardList.isNotEmpty()) {
             val tail = spareZone.cardStack.cardList.last()
             val tailSuit = tail.suit
