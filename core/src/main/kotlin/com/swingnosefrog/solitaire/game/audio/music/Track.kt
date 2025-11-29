@@ -5,7 +5,7 @@ import com.swingnosefrog.solitaire.game.audio.FoundationNoteProvider
 
 sealed class Track : FoundationNoteProvider {
 
-    data object Default : Track() {
+    data object Classic : Track() {
 
         enum class Stems(override val assetKey: String) : StemType {
 
@@ -15,7 +15,7 @@ sealed class Track : FoundationNoteProvider {
             SIDE("music_gameplay_stem_side"),
         }
 
-        override val name: String = "gameplay"
+        override val name: String = "classic"
         override val allStemTypes: List<StemType> = Stems.entries.toList()
 
         override val notesAssetKeys: List<String> = listOf(

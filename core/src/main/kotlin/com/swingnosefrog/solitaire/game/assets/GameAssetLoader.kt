@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.swingnosefrog.solitaire.assets.AssetLoaderBase
 import com.swingnosefrog.solitaire.game.CardSuit
 import com.swingnosefrog.solitaire.game.CardSymbol
-import com.swingnosefrog.solitaire.game.audio.music.Track.Default.Stems as DefaultStems
+import com.swingnosefrog.solitaire.game.audio.music.Track.Classic.Stems as DefaultStems
 import com.swingnosefrog.solitaire.game.audio.music.Track.Practice.Stems as PracticeStems
 import com.swingnosefrog.solitaire.soundsystem.beads.BeadsSound
 

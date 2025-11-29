@@ -6,6 +6,6 @@ enum class MusicTrackSetting {
     SHUFFLE_AFTER_WIN,
     
     BGM_PRACTICE,
-    BGM_DEFAULT,
+    BGM_CLASSIC,
     
 }

@@ -69,8 +69,8 @@ class AudioSettingsMenu(
                         } else {
                             when (setting) {
                                 MusicTrackSetting.SHUFFLE_AFTER_WIN -> Localization["game.menu.audioSettings.option.musicTrackSetting.shuffleAfterWin"]
-                                MusicTrackSetting.BGM_DEFAULT -> Localization["game.menu.audioSettings.option.musicTrackSetting.default"]
                                 MusicTrackSetting.BGM_PRACTICE -> Localization["game.menu.audioSettings.option.musicTrackSetting.practice"]
+                                MusicTrackSetting.BGM_CLASSIC -> Localization["game.menu.audioSettings.option.musicTrackSetting.classic"]
                             }
                         }.use()
                     }

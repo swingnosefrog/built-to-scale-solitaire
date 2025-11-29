@@ -27,7 +27,7 @@ interface TrackManager : FoundationNoteProvider {
 
 abstract class TrackManagerBase : TrackManager {
 
-    protected val defaultTrack: Track = Track.Default
+    protected val defaultTrack: Track = Track.Classic
     protected val practiceTrack: Track = Track.Practice
 
     override val allTracks: List<Track> = listOf(defaultTrack, practiceTrack)
@@ -51,7 +51,7 @@ class ProgressBasedTrackManager(private val game: SolitaireGame) : TrackManagerB
             if (hasUnlockedAllTracks()) {
                 when (l.getOrCompute()) {
                     MusicTrackSetting.SHUFFLE_AFTER_WIN -> {}
-                    MusicTrackSetting.BGM_DEFAULT -> changeTrack(defaultTrack)
+                    MusicTrackSetting.BGM_CLASSIC -> changeTrack(defaultTrack)
                     MusicTrackSetting.BGM_PRACTICE -> changeTrack(practiceTrack)
                 }
             }
@@ -75,7 +75,7 @@ class ProgressBasedTrackManager(private val game: SolitaireGame) : TrackManagerB
 
         return when (musicTrackSetting.getOrCompute()) {
             MusicTrackSetting.SHUFFLE_AFTER_WIN -> randomStartingTrack
-            MusicTrackSetting.BGM_DEFAULT -> defaultTrack
+            MusicTrackSetting.BGM_CLASSIC -> defaultTrack
             MusicTrackSetting.BGM_PRACTICE -> practiceTrack
         }
     }
