@@ -84,7 +84,7 @@ class SolitaireSettings(
             gameplayShowTimer = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_TIMER, true).add().value
             gameplayShowHowToPlayButton = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_HOW_TO_PLAY_BUTTON, true).add().value
             
-            audioMusicTrackSetting = KeyValue.Enum<MusicTrackSetting>(SETTINGS_AUDIO_MUSIC_TRACK, MusicTrackSetting.SHUFFLE_AFTER_WIN).add().value
+            audioMusicTrackSetting = KeyValue.Enum<MusicTrackSetting>(SETTINGS_AUDIO_MUSIC_TRACK, MusicTrackSetting.BGM_PRACTICE).add().value
         }
 
         allKeyValues = initScope.allKeyValues.toList()
