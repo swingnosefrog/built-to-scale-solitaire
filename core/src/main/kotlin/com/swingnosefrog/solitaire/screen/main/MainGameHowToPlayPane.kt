@@ -92,7 +92,7 @@ class MainGameHowToPlayPane(
                 }]).apply {
                     this.markup.set(mainSerifMarkup)
                     this.setScaleXY(0.8125f)
-                    this.textColor.set(Color().grey(0.9f))
+                    this.textColor.set(Color.valueOf("E5E5E5"))
                     this.renderAlign.set(RenderAlign.center)
                 }
             }
