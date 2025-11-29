@@ -34,7 +34,7 @@ class DebugInputAdapter(
                         return true
                     }
 
-                    Input.Keys.SPACE if !gameLogic.isStillDealing.get() -> {
+                    Input.Keys.COMMA if !gameLogic.isStillDealing.get() && !gameLogic.gameInput.isDragging() -> {
                         gameLogic.animationContainer.renderUpdate(10f)
                         gameLogic.checkTableauAfterActivity()
                         return true
