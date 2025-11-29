@@ -107,13 +107,17 @@ class GameAudioEventListener(
         gameLogic: GameLogic,
         freeCellZone: CardZone,
     ) {
-        val beatDelayMs = 37.5f
         val chordNoteCount = 3
+        val arpeggioDelayMs = 30f
+        val beatDelayMs = 37.5f
+        
+        val maxArpeggioDelay = arpeggioDelayMs * (chordNoteCount - 1)
         
         val notesAssetKeys = foundationNoteProvider.notesAssetKeys
         notesAssetKeys.takeLast(chordNoteCount).forEachIndexed { i, it ->
             gameAudio.playSfx(GameAssets.get<BeadsSound>(it)) { player ->
-                player.position = MathUtils.lerp(-beatDelayMs * 1.5f, 0f, i.toFloat() / (chordNoteCount - 1).coerceAtLeast(1)).toDouble()
+                val progress = i.toFloat() / (chordNoteCount - 1).coerceAtLeast(1)
+                player.position = (-beatDelayMs + MathUtils.lerp(0f, -maxArpeggioDelay, progress)).toDouble()
                 player.gain = when (i) {
                     0 -> 0.75f
                     1 -> 0.875f
@@ -122,7 +126,7 @@ class GameAudioEventListener(
             }
         }
         gameAudio.playSfx(GameAssets.get<BeadsSound>("sfx_game_widget_assemble")) { player ->
-            player.position = -beatDelayMs * 0.5
+            player.position = -maxArpeggioDelay.toDouble()
         }
     }
 
