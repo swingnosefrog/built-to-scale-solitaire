@@ -372,7 +372,10 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
                         }
 
                         InputActions.NewGame -> {
-                            startNewGame()
+                            val attemptSkipDealing = skipDealingAnimation()
+                            if (!attemptSkipDealing) {
+                                startNewGame()
+                            }
                             return true
                         }
 

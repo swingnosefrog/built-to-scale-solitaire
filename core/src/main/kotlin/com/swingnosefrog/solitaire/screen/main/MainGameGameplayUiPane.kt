@@ -69,12 +69,22 @@ class MainGameGameplayUiPane(
                             uiInputHandler.openPauseMenu()
                         }
                     }
-                    this += Button(Localization["game.gameplay.button.newGame", Var { listOf(newGameGlyph.use().firstOrNull()?.promptFontText ?: "") }]).apply {
+                    val newGameGlyphArgs = Var { listOf(newGameGlyph.use().firstOrNull()?.promptFontText ?: "") }
+                    this += Button(binding = {
+                        if (gameContainer.use().gameLogic.isStillDealing.use()) {
+                            Localization["game.gameplay.button.skipDealing", newGameGlyphArgs]
+                        } else {
+                            Localization["game.gameplay.button.newGame", newGameGlyphArgs]
+                        }.use()
+                    }).apply {
                         this.bindHeightToSelfWidth(multiplier = 1.25f)
                         this.applyStyle(Corner.BOTTOM_RIGHT)
                         
                         this.setOnAction {
-                            uiInputHandler.startNewGame()
+                            val attemptSkipDealing = uiInputHandler.skipDealingAnimation()
+                            if (!attemptSkipDealing) {
+                                uiInputHandler.startNewGame()
+                            }
                         }
                     }
                 }
