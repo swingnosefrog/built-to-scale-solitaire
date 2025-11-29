@@ -28,8 +28,8 @@ class StatsAndAchievementsGameListener(
     }
 
     private var satisfiesNoNumericalCardsInFreeSlots: Boolean = true
-    private var satisfiesWidgetsFirstToAssemble: Boolean = true
-    private var satisfiesWidgetsLastToAssemble: Boolean = true
+    private var satisfiesWidgetsFirstToAssembleBeforeSuitFoundation: Boolean = true
+    private var satisfiesWidgetsLastToAssembleAfterAllFoundations: Boolean = true
 
     private fun getAchievementsGottenOnGameWin(gamePlayStats: GamePlayStats): List<String> {
         val movesMade = gamePlayStats.movesMade.get()
@@ -139,20 +139,23 @@ class StatsAndAchievementsGameListener(
 
     override fun onWidgetSetCompleted(gameLogic: GameLogic, freeCellZone: CardZone) {
         val zones = gameLogic.zones
+        val widgetSuit = freeCellZone.cardStack.cardList.firstOrNull()?.suit ?: return
         
-        if (satisfiesWidgetsFirstToAssemble && zones.foundationZones.any { it.cardStack.cardList.isNotEmpty() }) {
-            satisfiesWidgetsFirstToAssemble = false
+        if (satisfiesWidgetsFirstToAssembleBeforeSuitFoundation && zones.foundationZones.any {
+                it.cardStack.cardList.firstOrNull()?.suit == widgetSuit && it.isFlippedOver
+            }) {
+            satisfiesWidgetsFirstToAssembleBeforeSuitFoundation = false
         }
-        if (satisfiesWidgetsLastToAssemble && zones.foundationZones.any { !it.isFlippedOver }) {
-            satisfiesWidgetsLastToAssemble = false
+        if (satisfiesWidgetsLastToAssembleAfterAllFoundations && !zones.foundationZones.all { it.isFlippedOver }) {
+            satisfiesWidgetsLastToAssembleAfterAllFoundations = false
         }
         
         // If this is the last free cell to close, check for achievements
         if (zones.freeCellZones.all { it.cardStack.isWidgetSet() }) {
-            if (satisfiesWidgetsFirstToAssemble) {
+            if (satisfiesWidgetsFirstToAssembleBeforeSuitFoundation) {
                 tryAwardSingleAchievement(AchievementIds.WIDGETS_FIRST_TO_ASSEMBLE)
             }
-            if (satisfiesWidgetsLastToAssemble) {
+            if (satisfiesWidgetsLastToAssembleAfterAllFoundations) {
                 tryAwardSingleAchievement(AchievementIds.WIDGETS_LAST_TO_ASSEMBLE)
             }
         }
