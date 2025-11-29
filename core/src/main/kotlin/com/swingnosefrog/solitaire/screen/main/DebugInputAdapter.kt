@@ -21,25 +21,27 @@ class DebugInputAdapter(
         when (ui.currentMenuState.getOrCompute()) {
             MainGameUi.MenuState.NONE -> {
                 when (keycode) {
-                    Input.Keys.G if !Gdx.input.isControlDown() && !Gdx.input.isAltDown() -> {
-                        if (Gdx.input.isShiftDown()) {
-                            mainGameScreen.startNewGame(gameLogic.deckInitializer, breakWinStreakIfNotWon = false)
-                        } else {
-                            mainGameScreen.startNewGame(DeckInitializer.DebugAutoWin, breakWinStreakIfNotWon = false)
-                        }
+                    Input.Keys.G if !Gdx.input.isShiftDown() && !Gdx.input.isAltDown() -> {
+                        mainGameScreen.startNewGame(
+                            DeckInitializer.DebugAutoWin(startFromWonState = Gdx.input.isControlDown()),
+                            breakWinStreakIfNotWon = false
+                        )
+                        return true
+                    }
 
+                    Input.Keys.G if !Gdx.input.isControlDown() && Gdx.input.isShiftDown() && !Gdx.input.isAltDown() -> {
+                        mainGameScreen.startNewGame(gameLogic.deckInitializer, breakWinStreakIfNotWon = false)
                         return true
                     }
 
                     Input.Keys.SPACE if !gameLogic.isStillDealing.get() -> {
                         gameLogic.animationContainer.renderUpdate(10f)
                         gameLogic.checkTableauAfterActivity()
-
                         return true
                     }
                 }
             }
-            
+
             MainGameUi.MenuState.PAUSE_MENU -> {
                 when (keycode) {
                     Input.Keys.R if ui.currentMenuState.getOrCompute() == MainGameUi.MenuState.PAUSE_MENU && Paintbox.debugMode.get() -> {

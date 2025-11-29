@@ -18,7 +18,7 @@ sealed class DeckInitializer {
         }
     }
     
-    data object DebugAutoWin : DeckInitializer() {
+    data class DebugAutoWin(override val startFromWonState: Boolean = false) : DeckInitializer() {
 
         override fun initializeDeck(startingDeck: List<Card>): List<Card> {
             val col1 = listOf(
