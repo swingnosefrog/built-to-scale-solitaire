@@ -65,7 +65,7 @@ class AudioSettingsMenu(
                 StringVarConverter { setting: MusicTrackSetting ->
                     Var<String> {
                         if (!unlockedMusicTrackChanging.use()) {
-                            Localization["game.menu.audioSettings.option.musicTrackSetting.notUnlockedYet"]
+                            Localization["game.menu.optionUnlockedAfterFirstWin"]
                         } else {
                             when (setting) {
                                 MusicTrackSetting.SHUFFLE_AFTER_WIN -> Localization["game.menu.audioSettings.option.musicTrackSetting.shuffleAfterWin"]
