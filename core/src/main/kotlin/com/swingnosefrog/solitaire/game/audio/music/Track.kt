@@ -9,10 +9,8 @@ sealed class Track : FoundationNoteProvider {
 
         enum class Stems(override val assetKey: String) : StemType {
 
-            DRUMS("music_classic_stem_drums"),
-            KEYS("music_classic_stem_keys"),
-            LEAD("music_classic_stem_lead"),
-            SIDE("music_classic_stem_side"),
+            DRUMS_AND_SIDE("music_classic_stem_drums_and_side"),
+            KEYS_AND_LEAD("music_classic_stem_keys_and_lead"),
         }
 
         override val name: String = "classic"
@@ -37,8 +35,8 @@ sealed class Track : FoundationNoteProvider {
         override fun getStemMixForScenario(scenario: StemMixScenario): StemMix {
             return when (scenario) {
                 StemMixScenario.NONE -> emptySet()
-                StemMixScenario.GAMEPLAY -> setOf(Stems.DRUMS, Stems.KEYS, Stems.LEAD, Stems.SIDE)
-                StemMixScenario.AFTER_WIN -> setOf(Stems.DRUMS, Stems.SIDE)
+                StemMixScenario.GAMEPLAY -> setOf(Stems.DRUMS_AND_SIDE, Stems.KEYS_AND_LEAD)
+                StemMixScenario.AFTER_WIN -> setOf(Stems.DRUMS_AND_SIDE)
             }
         }
     }
@@ -47,10 +45,8 @@ sealed class Track : FoundationNoteProvider {
 
         enum class Stems(override val assetKey: String) : StemType {
 
-            BASS("music_tutorial_stem_bass"),
-            DRUMS("music_tutorial_stem_drums"),
-            KEYS("music_tutorial_stem_keys"),
-            SIDE("music_tutorial_stem_side"),
+            DRUMS_AND_SIDE("music_tutorial_stem_drums_and_side"),
+            KEYS_AND_BASS("music_tutorial_stem_keys_and_bass"),
         }
 
         override val name: String = "practice"
@@ -75,8 +71,8 @@ sealed class Track : FoundationNoteProvider {
         override fun getStemMixForScenario(scenario: StemMixScenario): StemMix {
             return when (scenario) {
                 StemMixScenario.NONE -> emptySet()
-                StemMixScenario.GAMEPLAY -> setOf(Stems.DRUMS, Stems.KEYS, Stems.BASS, Stems.SIDE)
-                StemMixScenario.AFTER_WIN -> setOf(Stems.DRUMS, Stems.SIDE)
+                StemMixScenario.GAMEPLAY -> setOf(Stems.DRUMS_AND_SIDE, Stems.KEYS_AND_BASS)
+                StemMixScenario.AFTER_WIN -> setOf(Stems.DRUMS_AND_SIDE)
             }
         }
     }

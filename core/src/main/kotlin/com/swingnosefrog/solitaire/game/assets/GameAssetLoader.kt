@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.swingnosefrog.solitaire.assets.AssetLoaderBase
 import com.swingnosefrog.solitaire.game.CardSuit
 import com.swingnosefrog.solitaire.game.CardSymbol
-import com.swingnosefrog.solitaire.game.audio.music.Track.Classic.Stems as DefaultStems
+import com.swingnosefrog.solitaire.game.audio.music.Track.Classic.Stems as ClassicStems
 import com.swingnosefrog.solitaire.game.audio.music.Track.Practice.Stems as PracticeStems
 import com.swingnosefrog.solitaire.soundsystem.beads.BeadsSound
 
@@ -72,14 +72,10 @@ class GameAssetLoader : AssetLoaderBase<GameAssets>(GameAssets) {
         registry.loadAsset<BeadsSound>("sfx_game_note_Gs2", "sounds/game/notes/note_Gs2.ogg")
         registry.loadAsset<BeadsSound>("sfx_game_note_Gs3", "sounds/game/notes/note_Gs3.ogg")
         
-        registry.loadAsset<BeadsSound>(DefaultStems.DRUMS.assetKey, "music/classic/stem_drums.ogg")
-        registry.loadAsset<BeadsSound>(DefaultStems.KEYS.assetKey, "music/classic/stem_keys.ogg")
-        registry.loadAsset<BeadsSound>(DefaultStems.LEAD.assetKey, "music/classic/stem_lead.ogg")
-        registry.loadAsset<BeadsSound>(DefaultStems.SIDE.assetKey, "music/classic/stem_side.ogg")
-        registry.loadAsset<BeadsSound>(PracticeStems.BASS.assetKey, "music/tutorial/stem_bass.ogg")
-        registry.loadAsset<BeadsSound>(PracticeStems.DRUMS.assetKey, "music/tutorial/stem_drums.ogg")
-        registry.loadAsset<BeadsSound>(PracticeStems.KEYS.assetKey, "music/tutorial/stem_keys.ogg")
-        registry.loadAsset<BeadsSound>(PracticeStems.SIDE.assetKey, "music/tutorial/stem_side.ogg")
+        registry.loadAsset<BeadsSound>(ClassicStems.DRUMS_AND_SIDE.assetKey, "music/classic/stems_drums_and_side.ogg")
+        registry.loadAsset<BeadsSound>(ClassicStems.KEYS_AND_LEAD.assetKey, "music/classic/stems_keys_and_lead.ogg")
+        registry.loadAsset<BeadsSound>(PracticeStems.DRUMS_AND_SIDE.assetKey, "music/tutorial/stems_drums_and_side.ogg")
+        registry.loadAsset<BeadsSound>(PracticeStems.KEYS_AND_BASS.assetKey, "music/tutorial/stems_keys_and_bass.ogg")
     }
 
     private fun addCardTextures(
