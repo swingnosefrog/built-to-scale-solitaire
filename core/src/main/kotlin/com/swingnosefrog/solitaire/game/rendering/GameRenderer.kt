@@ -64,9 +64,12 @@ class GameRenderer(
     }
     override val viewport: Viewport = ExtendViewport(18f, 11.25f, 20f, 11.25f, camera)
     override val shouldApplyViewport: BooleanVar = BooleanVar(true)
-    
+
     val currentCardSkin: ReadOnlyVar<CardSkin> = Var {
-        SolitaireGame.instance.settings.gameplayCardSkin.use()
+        val game = SolitaireGame.instance
+        if (!game.progress.unlockedCardSkinChanging.get())
+            CardSkin.MODERN
+        else game.settings.gameplayCardSkin.use()
     }
     
     private val rendererEventListener: RendererEventListener = RendererEventListener()
