@@ -42,7 +42,7 @@ class CreditsInfo {
             specialThanksSubheading("credits.category.specialThanks.subheading.steamAchievements",
                 abcSorted("Merch_Andise", "Kievit", "spoopster", "Luxury")),
             specialThanksSubheading("credits.category.specialThanks.subheading.steamTrailer",
-                abcSorted("Merch_Andise", "Kievit")),
+                abcSorted("Merch_Andise")),
         ),
         Localization["credits.category.resourcesAndTechnologies"] to listOf(
             "libGDX & LWJGL",
