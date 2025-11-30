@@ -9,10 +9,10 @@ sealed class Track : FoundationNoteProvider {
 
         enum class Stems(override val assetKey: String) : StemType {
 
-            DRUMS("music_gameplay_stem_drums"),
-            KEYS("music_gameplay_stem_keys"),
-            LEAD("music_gameplay_stem_lead"),
-            SIDE("music_gameplay_stem_side"),
+            DRUMS("music_classic_stem_drums"),
+            KEYS("music_classic_stem_keys"),
+            LEAD("music_classic_stem_lead"),
+            SIDE("music_classic_stem_side"),
         }
 
         override val name: String = "classic"
