@@ -67,7 +67,7 @@ class GameRenderer(
 
     val currentCardSkin: ReadOnlyVar<CardSkin> = Var {
         val game = SolitaireGame.instance
-        if (!game.progress.unlockedCardSkinChanging.get())
+        if (!game.progress.unlockedCardSkinChanging.use())
             CardSkin.MODERN
         else game.settings.gameplayCardSkin.use()
     }
