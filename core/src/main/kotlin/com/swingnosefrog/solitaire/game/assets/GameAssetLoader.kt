@@ -14,12 +14,6 @@ class GameAssetLoader : AssetLoaderBase<GameAssets>(GameAssets) {
 
     override fun addManagedAssets(manager: AssetManager) {
         super.addManagedAssets(manager)
-        
-        fun mipmappedLinearTexture() = TextureLoader.TextureParameter().apply {
-            this.genMipMaps = true
-            this.minFilter = Texture.TextureFilter.MipMapLinearLinear
-            this.magFilter = Texture.TextureFilter.Linear
-        }
 
         val registry = assetRegistryInstance
 

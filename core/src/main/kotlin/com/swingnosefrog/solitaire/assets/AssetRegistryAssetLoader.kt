@@ -15,11 +15,11 @@ class AssetRegistryAssetLoader : AssetLoaderBase<AssetRegistry>(AssetRegistry) {
 
         val assetRegistry = assetRegistryInstance
         
-        assetRegistry.loadAsset<Texture>("ui_nut_icon", "textures/ui/nut_icon.png", linearTexture())
-        assetRegistry.loadAsset<Texture>("ui_x", "textures/ui/x.png", linearTexture())
-        assetRegistry.loadAsset<Texture>("ui_x_bordered", "textures/ui/x_bordered.png", linearTexture())
-        assetRegistry.loadAsset<Texture>("ui_logo_menu", "textures/ui/credits_menu.png", linearTexture())
-        assetRegistry.loadAsset<Texture>("ui_logo_credits", "textures/ui/credits_logo.png", linearTexture())
+        assetRegistry.loadAsset<Texture>("ui_nut_icon", "textures/ui/nut_icon.png", mipmappedLinearTexture())
+        assetRegistry.loadAsset<Texture>("ui_x", "textures/ui/x.png", mipmappedLinearTexture())
+        assetRegistry.loadAsset<Texture>("ui_x_bordered", "textures/ui/x_bordered.png", mipmappedLinearTexture())
+        assetRegistry.loadAsset<Texture>("ui_logo_menu", "textures/ui/credits_menu.png", mipmappedLinearTexture())
+        assetRegistry.loadAsset<Texture>("ui_logo_credits", "textures/ui/credits_logo.png", mipmappedLinearTexture())
         assetRegistry.loadAsset<Texture>("ui_cursor_invert", "cursors/cursor_invert.png")
         assetRegistry.loadAsset<Texture>("ui_cursor_invert_pressed", "cursors/cursor_invert_pressed.png")
         
