@@ -21,7 +21,7 @@ allprojects {
     ext {
         appName = "built-to-scale-solitaire"
         
-        useLocalPaintbox = true
+        useLocalPaintbox = false
     }
     
     java {
