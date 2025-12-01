@@ -37,12 +37,14 @@ class CreditsInfo {
             "Huebird",
         ).toVars(),
         Localization["credits.category.specialThanks"] to listOf(
-            specialThanksSubheading("credits.category.specialThanks.subheading.steamDeckTesting",
-                abcSorted("spoopster", "NoahAmp", "TheAlternateDoctor")),
+            specialThanksSubheading("credits.category.specialThanks.subheading.logo",
+                abcSorted("snow krow")),
+            specialThanksSubheading("credits.category.specialThanks.subheading.steamStoreAndLibraryArt",
+                abcSorted("Merch_Andise", "snow krow")),
             specialThanksSubheading("credits.category.specialThanks.subheading.steamAchievements",
                 abcSorted("Merch_Andise", "Kievit", "spoopster", "Luxury")),
-            specialThanksSubheading("credits.category.specialThanks.subheading.steamTrailer",
-                abcSorted("Merch_Andise")),
+            specialThanksSubheading("credits.category.specialThanks.subheading.steamDeckTesting",
+                abcSorted("spoopster", "NoahAmp", "TheAlternateDoctor")),
         ),
         Localization["credits.category.resourcesAndTechnologies"] to listOf(
             "libGDX & LWJGL",
