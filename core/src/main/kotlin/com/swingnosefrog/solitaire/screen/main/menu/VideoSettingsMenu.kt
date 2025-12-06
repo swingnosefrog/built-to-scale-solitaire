@@ -44,7 +44,7 @@ class VideoSettingsMenu(
         ),
         MenuOption.OptionWidget.Checkbox(
             Localization["game.menu.videoSettings.option.fullscreen"],
-            settings.fullscreen
+            fullscreen
         ),
         MenuOption.Simple(Var {
             val locKey = if (!hasPendingResolutionChanges.use())
