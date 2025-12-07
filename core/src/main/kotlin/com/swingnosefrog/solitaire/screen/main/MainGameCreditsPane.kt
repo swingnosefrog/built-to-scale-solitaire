@@ -80,7 +80,9 @@ class MainGameCreditsPane(
                         this += ImageIcon(binding = { TextureRegion(AssetRegistry.get<Texture>("ui_logo_credits")) }).apply {
                             this.bounds.height.set(175f)
                         }
-                        this += createTextLabel(credits).apply {
+                        val thankYouForPlaying =
+                            Pair(Localization["credits.thankYouForPlaying"], emptyList<ReadOnlyVar<String>>())
+                        this += createTextLabel(credits + thankYouForPlaying).apply {
                             this.margin.set(Insets(16f, 8f, 0f, 0f))
                             this.setAutoResize()
                         }
