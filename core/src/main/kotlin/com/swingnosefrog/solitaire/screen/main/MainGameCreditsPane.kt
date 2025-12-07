@@ -145,11 +145,7 @@ class MainGameCreditsPane(
         }
     }
 
-    override fun renderSelf(
-        originX: Float,
-        originY: Float,
-        batch: SpriteBatch,
-    ) {
+    override fun renderSelf(originX: Float, originY: Float, batch: SpriteBatch) {
         // HACK -- this is the only pane with a clickable scroll bar. We need to support keyboard/controllers though
         if (this.opacity.get() == 1f) {
             val input = mainGameUi.mainGameScreen.inputManager

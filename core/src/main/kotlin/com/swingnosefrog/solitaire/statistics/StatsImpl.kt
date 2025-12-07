@@ -124,6 +124,20 @@ class StatsImpl : AbstractStats() {
             }
         }
     }
+    
+    private fun resetLastNGamesData() {
+        lastNGamesData.set(emptyList())
+    }
+
+    override fun resetToInitialValues() {
+        super.resetToInitialValues()
+        resetLastNGamesData()
+    }
+
+    override fun resetToResetValues() {
+        super.resetToResetValues()
+        resetLastNGamesData()
+    }
 
     @Suppress("ConvertTwoComparisonsToRangeCheck")
     fun pushGameWinRollingStat(movesMade: Int, timeSec: Float) {

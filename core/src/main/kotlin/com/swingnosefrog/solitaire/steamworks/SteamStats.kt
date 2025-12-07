@@ -50,6 +50,12 @@ object SteamStats : SteamUserStatsCallback {
 
         return steamUserStats.isAchieved(achievementApiName, false)
     }
+    
+    fun resetAllStats(): Boolean {
+        val steamUserStats = getSteamUserStats() ?: return false
+
+        return steamUserStats.resetAllStats(false)
+    }
 
     fun persistStats(): Boolean {
         val steamUserStats = getSteamUserStats() ?: return false

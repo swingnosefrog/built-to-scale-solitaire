@@ -26,13 +26,13 @@ abstract class AbstractStats {
         return stat
     }
 
-    fun resetToInitialValues() {
+    open fun resetToInitialValues() {
         statMap.values.forEach { stat ->
             stat.setValue(stat.initialValue)
         }
     }
 
-    fun resetToResetValues() {
+    open fun resetToResetValues() {
         statMap.values.forEach { stat ->
             stat.setValue(stat.resetValue)
         }
