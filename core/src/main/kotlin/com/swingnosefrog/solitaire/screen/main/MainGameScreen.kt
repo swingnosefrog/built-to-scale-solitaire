@@ -91,9 +91,8 @@ class MainGameScreen(
             backingGameContainer.setNewGameContainer(newContainer)
 
         // Resume music
-        if (!isFirstTimeSetting &&
-            settings.audioMusicTrackSetting.getOrCompute() == MusicTrackSetting.SHUFFLE_AFTER_WIN &&
-            gameContainer.getOrCompute().gameLogic.gameWon.get()) {
+        if (settings.audioMusicTrackSetting.getOrCompute() == MusicTrackSetting.SHUFFLE_AFTER_WIN &&
+            (isFirstTimeSetting || deckInitializer.startFromWonState)) {
             trackManager.shuffleTrack()
         }
         gameMusic.transitionToStemMix(1f, StemMixScenario.GAMEPLAY)
