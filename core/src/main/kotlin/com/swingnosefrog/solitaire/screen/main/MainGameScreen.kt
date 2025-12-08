@@ -87,11 +87,13 @@ class MainGameScreen(
                 soundSystem,
                 gameMusic
             )
-        val isFirstTimeSetting = 
+        val isFirstTimeSetting =
             backingGameContainer.setNewGameContainer(newContainer)
 
         // Resume music
-        if (!isFirstTimeSetting && settings.audioMusicTrackSetting.getOrCompute() == MusicTrackSetting.SHUFFLE_AFTER_WIN) {
+        if (!isFirstTimeSetting &&
+            settings.audioMusicTrackSetting.getOrCompute() == MusicTrackSetting.SHUFFLE_AFTER_WIN &&
+            gameContainer.getOrCompute().gameLogic.gameWon.get()) {
             trackManager.shuffleTrack()
         }
         gameMusic.transitionToStemMix(1f, StemMixScenario.GAMEPLAY)
