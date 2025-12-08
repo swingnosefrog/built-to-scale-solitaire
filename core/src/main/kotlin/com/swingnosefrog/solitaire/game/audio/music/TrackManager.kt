@@ -3,6 +3,7 @@ package com.swingnosefrog.solitaire.game.audio.music
 import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.game.audio.FoundationNoteProvider
 import com.swingnosefrog.solitaire.progress.Progress
+import paintbox.binding.GenericVar
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 
@@ -41,15 +42,16 @@ class ProgressBasedTrackManager(private val game: SolitaireGame) : TrackManagerB
     }
 
     private val progress: Progress = game.progress
-    private val musicTrackSetting: ReadOnlyVar<MusicTrackSetting> = Var { game.settings.audioMusicTrackSetting.use() }
+    private val musicTrackSetting: ReadOnlyVar<MusicTrackSetting> = GenericVar(eager = true) { game.settings.audioMusicTrackSetting.use() }
 
     private val _currentTrack: Var<Track> = Var(getInitialTrack())
     override val currentTrack: ReadOnlyVar<Track> get() = _currentTrack
 
     init {
         musicTrackSetting.addListener { l ->
+            val newValue = l.getOrCompute()
             if (hasUnlockedAllTracks()) {
-                when (l.getOrCompute()) {
+                when (newValue) {
                     MusicTrackSetting.SHUFFLE_AFTER_WIN -> {}
                     MusicTrackSetting.BGM_CLASSIC -> changeTrack(defaultTrack)
                     MusicTrackSetting.BGM_PRACTICE -> changeTrack(practiceTrack)
