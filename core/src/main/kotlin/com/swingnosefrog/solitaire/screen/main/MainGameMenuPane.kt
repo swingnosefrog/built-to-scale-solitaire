@@ -339,11 +339,9 @@ class MainGameMenuPane(
                                     }
                                 }
                                 option.value.addListener(WeakVarChangedListener { v ->
-                                    if (!this.apparentDisabledState.get()) {
-                                        val newOptionValue = v.getOrCompute()
-                                        if (this.value.get() != newOptionValue) {
-                                            this.setValue(newOptionValue)
-                                        }
+                                    val newOptionValue = v.getOrCompute()
+                                    if (this.value.get() != newOptionValue) {
+                                        this.setValue(newOptionValue)
                                     }
                                 })
                             }

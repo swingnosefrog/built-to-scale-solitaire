@@ -14,7 +14,8 @@ class AudioSettingsMenu(
     companion object {
 
         private fun convertIntVolumeToFloatVar(volume: IntVar): FloatVar {
-            return FloatVar(eager = true, computation = { volume.use().toFloat() }).apply {
+            // Note: intentionally not a Compute-type binding, as this value can be `set` by the UI and override the binding to be Const
+            return FloatVar(volume.get().toFloat()).apply {
                 this.addListener { v ->
                     val converted = v.getOrCompute().toInt()
                     if (volume.get() != converted) {
@@ -38,23 +39,47 @@ class AudioSettingsMenu(
     override val options: List<MenuOption>
 
     init {
-        fun createSliderOption(localization: ReadOnlyVar<String>, intVolume: IntVar): MenuOption.OptionWidget.Slider {
+        fun createSliderOption(localization: ReadOnlyVar<String>, intVolume: IntVar): Pair<MenuOption.OptionWidget.Slider, () -> Unit> {
             val volumePercentageString =
                 Localization["game.menu.audioSettings.option.volumePercentage", Var { listOf(intVolume.use()) }]
             val adjustedText: ReadOnlyVar<String> = Var {
                 "${localization.use()}  [font=ui_main_sansserif scale=0.75]\\[${volumePercentageString.use()}\\][]"
             }
+            val floatVolume = convertIntVolumeToFloatVar(intVolume)
+            val syncFunc = fun() {
+                floatVolume.set(intVolume.get().toFloat())
+            }
             return MenuOption.OptionWidget.Slider(
                 adjustedText,
                 minVolumeValue, maxVolumeValue, tickVolumeValue,
-                convertIntVolumeToFloatVar(intVolume)
-            )
+                floatVolume
+            ) to syncFunc
         }
 
+
+        val (masterVolSlider, masterVolSync) = createSliderOption(
+            Localization["game.menu.audioSettings.option.masterVolume"],
+            settings.masterVolume
+        )
+        val (musicVolSlider, musicVolSync) = createSliderOption(
+            Localization["game.menu.audioSettings.option.musicVolume"],
+            settings.musicVolume
+        )
+        val (sfxVolSlider, sfxVolSync) = createSliderOption(
+            Localization["game.menu.audioSettings.option.sfxVolume"],
+            settings.sfxVolume
+        )
+
         options = listOf(
-            createSliderOption(Localization["game.menu.audioSettings.option.masterVolume"], settings.masterVolume),
-            createSliderOption(Localization["game.menu.audioSettings.option.musicVolume"], settings.musicVolume),
-            createSliderOption(Localization["game.menu.audioSettings.option.sfxVolume"], settings.sfxVolume),
+            masterVolSlider,
+            musicVolSlider,
+            sfxVolSlider,
+            MenuOption.Simple(Localization["game.menu.audioSettings.option.resetVolumesToDefault"], fun(_) {
+                settings.resetVolumeSettingsToDefault()
+                masterVolSync()
+                musicVolSync()
+                sfxVolSync()
+            }),
 
             MenuOption.Separator(),
 

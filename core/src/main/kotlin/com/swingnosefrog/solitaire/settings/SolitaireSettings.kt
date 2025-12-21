@@ -58,6 +58,8 @@ class SolitaireSettings(
     val gameplayShowHowToPlayButton: BooleanVar
     
     val audioMusicTrackSetting: Var<MusicTrackSetting>
+    
+    private val allVolumeSettings: List<KeyValue.Int>
 
     init {
         val definitelyOnSteamDeck = isRunningOnSteamDeckHint == true
@@ -73,9 +75,13 @@ class SolitaireSettings(
             fullscreen = KeyValue.Bool(SETTINGS_FULLSCREEN, true).add().value
             fullscreenMonitor = KeyValue.MonitorInfo(SETTINGS_FULLSCREEN_MONITOR, null).add().value
 
-            masterVolume = KeyValue.Int(SETTINGS_MASTER_VOLUME, 50, min = 0, max = 100).add().value
-            musicVolume = KeyValue.Int(SETTINGS_MUSIC_VOLUME, 100, min = 0, max = 100).add().value
-            sfxVolume = KeyValue.Int(SETTINGS_SFX_VOLUME, 100, min = 0, max = 100).add().value
+            val masterVolumeKeyValue = KeyValue.Int(SETTINGS_MASTER_VOLUME, 50, min = 0, max = 100).add()
+            val musicVolumeKeyValue = KeyValue.Int(SETTINGS_MUSIC_VOLUME, 100, min = 0, max = 100).add()
+            val sfxVolumeKeyValue = KeyValue.Int(SETTINGS_SFX_VOLUME, 100, min = 0, max = 100).add()
+            allVolumeSettings = listOf(masterVolumeKeyValue, musicVolumeKeyValue, sfxVolumeKeyValue)
+            masterVolume = masterVolumeKeyValue.value
+            musicVolume = musicVolumeKeyValue.value
+            sfxVolume = sfxVolumeKeyValue.value
             
             gameplayMouseMode = KeyValue.Enum<MouseMode>(SETTINGS_GAMEPLAY_MOUSE_MODE, MouseMode.CLICK_AND_DRAG).add().value
             gameplayShowCardCursorInMouseMode = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_CARD_CURSOR_IN_MOUSE_MODE, true).add().value
@@ -96,5 +102,9 @@ class SolitaireSettings(
     override fun setStartupSettings() {
         setFpsAndVsync(maxFramerate, vsyncEnabled)
         setFullscreenOrWindowed(fullscreen, fullscreenMonitor, windowedResolution)
+    }
+    
+    fun resetVolumeSettingsToDefault() {
+        allVolumeSettings.forEach { it.value.set(it.defaultValue) }
     }
 }
