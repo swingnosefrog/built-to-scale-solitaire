@@ -1,7 +1,9 @@
 package com.swingnosefrog.solitaire.settings
 
 import com.badlogic.gdx.Preferences
+import com.swingnosefrog.solitaire.Solitaire
 import com.swingnosefrog.solitaire.SolitaireGame
+import com.swingnosefrog.solitaire.SolitaireLocalePicker
 import com.swingnosefrog.solitaire.game.assets.CardSkin
 import com.swingnosefrog.solitaire.game.audio.music.MusicTrackSetting
 import com.swingnosefrog.solitaire.game.input.MouseMode
@@ -14,6 +16,7 @@ import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_SHO
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_HOW_TO_PLAY_BUTTON
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_TIMER
+import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_LOCALE
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_MASTER_VOLUME
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_MAX_FPS
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_MUSIC_VOLUME
@@ -21,6 +24,7 @@ import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_SFX_VOLUME
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_VSYNC
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_WINDOWED_RESOLUTION
 import com.swingnosefrog.solitaire.util.WindowSizeUtils
+import paintbox.Paintbox
 import paintbox.binding.BooleanVar
 import paintbox.binding.IntVar
 import paintbox.binding.Var
@@ -40,6 +44,8 @@ class SolitaireSettings(
     override val allKeyValues: List<KeyValue<*>>
     override val allNewIndicators: List<NewIndicator>
 
+    val locale: Var<String>
+    
     val vsyncEnabled: BooleanVar
     val maxFramerate: IntVar
     val windowedResolution: Var<WindowSize>
@@ -66,6 +72,8 @@ class SolitaireSettings(
         
         val initScope = InitScope()
         with(initScope) {
+            locale = KeyValue.Str(SETTINGS_LOCALE, "").add().value
+            
             vsyncEnabled = KeyValue.Bool(SETTINGS_VSYNC, false).add().value
             maxFramerate =
                 KeyValue.Int(SETTINGS_MAX_FPS, determineMaxRefreshRate(), min = 0, max = Int.MAX_VALUE).add().value
@@ -95,6 +103,11 @@ class SolitaireSettings(
 
         allKeyValues = initScope.allKeyValues.toList()
         allNewIndicators = initScope.allNewIndicators.toList()
+
+        SolitaireLocalePicker.currentLocale.addListener { 
+            val newLocale = it.getOrCompute()
+            this.locale.set(newLocale.locale.toString())
+        }
     }
 
     override fun getLastVersionKey(): String = PreferenceKeys.LAST_VERSION
@@ -102,6 +115,17 @@ class SolitaireSettings(
     override fun setStartupSettings() {
         setFpsAndVsync(maxFramerate, vsyncEnabled)
         setFullscreenOrWindowed(fullscreen, fullscreenMonitor, windowedResolution)
+
+        val localePicker = SolitaireLocalePicker
+        val localeStr = locale.getOrCompute()
+        val namedLocale = localePicker.attemptToFindNamedLocale(localeStr)
+        if (namedLocale == null) {
+            val fallback = localePicker.namedLocales.first()
+            localePicker.currentLocale.set(fallback)
+            Paintbox.LOGGER.warn("No named locale found for \"$localeStr\", defaulting to $fallback")
+        } else {
+            localePicker.currentLocale.set(namedLocale)
+        }
     }
     
     fun resetVolumeSettingsToDefault() {

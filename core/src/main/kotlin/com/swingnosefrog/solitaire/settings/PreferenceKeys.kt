@@ -6,6 +6,8 @@ object PreferenceKeys {
 
     val LAST_VERSION: String = "lastVersion"
 
+    val SETTINGS_LOCALE = "settings_locale"
+    
     val SETTINGS_VSYNC = "settings_vsync"
     val SETTINGS_MAX_FPS = "settings_max_framerate"
     val SETTINGS_WINDOWED_RESOLUTION = "settings_windowedResolution"

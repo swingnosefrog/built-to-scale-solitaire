@@ -136,6 +136,9 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
 
         val processor = ToggleableDebugKeysInputProcessor().apply { 
             this.reloadableLocalizationInstances = listOf(Localization)
+            if (Solitaire.isDevVersion) {
+                this.reloadableLocalizationInstances.forEach { it.logMissingLocalizations(false) }
+            }
         }
         toggleableDebugKeysInputProcessor = processor
         return processor
