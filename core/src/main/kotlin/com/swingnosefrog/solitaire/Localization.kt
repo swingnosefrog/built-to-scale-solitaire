@@ -9,9 +9,9 @@ import paintbox.i18n.LocalizationGroup
 
 
 object SolitaireLocalePicker : LocalePickerBase(
-    if (Solitaire.isNonProductionVersion)
-        Gdx.files.internal("localization/langs.json")
-    else Gdx.files.internal("localization/langs_en-only.json")
+    if (Solitaire.isDevVersion)
+        Gdx.files.internal("localization/langs_dev.json")
+    else Gdx.files.internal("localization/langs.json")
 )
 
 abstract class SolitaireLocalizationBase(baseHandle: FileHandle) : LocalizationBase(baseHandle, SolitaireLocalePicker)
