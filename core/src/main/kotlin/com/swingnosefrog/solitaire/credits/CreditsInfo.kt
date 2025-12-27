@@ -11,7 +11,7 @@ import java.util.*
 
 class CreditsInfo {
 
-    val credits: Map<ReadOnlyVar<String>, List<ReadOnlyVar<String>>> = mapOf(
+    val credits: Map<ReadOnlyVar<String>, List<ReadOnlyVar<String>>> = listOfNotNull(
         Localization["credits.category.projectLeadAndProgramming"] to abcSorted(
             "swingnosefrog"
         ).toVars(),
@@ -39,7 +39,8 @@ class CreditsInfo {
             "garbo",
             "Huebird",
         ).toVars(),
-        Localization["credits.category.localization"] to listOf(
+        if (SolitaireLocalePicker.namedLocales.size <= 1) null
+        else Localization["credits.category.localization"] to listOf(
             localizationSubheading(
                 SolitaireLocalePicker.namedLocales.first { it.locale.toString() == "it" },
                 listOf("Gosh")
@@ -80,7 +81,7 @@ class CreditsInfo {
             "Radio Canada Big",
             "Open Sans",
         ).toVars(),
-    )
+    ).toMap()
 
     val otherAttributions: List<ReadOnlyVar<String>> = listOf(
         Localization["credits.otherAttributions.thisGame"],
