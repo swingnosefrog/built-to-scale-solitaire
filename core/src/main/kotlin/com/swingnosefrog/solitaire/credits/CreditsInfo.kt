@@ -1,8 +1,11 @@
 package com.swingnosefrog.solitaire.credits
 
 import com.swingnosefrog.solitaire.Localization
+import com.swingnosefrog.solitaire.SolitaireLocalePicker
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
+import paintbox.binding.toConstVar
+import paintbox.i18n.NamedLocale
 import java.util.*
 
 
@@ -36,15 +39,29 @@ class CreditsInfo {
             "garbo",
             "Huebird",
         ).toVars(),
+        Localization["credits.category.localization"] to listOf(
+            localizationSubheading(
+                SolitaireLocalePicker.namedLocales.first { it.locale.toString() == "it" },
+                listOf("Gosh")
+            ),
+        ),
         Localization["credits.category.specialThanks"] to listOf(
-            specialThanksSubheading("credits.category.specialThanks.subheading.logo",
-                abcSorted("snow krow")),
-            specialThanksSubheading("credits.category.specialThanks.subheading.steamStoreAndLibraryArt",
-                abcSorted("Merch_Andise", "snow krow")),
-            specialThanksSubheading("credits.category.specialThanks.subheading.steamAchievements",
-                abcSorted("Merch_Andise", "Kievit", "spoopster", "Luxury")),
-            specialThanksSubheading("credits.category.specialThanks.subheading.steamDeckTesting",
-                abcSorted("spoopster", "NoahAmp", "TheAlternateDoctor")),
+            specialThanksSubheading(
+                "credits.category.specialThanks.subheading.logo",
+                abcSorted("snow krow")
+            ),
+            specialThanksSubheading(
+                "credits.category.specialThanks.subheading.steamStoreAndLibraryArt",
+                abcSorted("Merch_Andise", "snow krow")
+            ),
+            specialThanksSubheading(
+                "credits.category.specialThanks.subheading.steamAchievements",
+                abcSorted("Merch_Andise", "Kievit", "spoopster", "Luxury")
+            ),
+            specialThanksSubheading(
+                "credits.category.specialThanks.subheading.steamDeckTesting",
+                abcSorted("spoopster", "NoahAmp", "TheAlternateDoctor")
+            ),
         ),
         Localization["credits.category.resourcesAndTechnologies"] to listOf(
             "libGDX & LWJGL",
@@ -64,7 +81,7 @@ class CreditsInfo {
             "Open Sans",
         ).toVars(),
     )
-    
+
     val otherAttributions: List<ReadOnlyVar<String>> = listOf(
         Localization["credits.otherAttributions.thisGame"],
         Localization["credits.otherAttributions.fontLicenses"],
@@ -72,13 +89,29 @@ class CreditsInfo {
     )
 
     private fun abcSorted(vararg things: String): List<String> = things.sortedBy { it.lowercase(Locale.ROOT) }
-    
+
     private fun List<String>.toVars(): List<ReadOnlyVar<String>> = this.map { ReadOnlyVar.const(it) }
 
+    private fun localizationSubheading(namedLocale: NamedLocale, names: List<String>): ReadOnlyVar<String> {
+        return genericSubheading(
+            "credits.category.localization.subheading",
+            namedLocale.name.toConstVar(),
+            names
+        )
+    }
+
     private fun specialThanksSubheading(subheadingKey: String, names: List<String>): ReadOnlyVar<String> {
-        return Localization["credits.category.specialThanks.subheading", Var {
+        return genericSubheading("credits.category.specialThanks.subheading", Localization[subheadingKey], names)
+    }
+
+    private fun genericSubheading(
+        subheadingFormatKey: String,
+        subheading: ReadOnlyVar<String>,
+        names: List<String>,
+    ): ReadOnlyVar<String> {
+        return Localization[subheadingFormatKey, Var {
             listOf(
-                Localization[subheadingKey].use(),
+                subheading.use(),
                 names.joinToString(separator = "\n")
             )
         }]
