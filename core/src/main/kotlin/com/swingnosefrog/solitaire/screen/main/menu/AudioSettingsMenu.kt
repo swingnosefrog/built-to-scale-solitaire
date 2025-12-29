@@ -107,6 +107,6 @@ class AudioSettingsMenu(
             MenuOption.Back(),
         )
 
-        this.menuSizeAdjustment.set(3)
+        this.menuSizeAdjustment.set(4)
     }
 }

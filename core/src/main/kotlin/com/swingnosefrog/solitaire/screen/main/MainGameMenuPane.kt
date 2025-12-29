@@ -256,47 +256,54 @@ class MainGameMenuPane(
                         this.bindWidthToParent(multiplier = 0.5f)
                         this.bindVarToSelfWidth(this.bounds.x)
 
-                        this += TextLabel(binding = {
-                            val selectedOption = option.selectedOption.use()
-                            @Suppress("UNCHECKED_CAST")
-                            (option.stringVarConverter as StringVarConverter<Any?>).toVar(selectedOption).use()
-                        }).apply {
-                            this.markup.set(mainSerifBoldMarkup)
-                            this.disabled.bind(option.disabled)
-                            this.textColor.bind { textColor.use() }
-                            this.textAlign.set(TextAlign.CENTRE)
-                            this.renderAlign.set(Align.center)
-                            
-                            fun createCycleZone(indexChange: Int): ActionablePane {
-                                return ActionablePane().apply {
-                                    this.bindWidthToParent(multiplier = 0.5f)
-                                    this.opacity.set(0f)
-                                    this.visible.bind(option.isSelected) // Prevents being able to start a click when not yet selected
+                        fun createCycleZone(indexChange: Int): ActionablePane {
+                            return ActionablePane().apply {
+                                this.bindWidthToParent(multiplier = 0.5f)
+                                this.opacity.set(0f)
+                                this.visible.bind(option.isSelected) // Prevents being able to start a click when not yet selected
 
-                                    this.onLeftClick = {
-                                        if (!option.disabled.get() && option.isSelected.get()) {
-                                            option.selectNext(indexChange)
-                                            true
-                                        } else false
-                                    }
+                                this.onLeftClick = {
+                                    if (!option.disabled.get() && option.isSelected.get()) {
+                                        option.selectNext(indexChange)
+                                        true
+                                    } else false
                                 }
                             }
-                            this += createCycleZone(-1).apply { 
-                                Anchor.TopLeft.configure(this)
-                            }
-                            this += createCycleZone(+1).apply { 
-                                Anchor.TopRight.configure(this)
+                        }
+                        this += createCycleZone(-1).apply {
+                            Anchor.TopLeft.configure(this)
+                        }
+                        this += createCycleZone(+1).apply {
+                            Anchor.TopRight.configure(this)
+                        }
+                        this += NoInputPane().apply {
+                            this += TextLabel(binding = {
+                                val selectedOption = option.selectedOption.use()
+                                @Suppress("UNCHECKED_CAST")
+                                (option.stringVarConverter as StringVarConverter<Any?>).toVar(selectedOption).use()
+                            }).apply {
+                                this.markup.set(mainSerifBoldMarkup)
+                                this.disabled.bind(option.disabled)
+                                this.textColor.bind { textColor.use() }
+                                this.textAlign.set(TextAlign.CENTRE)
+                                this.renderAlign.set(Align.center)
+                                this.padding.set(Insets(0f, 20f))
                             }
                         }
                         this += NoInputPane().apply {
                             this.visible.bind { isSelected.use() }
+                            
                             val font = fonts.uiMainSansSerifFontBold
                             this += TextLabel("<", font = font).apply {
+                                Anchor.TopLeft.configure(this)
+                                this.bounds.width.set(20f)
                                 this.disabled.bind(option.disabled)
                                 this.textColor.set(Color.WHITE)
                                 this.renderAlign.set(Align.left)
                             }
                             this += TextLabel(">", font = font).apply {
+                                Anchor.TopRight.configure(this)
+                                this.bounds.width.set(20f)
                                 this.disabled.bind(option.disabled)
                                 this.textColor.set(Color.WHITE)
                                 this.renderAlign.set(Align.right)
