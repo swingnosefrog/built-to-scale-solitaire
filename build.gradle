@@ -68,7 +68,9 @@ project(":core") {
         implementation "net.beadsproject:beads:3.2"
         implementation "com.badlogicgames.jlayer:jlayer:1.0.1-gdx"
         implementation "com.eclipsesource.minimal-json:minimal-json:0.9.5"
-        implementation "com.code-disaster.steamworks4j:steamworks4j:1.9.0"
+        final var steamworks4jVersion = "1.10.0"
+        implementation "com.code-disaster.steamworks4j:steamworks4j:${steamworks4jVersion}"
+        implementation "com.code-disaster.steamworks4j:steamworks4j-gdx:${steamworks4jVersion}"
     }
 }
 

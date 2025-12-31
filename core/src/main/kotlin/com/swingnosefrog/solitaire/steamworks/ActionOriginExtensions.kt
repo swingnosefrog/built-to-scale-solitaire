@@ -17,10 +17,10 @@ fun SteamController.ActionOrigin.getActionInputGlyph(): SteamActionInputGlyph {
 private fun SteamController.ActionOrigin.toSteamActionInputGlyph(): SteamActionInputGlyph {
     val promptFontText: String = when (this) {
         SteamController.ActionOrigin.None -> " "
-        SteamController.ActionOrigin.A -> PromptFontConsts.GAMEPAD_A
-        SteamController.ActionOrigin.B -> PromptFontConsts.GAMEPAD_B
-        SteamController.ActionOrigin.X -> PromptFontConsts.GAMEPAD_X
-        SteamController.ActionOrigin.Y -> PromptFontConsts.GAMEPAD_Y
+        SteamController.ActionOrigin.A -> PromptFontConsts.XBOX_A
+        SteamController.ActionOrigin.B -> PromptFontConsts.XBOX_B
+        SteamController.ActionOrigin.X -> PromptFontConsts.XBOX_X
+        SteamController.ActionOrigin.Y -> PromptFontConsts.XBOX_Y
         SteamController.ActionOrigin.LeftBumper ->  PromptFontConsts.XBOX_LEFT_SHOULDER
         SteamController.ActionOrigin.RightBumper -> PromptFontConsts.XBOX_RIGHT_SHOULDER
         SteamController.ActionOrigin.LeftGrip -> PromptFontConsts.GAMEPAD_L4
@@ -164,10 +164,10 @@ private fun SteamController.ActionOrigin.toSteamActionInputGlyph(): SteamActionI
         SteamController.ActionOrigin.XBox360_DPad_South -> PromptFontConsts.XBOX_DPAD_DOWN
         SteamController.ActionOrigin.XBox360_DPad_West ->  PromptFontConsts.XBOX_DPAD_LEFT
         SteamController.ActionOrigin.XBox360_DPad_East ->  PromptFontConsts.XBOX_DPAD_RIGHT
-        SteamController.ActionOrigin.SteamV2_A -> PromptFontConsts.GAMEPAD_A
-        SteamController.ActionOrigin.SteamV2_B -> PromptFontConsts.GAMEPAD_B
-        SteamController.ActionOrigin.SteamV2_X -> PromptFontConsts.GAMEPAD_X
-        SteamController.ActionOrigin.SteamV2_Y -> PromptFontConsts.GAMEPAD_Y
+        SteamController.ActionOrigin.SteamV2_A -> PromptFontConsts.XBOX_A
+        SteamController.ActionOrigin.SteamV2_B -> PromptFontConsts.XBOX_B
+        SteamController.ActionOrigin.SteamV2_X -> PromptFontConsts.XBOX_X
+        SteamController.ActionOrigin.SteamV2_Y -> PromptFontConsts.XBOX_Y
         SteamController.ActionOrigin.SteamV2_LeftBumper ->  PromptFontConsts.XBOX_LEFT_SHOULDER
         SteamController.ActionOrigin.SteamV2_RightBumper -> PromptFontConsts.XBOX_RIGHT_SHOULDER
         SteamController.ActionOrigin.SteamV2_LeftGrip_Lower -> PromptFontConsts.GAMEPAD_L5
@@ -394,6 +394,14 @@ private fun SteamController.ActionOrigin.toSteamActionInputGlyph(): SteamActionI
         SteamController.ActionOrigin.SteamDeck_Reserved18 -> PromptFontConsts.ICON_QUESTION
         SteamController.ActionOrigin.SteamDeck_Reserved19 -> PromptFontConsts.ICON_QUESTION
         SteamController.ActionOrigin.SteamDeck_Reserved20 -> PromptFontConsts.ICON_QUESTION
+        SteamController.ActionOrigin.Switch_JoyConButton_N -> PromptFontConsts.GAMEPAD_Y
+        SteamController.ActionOrigin.Switch_JoyConButton_E -> PromptFontConsts.GAMEPAD_B
+        SteamController.ActionOrigin.Switch_JoyConButton_S -> PromptFontConsts.GAMEPAD_A
+        SteamController.ActionOrigin.Switch_JoyConButton_W -> PromptFontConsts.GAMEPAD_X
+        SteamController.ActionOrigin.PS5_LeftGrip -> PromptFontConsts.GAMEPAD_L4
+        SteamController.ActionOrigin.PS5_RightGrip -> PromptFontConsts.GAMEPAD_R4
+        SteamController.ActionOrigin.PS5_LeftFn -> PromptFontConsts.KEYBOARD_FN + PromptFontConsts.TRACKPAD_L_CLICK
+        SteamController.ActionOrigin.PS5_RightFn -> PromptFontConsts.KEYBOARD_FN + PromptFontConsts.TRACKPAD_R_CLICK
     }
     return SteamActionInputGlyph(this, promptFontText)
 }
