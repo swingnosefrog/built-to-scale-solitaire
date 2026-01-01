@@ -3,6 +3,7 @@ package com.swingnosefrog.solitaire.steamworks
 import com.codedisaster.steamworks.SteamAPI
 import com.codedisaster.steamworks.SteamApps
 import com.codedisaster.steamworks.SteamController
+import com.codedisaster.steamworks.SteamControllerOverride
 import com.codedisaster.steamworks.SteamLibraryLoaderGdx
 import com.codedisaster.steamworks.SteamUserStats
 import com.codedisaster.steamworks.SteamUtils
@@ -36,7 +37,7 @@ object Steamworks {
             } else {
                 val steamInterfaces = SteamInterfaces(
                     SteamUtils(SteamUtilsCallbackImpl),
-                    SteamController().apply { this.init() },
+                    SteamControllerOverride().apply { this.init() },
                     SteamApps(),
                     SteamUserStats(SteamStats),
                 )
