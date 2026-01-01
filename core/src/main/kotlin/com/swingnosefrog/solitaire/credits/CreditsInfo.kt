@@ -38,6 +38,7 @@ class CreditsInfo {
             "TheAlternateDoctor",
             "garbo",
             "Huebird",
+            "Chirp",
         ).toVars(),
         if (SolitaireLocalePicker.namedLocales.size <= 1) null
         else Localization["credits.category.localization"] to listOf(
