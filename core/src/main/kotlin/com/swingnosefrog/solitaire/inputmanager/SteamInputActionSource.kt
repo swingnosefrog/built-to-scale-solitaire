@@ -8,6 +8,7 @@ import com.swingnosefrog.solitaire.steamworks.SteamActionInputGlyph
 import com.swingnosefrog.solitaire.steamworks.SteamInterfaces
 import com.swingnosefrog.solitaire.steamworks.getActionInputGlyph
 import com.swingnosefrog.solitaire.steamworks.getConnectedControllers
+import paintbox.Paintbox
 
 open class SteamInputActionSource(
     actions: List<IInputAction>,
@@ -58,8 +59,10 @@ open class SteamInputActionSource(
             }
         }
         
-        if (isDirty){
+        if (isDirty) {
+            val old = digitalState.cachedGlyphs
             digitalState.cachedGlyphs = (0 until num).map { actionOriginsArray[it].getActionInputGlyph() }
+            Paintbox.LOGGER.debug("Glyphs changed for action $action:\nold: ${old}\nnew: ${digitalState.cachedGlyphs}")
         }
         
         return digitalState.cachedGlyphs
