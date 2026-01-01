@@ -43,9 +43,8 @@ open class SteamInputActionSource(
         val handle = digitalState.handle
         val input = steamInterfaces.input
         val controller = firstControllerHandle
-        val num = input.getDigitalActionOrigins(controller, input.getCurrentActionSet(controller), handle,
-            actionOriginsArray
-        )
+        val actionSet = input.getCurrentActionSet(controller)
+        val num = input.getDigitalActionOrigins(controller, actionSet, handle, actionOriginsArray)
         
         val currentlyCached = digitalState.cachedGlyphs
         var isDirty = currentlyCached.size != num
@@ -62,7 +61,7 @@ open class SteamInputActionSource(
         if (isDirty) {
             val old = digitalState.cachedGlyphs
             digitalState.cachedGlyphs = (0 until num).map { actionOriginsArray[it].getActionInputGlyph() }
-            Paintbox.LOGGER.debug("Glyphs changed for action $action:\nold: ${old}\nnew: ${digitalState.cachedGlyphs}")
+            Paintbox.LOGGER.debug("Glyphs changed for action $action (current action set handle: ${actionSet}):\nold: ${old}\nnew: ${digitalState.cachedGlyphs}")
         }
         
         return digitalState.cachedGlyphs
