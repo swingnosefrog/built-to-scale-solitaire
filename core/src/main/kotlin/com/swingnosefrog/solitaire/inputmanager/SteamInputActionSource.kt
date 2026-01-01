@@ -1,9 +1,11 @@
 package com.swingnosefrog.solitaire.inputmanager
 
 import com.codedisaster.steamworks.SteamController
+import com.codedisaster.steamworks.SteamControllerActionSetHandle
 import com.codedisaster.steamworks.SteamControllerDigitalActionData
 import com.codedisaster.steamworks.SteamControllerDigitalActionHandle
 import com.codedisaster.steamworks.SteamControllerHandle
+import com.codedisaster.steamworks.SteamNativeHandle
 import com.swingnosefrog.solitaire.steamworks.SteamActionInputGlyph
 import com.swingnosefrog.solitaire.steamworks.SteamInterfaces
 import com.swingnosefrog.solitaire.steamworks.getActionInputGlyph
@@ -40,11 +42,16 @@ open class SteamInputActionSource(
 
         val actionOriginsArray = actionOriginsTmp
         
-        val handle = digitalState.handle
         val input = steamInterfaces.input
         val controller = firstControllerHandle
-        val actionSet = input.getCurrentActionSet(controller)
-        val num = input.getDigitalActionOrigins(controller, actionSet, handle, actionOriginsArray)
+        var actionSet = input.getCurrentActionSet(controller)
+        
+        if (actionSet.isNull() && !digitalState.lastActionSetHandle.isNull()) {
+            actionSet = digitalState.lastActionSetHandle
+        }
+        
+        val digitalActionHandle = digitalState.handle
+        val num = input.getDigitalActionOrigins(controller, actionSet, digitalActionHandle, actionOriginsArray)
         
         val currentlyCached = digitalState.cachedGlyphs
         var isDirty = currentlyCached.size != num
@@ -59,9 +66,11 @@ open class SteamInputActionSource(
         }
         
         if (isDirty) {
-            val old = digitalState.cachedGlyphs
             digitalState.cachedGlyphs = (0 until num).map { actionOriginsArray[it].getActionInputGlyph() }
-            Paintbox.LOGGER.debug("Glyphs changed for action $action (current action set handle: ${actionSet}):\nold: ${old}\nnew: ${digitalState.cachedGlyphs}")
+        }
+        
+        if (!actionSet.isNull()) {
+            digitalState.lastActionSetHandle = actionSet
         }
         
         return digitalState.cachedGlyphs
@@ -87,12 +96,16 @@ open class SteamInputActionSource(
         return digitalStates.any { it.value.isActive }
     }
     
+    protected fun SteamControllerActionSetHandle?.isNull(): Boolean = 
+        this == null || SteamNativeHandle.getNativeHandle(this) == 0L
+    
     protected data class DigitalState(
         val action: IDigitalInputAction,
         val handle: SteamControllerDigitalActionHandle,
     ) {
         var isActive: Boolean = false
         
+        var lastActionSetHandle: SteamControllerActionSetHandle? = null
         var cachedGlyphs: List<SteamActionInputGlyph> = emptyList()
     }
 }
