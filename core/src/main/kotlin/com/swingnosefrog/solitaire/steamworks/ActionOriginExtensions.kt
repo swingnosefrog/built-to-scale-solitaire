@@ -15,7 +15,12 @@ fun SteamController.ActionOrigin.getActionInputGlyph(): SteamActionInputGlyph {
 }
 
 private fun SteamController.ActionOrigin.toSteamActionInputGlyph(): SteamActionInputGlyph {
-    val promptFontText: String = when (this) {
+    return SteamActionInputGlyph(this, this.toPromptFontText())
+}
+
+private fun SteamController.ActionOrigin?.toPromptFontText(): String {
+    return when (this) {
+        null -> PromptFontConsts.ICON_QUESTION
         SteamController.ActionOrigin.None -> " "
         SteamController.ActionOrigin.A -> PromptFontConsts.XBOX_A
         SteamController.ActionOrigin.B -> PromptFontConsts.XBOX_B
@@ -403,5 +408,4 @@ private fun SteamController.ActionOrigin.toSteamActionInputGlyph(): SteamActionI
         SteamController.ActionOrigin.PS5_LeftFn -> PromptFontConsts.KEYBOARD_FN + PromptFontConsts.TRACKPAD_L_CLICK
         SteamController.ActionOrigin.PS5_RightFn -> PromptFontConsts.KEYBOARD_FN + PromptFontConsts.TRACKPAD_R_CLICK
     }
-    return SteamActionInputGlyph(this, promptFontText)
 }
