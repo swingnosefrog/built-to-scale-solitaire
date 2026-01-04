@@ -1,15 +1,16 @@
 package com.swingnosefrog.solitaire.settings
 
 import com.badlogic.gdx.Preferences
-import com.swingnosefrog.solitaire.Solitaire
 import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.SolitaireLocalePicker
 import com.swingnosefrog.solitaire.game.assets.CardSkin
 import com.swingnosefrog.solitaire.game.audio.music.MusicTrackSetting
 import com.swingnosefrog.solitaire.game.input.MouseMode
+import com.swingnosefrog.solitaire.game.rendering.CardCursorType
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_AUDIO_MUSIC_TRACK
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_FULLSCREEN
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_FULLSCREEN_MONITOR
+import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_CARD_CURSOR_TYPE
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_CARD_SKIN
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_MOUSE_MODE
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_CARD_CURSOR_IN_MOUSE_MODE
@@ -57,6 +58,7 @@ class SolitaireSettings(
     val sfxVolume: IntVar
     
     val gameplayMouseMode: Var<MouseMode>
+    val gameplayCardCursorType: Var<CardCursorType>
     val gameplayShowCardCursorInMouseMode: BooleanVar
     val gameplayCardSkin: Var<CardSkin>
     val gameplayShowMoveCounter: BooleanVar
@@ -92,6 +94,7 @@ class SolitaireSettings(
             sfxVolume = sfxVolumeKeyValue.value
             
             gameplayMouseMode = KeyValue.Enum<MouseMode>(SETTINGS_GAMEPLAY_MOUSE_MODE, MouseMode.CLICK_AND_DRAG).add().value
+            gameplayCardCursorType = KeyValue.Enum<CardCursorType>(SETTINGS_GAMEPLAY_CARD_CURSOR_TYPE, CardCursorType.FULL).add().value
             gameplayShowCardCursorInMouseMode = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_CARD_CURSOR_IN_MOUSE_MODE, true).add().value
             gameplayCardSkin = KeyValue.Enum<CardSkin>(SETTINGS_GAMEPLAY_CARD_SKIN, CardSkin.MODERN).add().value
             gameplayShowMoveCounter = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER, true).add().value

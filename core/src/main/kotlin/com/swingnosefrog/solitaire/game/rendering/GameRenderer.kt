@@ -74,6 +74,9 @@ class GameRenderer(
     
     private val rendererEventListener: RendererEventListener = RendererEventListener()
     
+    private val cardCursorTypeSetting: ReadOnlyVar<CardCursorType> = Var {
+        SolitaireGame.instance.settings.gameplayCardCursorType.use()
+    }
     private val showCardCursorInMouseModeSetting: ReadOnlyBooleanVar = BooleanVar {
         SolitaireGame.instance.settings.gameplayShowCardCursorInMouseMode.use()
     }
@@ -189,6 +192,7 @@ class GameRenderer(
     private fun renderCardCursor() {
         val gameInput = logic.gameInput
         val cardCursor = gameInput.getCurrentCardCursor()
+        val cardCursorTypeSetting = cardCursorTypeSetting.getOrCompute()
 
         if (gameInput.inputsDisabled.get() || logic.gameWon.get() || logic.isStillDealing.get() ||
             (cardCursor.isMouseBased && 
@@ -210,19 +214,24 @@ class GameRenderer(
         val x = zone.x.get()
         val y = zone.y.get() + cardStack.stackDirection.yOffset * (cardStack.cardList.size - indexFromEnd - 1).coerceAtLeast(0)
 
-        val blinkPeriodSec = 1.2f
-        val blinkProgress = SineWave.getWaveValue(blinkPeriodSec, offsetMs = -(cardCursorBlinkOffsetMs.get()))
-        batch.setColor(cursorSelectionColor, alpha = MathUtils.lerp(0.3f, 0.6f, blinkProgress))
-        renderCardTex(CardAssetKey.Hover, x, y)
+        if (cardCursorTypeSetting.renderHighlight) {
+            val blinkPeriodSec = 1.2f
+            val blinkProgress = SineWave.getWaveValue(blinkPeriodSec, offsetMs = -(cardCursorBlinkOffsetMs.get()))
+            batch.setColor(cursorSelectionColor, alpha = MathUtils.lerp(0.3f, 0.6f, blinkProgress))
+            renderCardTex(CardAssetKey.Hover, x, y)
+        }
 
-        val cursorTexAsset = if (currentDragInfo is DragInfo.Dragging)
-            CardAssetKey.CardCursorArrowPressed 
-        else CardAssetKey.CardCursorArrow
-        val cursorTex = GameAssets.get<Texture>(cursorTexAsset.getAssetKey(currentCardSkin.getOrCompute()))
-        val cursorWidth = CARD_WIDTH * 0.4f
-        val cursorHeight = cursorWidth * (cursorTex.height.toFloat() / cursorTex.width)
         batch.setColor(1f, 1f, 1f, 1f)
-        batch.draw(cursorTex, x + CARD_WIDTH * 1.025f, -(y + CARD_HEIGHT * 0.0125f), cursorWidth, cursorHeight)
+        
+        if (cardCursorTypeSetting.renderArrow) {
+            val cursorTexAsset = if (currentDragInfo is DragInfo.Dragging)
+                CardAssetKey.CardCursorArrowPressed
+            else CardAssetKey.CardCursorArrow
+            val cursorTex = GameAssets.get<Texture>(cursorTexAsset.getAssetKey(currentCardSkin.getOrCompute()))
+            val cursorWidth = CARD_WIDTH * 0.4f
+            val cursorHeight = cursorWidth * (cursorTex.height.toFloat() / cursorTex.width)
+            batch.draw(cursorTex, x + CARD_WIDTH * 1.025f, -(y + CARD_HEIGHT * 0.0125f), cursorWidth, cursorHeight)
+        }
     }
     
     private fun renderSlamVfx(animation: SlamVfxPlayingAnimation) {

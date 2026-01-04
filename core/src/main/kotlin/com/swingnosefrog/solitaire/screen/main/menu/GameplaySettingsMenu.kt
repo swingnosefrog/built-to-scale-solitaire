@@ -4,6 +4,7 @@ import com.swingnosefrog.solitaire.Localization
 import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.game.assets.CardSkin
 import com.swingnosefrog.solitaire.game.input.MouseMode
+import com.swingnosefrog.solitaire.game.rendering.CardCursorType
 import com.swingnosefrog.solitaire.menu.MenuOption
 import paintbox.binding.BooleanVar
 import paintbox.binding.ReadOnlyBooleanVar
@@ -50,6 +51,17 @@ class GameplaySettingsMenu(
                 }
             }
         ),
+        MenuOption.OptionWidget.Cycle(
+            Localization["game.menu.gameplaySettings.option.cardCursorType"],
+            ReadOnlyVar.const(CardCursorType.entries.toList()),
+            settings.gameplayCardCursorType,
+            StringVarConverter { cardCursorType: CardCursorType ->
+                when (cardCursorType) {
+                    CardCursorType.FULL -> Localization["game.menu.gameplaySettings.option.cardCursorType.full"]
+                    CardCursorType.HIGHLIGHT_ONLY -> Localization["game.menu.gameplaySettings.option.cardCursorType.highlightOnly"]
+                }
+            }
+        ),
         MenuOption.OptionWidget.Checkbox(
             Localization["game.menu.gameplaySettings.option.showCardCursorInMouseMode"],
             settings.gameplayShowCardCursorInMouseMode
@@ -70,6 +82,6 @@ class GameplaySettingsMenu(
     )
 
     init {
-        this.menuSizeAdjustment.set(2)
+        this.menuSizeAdjustment.set(3)
     }
 }
