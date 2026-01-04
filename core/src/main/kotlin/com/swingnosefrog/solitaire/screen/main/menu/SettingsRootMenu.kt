@@ -7,7 +7,8 @@ import com.swingnosefrog.solitaire.menu.MenuOption
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 import paintbox.i18n.NamedLocale
-import paintbox.ui.StringVarConverter
+import paintbox.ui.StringConverter
+import paintbox.ui.toVarConverter
 
 
 class SettingsRootMenu(
@@ -29,7 +30,7 @@ class SettingsRootMenu(
                 Localization["game.menu.settings.option.language"],
                 Var(SolitaireLocalePicker.namedLocales),
                 SolitaireLocalePicker.currentLocale,
-                StringVarConverter { ReadOnlyVar.const(it.name) }
+                StringConverter<NamedLocale> { it.name }.toVarConverter()
             )
         else null,
         MenuOption.Back(callback = { menuController ->
