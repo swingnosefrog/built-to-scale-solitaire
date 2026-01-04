@@ -21,8 +21,8 @@ class InputManager(
 
     private val listeners: CopyOnWriteArrayList<InputActionListener> = CopyOnWriteArrayList()
 
-    private val _mostRecentSource: Var<ActionSource> = Var(sources.first())
-    val mostRecentActionSource: ReadOnlyVar<ActionSource> = Var { _mostRecentSource.use() }
+    val mostRecentActionSource: ReadOnlyVar<ActionSource>
+        field = Var(sources.first())
     
     private val glyphVarEmpty: ReadOnlyVar<List<IActionInputGlyph>> = ReadOnlyVar.const(emptyList())
     private val actionsToGlyphsVars: Map<IInputAction, Var<List<IActionInputGlyph>>> = actions.associateWith {
@@ -30,7 +30,7 @@ class InputManager(
     }
 
     fun frameUpdate() {
-        val mostRecentSource = _mostRecentSource.getOrCompute()
+        val mostRecentSource = mostRecentActionSource.getOrCompute()
         var anyDifferences = false
         var didAnyRecentSourceHaveDifferences = false
         var didAnyNonRecentSourceHaveDifferences = false
@@ -54,7 +54,7 @@ class InputManager(
                 val newSource = sources.first { src ->
                     src != mostRecentSource && actionsTrackers.getValue(src).differencesReturnMap.isNotEmpty()
                 }
-                _mostRecentSource.set(newSource)
+                mostRecentActionSource.set(newSource)
                 for (listener in listeners) {
                     val handled = listener.handleActionSourceChanged(mostRecentSource, newSource)
                     if (handled) break
@@ -91,7 +91,7 @@ class InputManager(
     }
 
     fun getCurrentGlyphsForAction(action: IInputAction): List<IActionInputGlyph> {
-        return _mostRecentSource.getOrCompute().getGlyphsForAction(action)
+        return mostRecentActionSource.getOrCompute().getGlyphsForAction(action)
     }
 
     fun getGlyphsVarForAction(action: IInputAction): ReadOnlyVar<List<IActionInputGlyph>> {

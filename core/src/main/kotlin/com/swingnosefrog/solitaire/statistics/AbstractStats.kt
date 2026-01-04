@@ -14,15 +14,15 @@ abstract class AbstractStats {
 
     data class UnknownStat(val id: String, val value: Int)
 
-    private val _statMap: MutableMap<String, Stat> = linkedMapOf()
-    val statMap: Map<String, Stat> = _statMap
+    val statMap: Map<String, Stat> 
+        field: MutableMap<String, Stat> = linkedMapOf()
 
-    private val _unkStatMap: MutableMap<String, UnknownStat> = linkedMapOf()
-    protected val unknownStatMap: Map<String, UnknownStat> = _unkStatMap
+    protected val unknownStatMap: Map<String, UnknownStat> 
+        field: MutableMap<String, UnknownStat> = linkedMapOf()
     
 
     protected fun register(stat: Stat): Stat {
-        _statMap[stat.id] = stat
+        statMap[stat.id] = stat
         return stat
     }
 
@@ -51,10 +51,10 @@ abstract class AbstractStats {
                 } else {
                     val value = member.value
                     if (value.isNumber) {
-                        _unkStatMap[statName] = UnknownStat(statName, value.asInt())
+                        unknownStatMap[statName] = UnknownStat(statName, value.asInt())
                     }
                 }
-            } catch (ignored: Exception) {
+            } catch (_: Exception) {
             }
         }
     }

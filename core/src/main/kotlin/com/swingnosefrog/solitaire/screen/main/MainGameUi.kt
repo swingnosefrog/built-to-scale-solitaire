@@ -52,8 +52,8 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
     val inputProcessor: InputProcessor
     val inputActionListener: InputActionListener
 
-    private val _currentMenuState: Var<MenuState> = Var(MenuState.NONE)
-    val currentMenuState: ReadOnlyVar<MenuState> get() = _currentMenuState.asReadOnlyVar()
+    val currentMenuState: ReadOnlyVar<MenuState>
+        field = Var(MenuState.NONE)
 
     private val menuController: MenuController = MenuController()
 
@@ -196,18 +196,18 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
 
         private fun openModalMenu(newMenuState: MenuState) {
             closePauseMenu()
-            _currentMenuState.set(newMenuState)
+            currentMenuState.set(newMenuState)
             cancelDragOnMenuOpen()
         }
 
         private fun closeModalMenu() {
-            _currentMenuState.set(MenuState.NONE)
+            currentMenuState.set(MenuState.NONE)
         }
 
         //region IUiInputHandler
 
         override fun openPauseMenu() {
-            _currentMenuState.set(MenuState.PAUSE_MENU)
+            currentMenuState.set(MenuState.PAUSE_MENU)
 
             cancelDragOnMenuOpen()
 
@@ -225,7 +225,7 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         }
 
         override fun closePauseMenu() {
-            _currentMenuState.set(MenuState.NONE)
+            currentMenuState.set(MenuState.NONE)
             menuController.clearMenuStack()
             menuController.setNewMenu(null, null)
         }

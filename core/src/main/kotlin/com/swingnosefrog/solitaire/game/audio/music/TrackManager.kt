@@ -44,8 +44,8 @@ class ProgressBasedTrackManager(private val game: SolitaireGame) : TrackManagerB
     private val progress: Progress = game.progress
     private val musicTrackSetting: ReadOnlyVar<MusicTrackSetting> = GenericVar(eager = true) { game.settings.audioMusicTrackSetting.use() }
 
-    private val _currentTrack: Var<Track> = Var(getInitialTrack())
-    override val currentTrack: ReadOnlyVar<Track> get() = _currentTrack
+    final override val currentTrack: ReadOnlyVar<Track>
+        field = Var(getInitialTrack())
 
     init {
         musicTrackSetting.addListener { l ->
@@ -62,9 +62,9 @@ class ProgressBasedTrackManager(private val game: SolitaireGame) : TrackManagerB
 
     override fun changeTrack(track: Track) {
         if (!hasUnlockedAllTracks()) {
-            _currentTrack.set(practiceTrack)
+            currentTrack.set(practiceTrack)
         } else {
-            _currentTrack.set(track)
+            currentTrack.set(track)
         }
     }
 

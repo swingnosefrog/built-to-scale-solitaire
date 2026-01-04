@@ -13,8 +13,8 @@ class Stat(
     val localizationId: String = "statistics.name.$id"
 ) {
 
-    private val _value: IntVar = IntVar(initialValue)
-    val value: ReadOnlyIntVar = _value
+    val value: ReadOnlyIntVar 
+        field = IntVar(initialValue)
 
     val triggers: MutableList<StatTrigger> = CopyOnWriteArrayList()
 
@@ -22,9 +22,9 @@ class Stat(
      * Increments this stat by the given amount, and runs any [triggers]. If amount is non-positive, nothing changes.
      */
     fun increment(amount: Int = 1): Int {
-        val oldValue = _value.get()
+        val oldValue = value.get()
         if (amount <= 0) return oldValue
-        val newValue = _value.incrementAndGetBy(amount)
+        val newValue = value.incrementAndGetBy(amount)
         triggers.forEach { it.onIncremented(this, oldValue, newValue) }
         return newValue
     }
@@ -33,6 +33,6 @@ class Stat(
      * Sets the value of the stat to the given amount WITHOUT running any [triggers]. Used for persistence and resets.
      */
     fun setValue(newAmount: Int) {
-        _value.set(newAmount)
+        value.set(newAmount)
     }
 }

@@ -11,32 +11,31 @@ open class MenuController {
 
     private val previousMenuStack: ArrayDeque<MenuHistory> = ArrayDeque()
 
-    private val _currentMenu: Var<AbstractMenu?> = Var(null)
-    val currentMenu: ReadOnlyVar<AbstractMenu?> get() = _currentMenu
-
-    private val _currentHighlightedMenuOption: Var<MenuOption?> = Var(null)
-    val currentHighlightedMenuOption: ReadOnlyVar<MenuOption?> get() = _currentHighlightedMenuOption
+    val currentMenu: ReadOnlyVar<AbstractMenu?>
+        field = Var<AbstractMenu?>(null)
+    val currentHighlightedMenuOption: ReadOnlyVar<MenuOption?>
+        field = Var<MenuOption?>(null)
 
     open fun setNewMenu(menu: AbstractMenu?, selectedMenuOption: MenuOption?) {
-        val oldMenu = _currentMenu.getOrCompute()
+        val oldMenu = currentMenu.getOrCompute()
         if (oldMenu != menu) {
             oldMenu?.onExit(this)
-            _currentMenu.set(menu)
-            _currentHighlightedMenuOption.set(selectedMenuOption)
+            currentMenu.set(menu)
+            currentHighlightedMenuOption.set(selectedMenuOption)
             menu?.onEnter(this)
         }
     }
 
     open fun setHighlightedMenuOption(menuOption: MenuOption?) {
-        if (_currentHighlightedMenuOption.getOrCompute() != menuOption) {
-            if (_currentMenu.getOrCompute()?.options?.any { opt -> opt.isSelected.get() } == true) {
+        if (currentHighlightedMenuOption.getOrCompute() != menuOption) {
+            if (currentMenu.getOrCompute()?.options?.any { opt -> opt.isSelected.get() } == true) {
                 return
             }
             if (menuOption?.disabled?.get() == true) {
                 return
             }
             
-            _currentHighlightedMenuOption.set(menuOption)
+            currentHighlightedMenuOption.set(menuOption)
         }
     }
 
