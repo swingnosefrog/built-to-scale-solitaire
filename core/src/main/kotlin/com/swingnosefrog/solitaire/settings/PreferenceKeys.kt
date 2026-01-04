@@ -22,9 +22,11 @@ object PreferenceKeys {
     val SETTINGS_GAMEPLAY_CARD_CURSOR_TYPE = "settings_gameplay_cardCursorType"
     val SETTINGS_GAMEPLAY_SHOW_CARD_CURSOR_IN_MOUSE_MODE = "settings_gameplay_showCardCursorInMouseMode"
     val SETTINGS_GAMEPLAY_CARD_SKIN = "settings_gameplay_cardSkin"
-    val SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER = "settings_gameplay_showMoveCounter"
-    val SETTINGS_GAMEPLAY_SHOW_TIMER = "settings_gameplay_showTimer"
-    val SETTINGS_GAMEPLAY_SHOW_HOW_TO_PLAY_BUTTON = "settings_gameplay_showHowToPlayButton"
+    
+    // Note: some HUD settings are grouped under "gameplay" in their preference key, for backwards compatibility
+    val SETTINGS_HUD_SHOW_MOVE_COUNTER = "settings_gameplay_showMoveCounter" // DO NOT MOVE to "settings_hud_*"
+    val SETTINGS_HUD_SHOW_TIMER = "settings_gameplay_showTimer" // DO NOT MOVE to "settings_hud_*"
+    val SETTINGS_HUD_SHOW_HOW_TO_PLAY_BUTTON = "settings_gameplay_showHowToPlayButton" // DO NOT MOVE to "settings_hud_*"
     
     val SETTINGS_AUDIO_MUSIC_TRACK = "settings_audio_musicTrack"
 

@@ -14,9 +14,9 @@ import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_CAR
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_CARD_SKIN
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_MOUSE_MODE
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_CARD_CURSOR_IN_MOUSE_MODE
-import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_HOW_TO_PLAY_BUTTON
-import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER
-import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_GAMEPLAY_SHOW_TIMER
+import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_HUD_SHOW_HOW_TO_PLAY_BUTTON
+import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_HUD_SHOW_MOVE_COUNTER
+import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_HUD_SHOW_TIMER
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_LOCALE
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_MASTER_VOLUME
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_MAX_FPS
@@ -61,9 +61,10 @@ class SolitaireSettings(
     val gameplayCardCursorType: Var<CardCursorType>
     val gameplayShowCardCursorInMouseMode: BooleanVar
     val gameplayCardSkin: Var<CardSkin>
-    val gameplayShowMoveCounter: BooleanVar
-    val gameplayShowTimer: BooleanVar
-    val gameplayShowHowToPlayButton: BooleanVar
+    
+    val hudShowMoveCounter: BooleanVar
+    val hudShowTimer: BooleanVar
+    val hudShowHowToPlayButton: BooleanVar
     
     val audioMusicTrackSetting: Var<MusicTrackSetting>
     
@@ -97,9 +98,10 @@ class SolitaireSettings(
             gameplayCardCursorType = KeyValue.Enum<CardCursorType>(SETTINGS_GAMEPLAY_CARD_CURSOR_TYPE, CardCursorType.FULL).add().value
             gameplayShowCardCursorInMouseMode = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_CARD_CURSOR_IN_MOUSE_MODE, true).add().value
             gameplayCardSkin = KeyValue.Enum<CardSkin>(SETTINGS_GAMEPLAY_CARD_SKIN, CardSkin.MODERN).add().value
-            gameplayShowMoveCounter = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_MOVE_COUNTER, true).add().value
-            gameplayShowTimer = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_TIMER, false).add().value
-            gameplayShowHowToPlayButton = KeyValue.Bool(SETTINGS_GAMEPLAY_SHOW_HOW_TO_PLAY_BUTTON, true).add().value
+            
+            hudShowMoveCounter = KeyValue.Bool(SETTINGS_HUD_SHOW_MOVE_COUNTER, true).add().value
+            hudShowTimer = KeyValue.Bool(SETTINGS_HUD_SHOW_TIMER, false).add().value
+            hudShowHowToPlayButton = KeyValue.Bool(SETTINGS_HUD_SHOW_HOW_TO_PLAY_BUTTON, true).add().value
             
             audioMusicTrackSetting = KeyValue.Enum<MusicTrackSetting>(SETTINGS_AUDIO_MUSIC_TRACK, MusicTrackSetting.BGM_PRACTICE).add().value
         }

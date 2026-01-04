@@ -44,8 +44,8 @@ class MainGameHudPane(
 
     init {
         onAnyHudSettingsChanged = Var.eagerBind {
-            settings.gameplayShowTimer.use()
-            settings.gameplayShowMoveCounter.use()
+            settings.hudShowTimer.use()
+            settings.hudShowMoveCounter.use()
         }
         
         elapsedTimeClock = DurationMsStatFormatter.format(IntVar {
@@ -117,7 +117,7 @@ class MainGameHudPane(
                 this.temporarilyDisableLayouts {
                     this.removeAllChildren()
 
-                    if (settings.gameplayShowMoveCounter.get()) {
+                    if (settings.hudShowMoveCounter.get()) {
                         this += createRoundedRect().apply {
                             this.bounds.width.set(250f)
 
@@ -129,7 +129,7 @@ class MainGameHudPane(
                         }
                     }
 
-                    if (settings.gameplayShowTimer.get()) {
+                    if (settings.hudShowTimer.get()) {
                         this += createRoundedRect().apply {
                             this.bounds.width.set(300f)
 

@@ -14,15 +14,15 @@ class HudSettingsMenu(
     override val options: List<MenuOption> = listOf(
         MenuOption.OptionWidget.Checkbox(
             Localization["game.menu.hudSettings.option.showMoveCounter"],
-            settings.gameplayShowMoveCounter
+            settings.hudShowMoveCounter
         ),
         MenuOption.OptionWidget.Checkbox(
             Localization["game.menu.hudSettings.option.showTimer"],
-            settings.gameplayShowTimer
+            settings.hudShowTimer
         ),
         MenuOption.OptionWidget.Checkbox(
             Localization["game.menu.hudSettings.option.showHowToPlayButton"],
-            settings.gameplayShowHowToPlayButton
+            settings.hudShowHowToPlayButton
         ),
         MenuOption.Back(),
     )

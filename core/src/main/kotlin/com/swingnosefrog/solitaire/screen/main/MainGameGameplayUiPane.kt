@@ -99,7 +99,7 @@ class MainGameGameplayUiPane(
                 Anchor.BottomLeft.configure(this)
                 this.applyStyle(Corner.TOP_RIGHT)
                 
-                this.visible.bind { SolitaireGame.instance.settings.gameplayShowHowToPlayButton.use() }
+                this.visible.bind { SolitaireGame.instance.settings.hudShowHowToPlayButton.use() }
 
                 this.setOnAction {
                     uiInputHandler.openHowToPlayMenu()
