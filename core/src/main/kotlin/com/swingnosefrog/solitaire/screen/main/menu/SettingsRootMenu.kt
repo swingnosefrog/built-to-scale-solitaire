@@ -16,6 +16,7 @@ class SettingsRootMenu(
 ) : AbstractMenu(id) {
 
     private val gameplaySettingsMenu: GameplaySettingsMenu = GameplaySettingsMenu("gameplaySettings")
+    private val hudSettingsMenu: HudSettingsMenu = HudSettingsMenu("hudSettings")
     private val audioSettingsMenu: AudioSettingsMenu = AudioSettingsMenu("audioSettings")
     private val videoSettingsMenu: VideoSettingsMenu = VideoSettingsMenu("videoSettings")
 
@@ -23,6 +24,7 @@ class SettingsRootMenu(
 
     override val options: List<MenuOption> = listOfNotNull(
         MenuOption.SubMenu(Localization["game.menu.settings.option.gameplay"]) { gameplaySettingsMenu },
+        MenuOption.SubMenu(Localization["game.menu.settings.option.hud"]) { hudSettingsMenu },
         MenuOption.SubMenu(Localization["game.menu.settings.option.audio"]) { audioSettingsMenu },
         MenuOption.SubMenu(Localization["game.menu.settings.option.video"]) { videoSettingsMenu },
         if (SolitaireLocalePicker.namedLocales.size > 1)

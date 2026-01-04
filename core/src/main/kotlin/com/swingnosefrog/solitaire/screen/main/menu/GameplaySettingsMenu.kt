@@ -66,18 +66,6 @@ class GameplaySettingsMenu(
             Localization["game.menu.gameplaySettings.option.showCardCursorInMouseMode"],
             settings.gameplayShowCardCursorInMouseMode
         ),
-        MenuOption.OptionWidget.Checkbox(
-            Localization["game.menu.gameplaySettings.option.showMoveCounter"],
-            settings.gameplayShowMoveCounter
-        ),
-        MenuOption.OptionWidget.Checkbox(
-            Localization["game.menu.gameplaySettings.option.showTimer"],
-            settings.gameplayShowTimer
-        ),
-        MenuOption.OptionWidget.Checkbox(
-            Localization["game.menu.gameplaySettings.option.showHowToPlayButton"],
-            settings.gameplayShowHowToPlayButton
-        ),
         MenuOption.Back(),
     )
 
