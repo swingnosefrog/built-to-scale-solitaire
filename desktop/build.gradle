@@ -13,7 +13,7 @@ task run(dependsOn: classes, type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
     workingDir = project.assetsDir
-    ignoreExitValue(true)
+    ignoreExitValue = true
 }
 
 task debug(dependsOn: classes, type: JavaExec) {
@@ -21,7 +21,7 @@ task debug(dependsOn: classes, type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
     workingDir = project.assetsDir
-    ignoreExitValue(true)
+    ignoreExitValue = true
     debug = true
 }
 
