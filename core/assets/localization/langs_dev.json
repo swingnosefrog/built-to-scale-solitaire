@@ -8,6 +8,14 @@
     }
   },
   {
+    "name": "Français",
+    "locale": {
+      "language": "fr",
+      "country": "",
+      "variant": ""
+    }
+  },
+  {
     "name": "Italiano",
     "locale": {
       "language": "it",
