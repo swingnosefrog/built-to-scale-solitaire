@@ -11,78 +11,100 @@ import java.util.*
 
 class CreditsInfo {
 
-    val credits: Map<ReadOnlyVar<String>, List<ReadOnlyVar<String>>> = listOfNotNull(
-        Localization["credits.category.projectLeadAndProgramming"] to abcSorted(
-            "swingnosefrog"
-        ).toVars(),
-        Localization["credits.category.graphics"] to abcSorted(
-            "Merch_Andise",
-            "snow krow",
-            "garbo",
-        ).toVars(),
-        Localization["credits.category.music"] to abcSorted(
-            "GenericArrangements",
-        ).toVars(),
-        Localization["credits.category.sfx"] to abcSorted(
-            "GenericArrangements", "Kievit", "Merch_Andise",
-        ).toVars(),
-        Localization["credits.category.testing"] to abcSorted(
-            "GenericArrangements",
-            "Luxury",
-            "spoopster",
-            "Conn",
-            "Merch_Andise",
-            "Kievit",
-            "NoahAmp",
-            "snow krow",
-            "TheAlternateDoctor",
-            "garbo",
-            "Huebird",
-            "Chirp",
-        ).toVars(),
-        if (SolitaireLocalePicker.namedLocales.size <= 1) null
-        else Localization["credits.category.localization"] to listOf(
-            localizationSubheading(
-                SolitaireLocalePicker.namedLocales.first { it.locale.toString() == "it" },
-                listOf("Gosh")
+    val credits: Map<ReadOnlyVar<String>, List<ReadOnlyVar<String>>> = run {
+        val locales = SolitaireLocalePicker.namedLocales
+        
+        listOfNotNull(
+            Localization["credits.category.projectLeadAndProgramming"] to abcSorted(
+                "swingnosefrog"
+            ).toVars(),
+            Localization["credits.category.graphics"] to abcSorted(
+                "Merch_Andise",
+                "snow krow",
+                "garbo",
+            ).toVars(),
+            Localization["credits.category.music"] to abcSorted(
+                "GenericArrangements",
+            ).toVars(),
+            Localization["credits.category.sfx"] to abcSorted(
+                "GenericArrangements", "Kievit", "Merch_Andise",
+            ).toVars(),
+            Localization["credits.category.testing"] to abcSorted(
+                "GenericArrangements",
+                "Luxury",
+                "spoopster",
+                "Conn",
+                "Merch_Andise",
+                "Kievit",
+                "NoahAmp",
+                "snow krow",
+                "TheAlternateDoctor",
+                "garbo",
+                "Huebird",
+                "Chirp",
+            ).toVars(),
+            if (locales.size <= 1) null
+            else Localization["credits.category.localization"] to locales.drop(1).map { locale -> 
+                when (locale.locale.toString()) {
+                    "fr" -> localizationSubheading(
+                        locale,
+                        listOf("TheAlternateDoctor"),
+                        abcSorted()
+                    )
+                    "it" -> localizationSubheading(
+                        locale,
+                        listOf("Gosh"),
+                        abcSorted()
+                    )
+                    "nl" -> localizationSubheading(
+                        locale,
+                        listOf("Kievit"),
+                        abcSorted()
+                    )
+                    else -> localizationSubheading(
+                        locale,
+                        listOf("<MISSING>"),
+                        emptyList()
+                    )
+                }
+            },
+            Localization["credits.category.specialThanks"] to listOf(
+                specialThanksSubheading(
+                    "credits.category.specialThanks.subheading.logo",
+                    abcSorted("snow krow")
+                ),
+                specialThanksSubheading(
+                    "credits.category.specialThanks.subheading.steamStoreAndLibraryArt",
+                    abcSorted("Merch_Andise", "snow krow")
+                ),
+                specialThanksSubheading(
+                    "credits.category.specialThanks.subheading.steamAchievements",
+                    abcSorted("Merch_Andise", "Kievit", "spoopster", "Luxury")
+                ),
+                specialThanksSubheading(
+                    "credits.category.specialThanks.subheading.steamDeckTesting",
+                    abcSorted("spoopster", "NoahAmp", "TheAlternateDoctor")
+                ),
             ),
-        ),
-        Localization["credits.category.specialThanks"] to listOf(
-            specialThanksSubheading(
-                "credits.category.specialThanks.subheading.logo",
-                abcSorted("snow krow")
-            ),
-            specialThanksSubheading(
-                "credits.category.specialThanks.subheading.steamStoreAndLibraryArt",
-                abcSorted("Merch_Andise", "snow krow")
-            ),
-            specialThanksSubheading(
-                "credits.category.specialThanks.subheading.steamAchievements",
-                abcSorted("Merch_Andise", "Kievit", "spoopster", "Luxury")
-            ),
-            specialThanksSubheading(
-                "credits.category.specialThanks.subheading.steamDeckTesting",
-                abcSorted("spoopster", "NoahAmp", "TheAlternateDoctor")
-            ),
-        ),
-        Localization["credits.category.resourcesAndTechnologies"] to listOf(
-            "libGDX & LWJGL",
-            "Kotlin",
-            "Java runtime (Temurin)",
-            "Paintbox",
-            "Beads Sound System",
-            "minimal-json",
-            "steamworks4j",
-            "JCommander",
-        ).toVars(),
-        Localization["credits.category.fontsUsed"] to abcSorted(
-            "Crimson Pro",
-            "Outfit",
-            "PromptFont",
-            "Radio Canada Big",
-            "Open Sans",
-        ).toVars(),
-    ).toMap()
+            Localization["credits.category.resourcesAndTechnologies"] to listOf(
+                "libGDX & LWJGL",
+                "Kotlin",
+                "Java runtime (Temurin)",
+                "Paintbox",
+                "Beads Sound System",
+                "minimal-json",
+                "steamworks4j",
+                "JCommander",
+            ).toVars(),
+            Localization["credits.category.fontsUsed"] to abcSorted(
+                "Crimson Pro",
+                "Outfit",
+                "PromptFont",
+                "Radio Canada Big",
+                "Open Sans",
+            ).toVars(),
+        ).toMap()
+    }
 
     val otherAttributions: List<ReadOnlyVar<String>> = listOf(
         Localization["credits.otherAttributions.thisGame"],
@@ -94,11 +116,11 @@ class CreditsInfo {
 
     private fun List<String>.toVars(): List<ReadOnlyVar<String>> = this.map { ReadOnlyVar.const(it) }
 
-    private fun localizationSubheading(namedLocale: NamedLocale, names: List<String>): ReadOnlyVar<String> {
+    private fun localizationSubheading(namedLocale: NamedLocale, primaryNames: List<String>, secondaryNames: List<String>): ReadOnlyVar<String> {
         return genericSubheading(
             "credits.category.localization.subheading",
             namedLocale.name.toConstVar(),
-            names
+            primaryNames + secondaryNames
         )
     }
 
