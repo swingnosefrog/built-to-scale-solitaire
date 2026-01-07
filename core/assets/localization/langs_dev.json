@@ -22,5 +22,13 @@
       "country": "",
       "variant": ""
     }
+  },
+  {
+    "name": "Nederlands",
+    "locale": {
+      "language": "nl",
+      "country": "",
+      "variant": ""
+    }
   }
 ]
