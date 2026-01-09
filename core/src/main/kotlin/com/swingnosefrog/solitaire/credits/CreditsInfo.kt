@@ -59,7 +59,7 @@ class CreditsInfo {
                     "nl" -> localizationSubheading(
                         locale,
                         listOf("Kievit"),
-                        abcSorted()
+                        abcSorted("Henk")
                     )
                     else -> localizationSubheading(
                         locale,
