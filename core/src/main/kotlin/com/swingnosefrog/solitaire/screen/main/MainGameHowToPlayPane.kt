@@ -82,7 +82,7 @@ class MainGameHowToPlayPane(
                 this.padding.set(Insets(12f))
 
                 this += TextLabel(Localization["game.howToPlay.keybindHint", Var {
-                    val unkIcon = PromptFontConsts.ICON_QUESTION_INT
+                    val unkIcon: String = PromptFontConsts.ICON_QUESTION
                     listOf(
                         moveGlyphs.use().joinToString(separator = "") { it.promptFontText }.takeIf { it.isNotEmpty() } ?: unkIcon,
                         jumpInStackGlyphs.use().joinToString(separator = "") { it.promptFontText }.takeIf { it.isNotEmpty() } ?: unkIcon,
