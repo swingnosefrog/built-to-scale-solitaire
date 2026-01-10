@@ -3,16 +3,31 @@ package com.swingnosefrog.solitaire.game.input
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.utils.TimeUtils
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.swingnosefrog.solitaire.SolitaireGame
+import com.swingnosefrog.solitaire.game.logic.ZoneCoordinates
+import paintbox.binding.ReadOnlyFloatVar
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 
 class GameGdxInputProcessor(private val input: GameInput, private val viewport: Viewport) : InputProcessor {
-
+    
+    private inner class DoubleTapTracker(val zoneCoords: ZoneCoordinates) {
+        
+        val firstTapTime: Long = TimeUtils.nanoTime()
+        
+        fun isWithinTimeInterval(): Boolean {
+            return (TimeUtils.nanoTime() - this.firstTapTime) in 0L .. (doubleTapMaxDelaySec.get() * 1_000_000_000L).toLong()
+        }
+    }
+    
     private val currentMouseModeSetting: ReadOnlyVar<MouseMode> = Var {
         SolitaireGame.instance.settings.gameplayMouseMode.use()
     }
+    
+    private val doubleTapMaxDelaySec: ReadOnlyFloatVar = ReadOnlyFloatVar.const(0.5f)
+    private var doubleTapTracker: DoubleTapTracker? = null
 
     private fun convertToWorldCoords(screenX: Int, screenY: Int): Vector2 {
         val unprojected = viewport.unproject(Vector2(screenX.toFloat(), screenY.toFloat()))
@@ -41,6 +56,29 @@ class GameGdxInputProcessor(private val input: GameInput, private val viewport: 
         return input.endDrag(isFromButtonInput = false)
     }
     
+    private fun startTrackingDoubleTap(zoneCoords: ZoneCoordinates) {
+        doubleTapTracker = DoubleTapTracker(zoneCoords)
+    }
+
+    private fun attemptDetectDoubleTap(zoneCoords: ZoneCoordinates): Boolean {
+        val currentDoubleTap = doubleTapTracker ?: return false
+
+        clearDoubleTapTracker()
+
+        if (areInputsDisabled()) return false
+        if (!currentDoubleTap.isWithinTimeInterval()) return false
+
+        if (!(zoneCoords.zone == currentDoubleTap.zoneCoords.zone && zoneCoords.indexFromEnd == currentDoubleTap.zoneCoords.indexFromEnd)) {
+            return false
+        }
+
+        return true
+    }
+    
+    private fun clearDoubleTapTracker() {
+        doubleTapTracker = null
+    }
+    
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         if (areInputsDisabled()) return false
         if (!pointer.isFirstPointer()) return false
@@ -48,10 +86,34 @@ class GameGdxInputProcessor(private val input: GameInput, private val viewport: 
         if (button == Input.Buttons.LEFT) {
             when (val mouseMode = currentMouseModeSetting.getOrCompute()) {
                 MouseMode.CLICK_AND_DRAG -> {
-                    return attemptPickUpCards(screenX, screenY, mouseMode)
+                    // Double-tap checks:
+                    var wasDoubleTapDetected = false
+                    val currentDoubleTap = doubleTapTracker
+                    val currentWorldCoords = convertToWorldCoords(screenX, screenY)
+                    val zoneCoords = input.logic.getSelectedZoneCoordinates(currentWorldCoords.x, currentWorldCoords.y)
+                    if (zoneCoords != null) {
+                        if (currentDoubleTap == null || !currentDoubleTap.isWithinTimeInterval()) {
+                            startTrackingDoubleTap(zoneCoords)
+                        } else {
+                            wasDoubleTapDetected = attemptDetectDoubleTap(zoneCoords)
+                        }
+                    } else {
+                        clearDoubleTapTracker()
+                    }
+
+                    if (wasDoubleTapDetected && zoneCoords != null) {
+                        if (input.handleDoubleClick(zoneCoords)) {
+                            return true
+                        }
+                    }
+                    
+                    val result = attemptPickUpCards(screenX, screenY, mouseMode)
+                    
+                    return result
                 }
 
                 MouseMode.CLICK_THEN_CLICK -> {
+                    clearDoubleTapTracker()
                     if (input.isDragging()) {
                         attemptPutDownCards(screenX, screenY)
                         return true
@@ -61,6 +123,7 @@ class GameGdxInputProcessor(private val input: GameInput, private val viewport: 
                 }
             }
         } else if (button == Input.Buttons.RIGHT) {
+            clearDoubleTapTracker()
             if (input.isDragging()) {
                 input.cancelDrag()
                 return true

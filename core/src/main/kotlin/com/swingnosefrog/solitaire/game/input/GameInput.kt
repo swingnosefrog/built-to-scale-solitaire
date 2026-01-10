@@ -3,9 +3,13 @@ package com.swingnosefrog.solitaire.game.input
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
+import com.swingnosefrog.solitaire.game.Card
+import com.swingnosefrog.solitaire.game.CardSymbol
+import com.swingnosefrog.solitaire.game.logic.CardStack
 import com.swingnosefrog.solitaire.game.logic.CardZone
 import com.swingnosefrog.solitaire.game.logic.DragInfo
 import com.swingnosefrog.solitaire.game.logic.GameLogic
+import com.swingnosefrog.solitaire.game.logic.StackDirection
 import com.swingnosefrog.solitaire.game.logic.ZoneCoordinates
 import paintbox.binding.BooleanVar
 import paintbox.binding.ReadOnlyVar
@@ -195,10 +199,42 @@ class GameInput(val logic: GameLogic, initiallyMouseBased: Boolean) {
             cardCursor.set(currentCardCursor.copy(isMouseBased = false))
         }
     }
+    
+    fun handleDoubleClick(zoneCoords: ZoneCoordinates): Boolean {
+        val cardsToPickUp = zoneCoords.getCardsToDrag()
+            .takeUnless { zoneCoords.zone.isFlippedOver || !zoneCoords.zone.canDragFrom }
+            ?: emptyList()
+
+        if (cardsToPickUp.isNotEmpty() && logic.isStackValidToMove(cardsToPickUp)) {
+            if (cardsToPickUp.size == 1) {
+                if (attemptForceAutoMoveSingleNumericCardToFoundation(zoneCoords, cardsToPickUp.single())) {
+                    return true
+                }
+            }
+        }
+        
+        return false
+    }
 
     //endregion
 
     //region Private functions
+
+    private fun attemptForceAutoMoveSingleNumericCardToFoundation(zoneCoords: ZoneCoordinates, card: Card): Boolean {
+        if (!card.symbol.isNumeric() || card.symbol == CardSymbol.NUM_1) return false
+        if (zoneCoords.getCardsToDrag().singleOrNull() != card) return false
+
+        val cardStack = CardStack(mutableListOf(card), StackDirection.DOWN)
+        for (foundationZone in logic.zones.foundationZones) {
+            if (logic.canPlaceStackOnZone(cardStack, foundationZone)) {
+                val sourceZone = zoneCoords.zone
+                logic.forceAutoMoveCardToFoundation(card, sourceZone, foundationZone)
+                return true
+            }
+        }
+
+        return false
+    }
     
     private fun snapToNearestLegalZoneToMouse() {
         val legalZones = getLegalCardZonesBasedOnCurrentDragInfo()

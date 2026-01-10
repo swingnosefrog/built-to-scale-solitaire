@@ -164,8 +164,6 @@ class GameLogic(val deckInitializer: DeckInitializer, initiallyMouseBased: Boole
         if ((zones.freeCellZones + zones.foundationZones).all { z -> z.isFlippedOver }) {
             (gameWon as BooleanVar).set(true)
             eventDispatcher.onGameWon(this)
-            
-            // TODO animation on win
             return false
         }
 
@@ -179,9 +177,7 @@ class GameLogic(val deckInitializer: DeckInitializer, initiallyMouseBased: Boole
                 val tail = zone.cardStack.cardList.last()
                 if (tail.symbol == CardSymbol.SPARE) {
                     // If it is the spare card, move it immediately to the spare zone
-                    gameInput.cancelDrag()
-                    eventDispatcher.onCardAutoMoved(this, tail, spareZone)
-                    enqueueDefaultCardMoveAnimation(tail, zone, spareZone)
+                    forceAutoMoveCardToFoundation(tail, zone, spareZone)
                     return true
                 } else if (!tail.symbol.isNumeric()) {
                     continue
@@ -212,9 +208,7 @@ class GameLogic(val deckInitializer: DeckInitializer, initiallyMouseBased: Boole
                 }
 
                 if (targetFoundation != null && canMoveToFoundation) {
-                    gameInput.cancelDrag()
-                    eventDispatcher.onCardAutoMoved(this, tail, targetFoundation)
-                    enqueueDefaultCardMoveAnimation(tail, zone, targetFoundation)
+                    forceAutoMoveCardToFoundation(tail, zone, targetFoundation)
                     return true
                 }
             }
@@ -229,14 +223,23 @@ class GameLogic(val deckInitializer: DeckInitializer, initiallyMouseBased: Boole
                 top != null && top.suit == tailSuit && top.symbol == CardSymbol.SCALE_CARDS.first()
             }
             if (targetFoundation != null) {
-                gameInput.cancelDrag()
-                eventDispatcher.onCardAutoMoved(this, tail, targetFoundation)
-                enqueueDefaultCardMoveAnimation(tail, spareZone, targetFoundation, durationSec = 0.333f)
+                forceAutoMoveCardToFoundation(tail, spareZone, targetFoundation, animationDurationSec = 0.333f)
                 return true
             }
         }
         
         return false
+    }
+    
+    fun forceAutoMoveCardToFoundation(
+        cardToMove: Card,
+        sourceZone: CardZone,
+        targetFoundation: CardZone,
+        animationDurationSec: Float? = null,
+    ) {
+        gameInput.cancelDrag()
+        eventDispatcher.onCardAutoMoved(this, cardToMove, targetFoundation)
+        enqueueDefaultCardMoveAnimation(cardToMove, sourceZone, targetFoundation, durationSec = animationDurationSec)
     }
 
     private fun enqueueDefaultCardMoveAnimation(
