@@ -76,7 +76,7 @@ class MainGameHowToPlayPane(
             
             this += RoundedRectElement(dark).apply {
                 Anchor.TopRight.configure(this)
-                this.bounds.width.set(1100f)
+                this.bounds.width.set(1132f)
 
                 this.roundedRadius.set(12)
                 this.padding.set(Insets(12f))
