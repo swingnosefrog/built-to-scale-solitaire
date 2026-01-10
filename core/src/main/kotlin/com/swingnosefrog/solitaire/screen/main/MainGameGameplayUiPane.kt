@@ -55,7 +55,7 @@ class MainGameGameplayUiPane(
         
         this += Pane().apply {
             this += VBox().apply {
-                this.bounds.width.set(64f)
+                this.bounds.width.set(72f)
                 this.bindHeightToParent(multiplier = 0.3f)
                 Anchor.CentreLeft.configure(this)
                 this.align.set(VBox.Align.CENTRE)
@@ -94,7 +94,7 @@ class MainGameGameplayUiPane(
                     howToPlayGlyph.use().firstOrNull()?.promptFontText ?: ""
                 )
             }]).apply {
-                this.bounds.width.set(175f)
+                this.bounds.width.set(200f)
                 this.bounds.height.set(40f)
                 Anchor.BottomLeft.configure(this)
                 this.applyStyle(Corner.TOP_RIGHT)
