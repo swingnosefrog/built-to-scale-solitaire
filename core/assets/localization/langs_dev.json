@@ -18,7 +18,8 @@
       "variant": ""
     },
     "metadata": {
-      "steam:api_language_code": "french"
+      "steam:api_language_code": "french",
+      "credits:primary": "TheAlternateDoctor"
     }
   },
   {
@@ -29,7 +30,8 @@
       "variant": ""
     },
     "metadata": {
-      "steam:api_language_code": "italian"
+      "steam:api_language_code": "italian",
+      "credits:primary": "Gosh"
     }
   },
   {
@@ -40,7 +42,9 @@
       "variant": ""
     },
     "metadata": {
-      "steam:api_language_code": "dutch"
+      "steam:api_language_code": "dutch",
+      "credits:primary": "Kievit",
+      "credits:secondary": "Henk"
     }
   }
 ]

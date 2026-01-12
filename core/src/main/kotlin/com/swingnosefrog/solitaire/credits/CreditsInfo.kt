@@ -44,29 +44,13 @@ class CreditsInfo {
                 "Chirp",
             ).toVars(),
             if (locales.size <= 1) null
-            else Localization["credits.category.localization"] to locales.drop(1).map { locale -> 
-                when (locale.locale.toString()) {
-                    "fr" -> localizationSubheading(
-                        locale,
-                        listOf("TheAlternateDoctor"),
-                        abcSorted()
-                    )
-                    "it" -> localizationSubheading(
-                        locale,
-                        listOf("Gosh"),
-                        abcSorted()
-                    )
-                    "nl" -> localizationSubheading(
-                        locale,
-                        listOf("Kievit"),
-                        abcSorted("Henk")
-                    )
-                    else -> localizationSubheading(
-                        locale,
-                        listOf("<MISSING>"),
-                        emptyList()
-                    )
-                }
+            else Localization["credits.category.localization"] to locales.drop(1).map { locale ->
+                val credits = SolitaireLocalePicker.getCredits(locale)
+                localizationSubheading(
+                    locale,
+                    credits.primary,
+                    credits.secondary
+                )
             },
             Localization["credits.category.specialThanks"] to listOf(
                 specialThanksSubheading(
