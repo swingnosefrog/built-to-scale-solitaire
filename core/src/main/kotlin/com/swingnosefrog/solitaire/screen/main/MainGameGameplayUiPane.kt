@@ -2,7 +2,7 @@ package com.swingnosefrog.solitaire.screen.main
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
-import com.swingnosefrog.solitaire.Localization
+import com.swingnosefrog.solitaire.localization.Localization
 import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.game.GameContainer

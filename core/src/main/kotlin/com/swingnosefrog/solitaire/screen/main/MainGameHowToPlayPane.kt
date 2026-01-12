@@ -3,7 +3,7 @@ package com.swingnosefrog.solitaire.screen.main
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.swingnosefrog.solitaire.Localization
+import com.swingnosefrog.solitaire.localization.Localization
 import com.swingnosefrog.solitaire.fonts.PromptFontConsts
 import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.inputmanager.IActionInputGlyph
@@ -25,7 +25,6 @@ import paintbox.ui.RenderAlign
 import paintbox.ui.area.Insets
 import paintbox.ui.control.TextLabel
 import paintbox.ui.element.RoundedRectElement
-import paintbox.util.gdxutils.grey
 import kotlin.math.min
 
 

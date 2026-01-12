@@ -1,6 +1,6 @@
 package com.swingnosefrog.solitaire.menu
 
-import com.swingnosefrog.solitaire.Localization
+import com.swingnosefrog.solitaire.localization.Localization
 import com.swingnosefrog.solitaire.screen.main.menu.AbstractMenu
 import paintbox.binding.*
 import paintbox.ui.StringVarConverter

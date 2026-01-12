@@ -1,6 +1,6 @@
 package com.swingnosefrog.solitaire.statistics.formatter
 
-import com.swingnosefrog.solitaire.Localization
+import com.swingnosefrog.solitaire.localization.Localization
 import paintbox.binding.ReadOnlyIntVar
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var

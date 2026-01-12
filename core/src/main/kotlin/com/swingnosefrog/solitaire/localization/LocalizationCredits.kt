@@ -1,5 +1,4 @@
-package com.swingnosefrog.solitaire.credits
-
+package com.swingnosefrog.solitaire.localization
 
 data class LocalizationCredits(
     val primary: List<String>,

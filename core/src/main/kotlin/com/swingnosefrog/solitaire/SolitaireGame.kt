@@ -9,6 +9,7 @@ import com.swingnosefrog.solitaire.fonts.SolitaireFonts
 import com.swingnosefrog.solitaire.game.assets.GameAssetLoader
 import com.swingnosefrog.solitaire.game.assets.GameAssets
 import com.swingnosefrog.solitaire.inputmanager.impl.InputManagerFactory
+import com.swingnosefrog.solitaire.localization.Localization
 import com.swingnosefrog.solitaire.persistence.JsonPreferences
 import com.swingnosefrog.solitaire.progress.Progress
 import com.swingnosefrog.solitaire.screen.main.MainGameScreen

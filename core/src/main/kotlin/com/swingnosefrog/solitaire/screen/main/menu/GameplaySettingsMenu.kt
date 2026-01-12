@@ -1,6 +1,6 @@
 package com.swingnosefrog.solitaire.screen.main.menu
 
-import com.swingnosefrog.solitaire.Localization
+import com.swingnosefrog.solitaire.localization.Localization
 import com.swingnosefrog.solitaire.SolitaireGame
 import com.swingnosefrog.solitaire.game.assets.CardSkin
 import com.swingnosefrog.solitaire.game.input.MouseMode

@@ -2,7 +2,7 @@ package com.swingnosefrog.solitaire.settings
 
 import com.badlogic.gdx.Preferences
 import com.swingnosefrog.solitaire.SolitaireGame
-import com.swingnosefrog.solitaire.SolitaireLocalePicker
+import com.swingnosefrog.solitaire.localization.SolitaireLocalePicker
 import com.swingnosefrog.solitaire.game.assets.CardSkin
 import com.swingnosefrog.solitaire.game.audio.music.MusicTrackSetting
 import com.swingnosefrog.solitaire.game.input.MouseMode

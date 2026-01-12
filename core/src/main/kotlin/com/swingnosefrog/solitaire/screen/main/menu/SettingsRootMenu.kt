@@ -1,8 +1,8 @@
 package com.swingnosefrog.solitaire.screen.main.menu
 
-import com.swingnosefrog.solitaire.Localization
+import com.swingnosefrog.solitaire.localization.Localization
 import com.swingnosefrog.solitaire.SolitaireGame
-import com.swingnosefrog.solitaire.SolitaireLocalePicker
+import com.swingnosefrog.solitaire.localization.SolitaireLocalePicker
 import com.swingnosefrog.solitaire.menu.MenuOption
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var

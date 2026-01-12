@@ -1,7 +1,7 @@
 package com.swingnosefrog.solitaire.screen.main.menu
 
 import com.badlogic.gdx.Gdx
-import com.swingnosefrog.solitaire.Localization
+import com.swingnosefrog.solitaire.localization.Localization
 import com.swingnosefrog.solitaire.menu.MenuController
 import com.swingnosefrog.solitaire.menu.MenuOption
 import paintbox.binding.ReadOnlyVar

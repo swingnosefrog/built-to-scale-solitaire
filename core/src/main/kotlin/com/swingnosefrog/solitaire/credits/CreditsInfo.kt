@@ -1,7 +1,7 @@
 package com.swingnosefrog.solitaire.credits
 
-import com.swingnosefrog.solitaire.Localization
-import com.swingnosefrog.solitaire.SolitaireLocalePicker
+import com.swingnosefrog.solitaire.localization.Localization
+import com.swingnosefrog.solitaire.localization.SolitaireLocalePicker
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
 import paintbox.binding.toConstVar
