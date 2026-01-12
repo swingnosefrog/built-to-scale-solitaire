@@ -5,6 +5,9 @@
       "language": "",
       "country": "",
       "variant": ""
+    },
+    "metadata": {
+      "steam:api_language_code": "english"
     }
   },
   {
@@ -13,6 +16,9 @@
       "language": "fr",
       "country": "",
       "variant": ""
+    },
+    "metadata": {
+      "steam:api_language_code": "french"
     }
   },
   {
@@ -21,6 +27,9 @@
       "language": "it",
       "country": "",
       "variant": ""
+    },
+    "metadata": {
+      "steam:api_language_code": "italian"
     }
   },
   {
@@ -29,6 +38,9 @@
       "language": "nl",
       "country": "",
       "variant": ""
+    },
+    "metadata": {
+      "steam:api_language_code": "dutch"
     }
   }
 ]

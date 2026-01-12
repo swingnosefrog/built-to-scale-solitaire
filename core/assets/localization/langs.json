@@ -5,6 +5,9 @@
       "language": "",
       "country": "",
       "variant": ""
+    },
+    "metadata": {
+      "steam:api_language_code": "english"
     }
   }
 ]

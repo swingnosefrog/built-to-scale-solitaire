@@ -7,6 +7,7 @@ import paintbox.binding.ReadOnlyVar
 import paintbox.i18n.LocalePickerBase
 import paintbox.i18n.LocalizationBase
 import paintbox.i18n.LocalizationGroup
+import paintbox.i18n.NamedLocale
 
 
 object SolitaireLocalePicker : LocalePickerBase(
@@ -15,11 +16,28 @@ object SolitaireLocalePicker : LocalePickerBase(
     else Gdx.files.internal("localization/langs.json")
 ) {
     
+    const val METADATA_KEY_STEAM_API_LANGUAGE_CODE: String = "steam:api_language_code"
+    
+    val namedLocalesBySteamApiLanguageCode: Map<String, List<NamedLocale>>
+    
     init {
+        namedLocalesBySteamApiLanguageCode = this.namedLocales
+            .filter { it.metadata.containsKey(METADATA_KEY_STEAM_API_LANGUAGE_CODE) }
+            .groupBy { it.metadata.getValue(METADATA_KEY_STEAM_API_LANGUAGE_CODE) }
+            .mapValues { (_, list) ->
+                list.sortedBy { it.locale.toString() }
+            }
+        
         if (Solitaire.isDevVersion) {
             checkForLocaleOrder()
         }
     }
+    
+    fun getNamedLocaleFromSteamLanguageCode(steamLanguageCode: String): NamedLocale? {
+        return namedLocalesBySteamApiLanguageCode[steamLanguageCode]?.firstOrNull()
+    }
+    
+    fun getFallbackNamedLocale(): NamedLocale = this.namedLocales.first()
     
     private fun checkForLocaleOrder() {
         val loggingTag = "SolitaireLocalePicker"

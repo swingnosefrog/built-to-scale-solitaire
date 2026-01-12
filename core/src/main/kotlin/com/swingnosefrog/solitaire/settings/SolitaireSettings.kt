@@ -24,6 +24,7 @@ import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_MUSIC_VOLUME
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_SFX_VOLUME
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_VSYNC
 import com.swingnosefrog.solitaire.settings.PreferenceKeys.SETTINGS_WINDOWED_RESOLUTION
+import com.swingnosefrog.solitaire.steamworks.Steamworks
 import com.swingnosefrog.solitaire.util.WindowSizeUtils
 import paintbox.Paintbox
 import paintbox.binding.BooleanVar
@@ -41,6 +42,30 @@ class SolitaireSettings(
     prefs: Preferences,
     isRunningOnSteamDeckHint: Boolean?,
 ) : PaintboxPreferences<SolitaireGame>(main, prefs) {
+    
+    companion object {
+        
+        private fun getDefaultLocaleStringFromSteamworks(): String {
+            val loggingTag = "SolitaireSettings#getDefaultLocaleStringFromSteamworks"
+            
+            val steamInterfaces = Steamworks.getSteamInterfaces()
+            val steamApps = steamInterfaces?.apps
+            val steamworksLanguageCode = steamApps?.currentGameLanguage
+
+            return (if (steamworksLanguageCode != null) {
+                val locale = SolitaireLocalePicker.getNamedLocaleFromSteamLanguageCode(steamworksLanguageCode)
+                val localeStr = locale?.locale?.toString()
+                Paintbox.LOGGER.info(
+                    "Got Steamworks language code = \"${steamworksLanguageCode}\", found NamedLocale = ${if (localeStr != null) "\"$locale\"" else "<null>"}",
+                    tag = loggingTag
+                )
+                localeStr
+            } else {
+                Paintbox.LOGGER.info("No Steamworks language code found", tag = loggingTag)
+                null
+            }) ?: ""
+        }
+    }
 
     override val allKeyValues: List<KeyValue<*>>
     override val allNewIndicators: List<NewIndicator>
@@ -75,7 +100,7 @@ class SolitaireSettings(
         
         val initScope = InitScope()
         with(initScope) {
-            locale = KeyValue.Str(SETTINGS_LOCALE, "").add().value
+            locale = KeyValue.Str(SETTINGS_LOCALE, getDefaultLocaleStringFromSteamworks()).add().value
             
             vsyncEnabled = KeyValue.Bool(SETTINGS_VSYNC, false).add().value
             maxFramerate =
@@ -115,25 +140,28 @@ class SolitaireSettings(
         }
     }
 
+    fun resetVolumeSettingsToDefault() {
+        allVolumeSettings.forEach { it.value.set(it.defaultValue) }
+    }
+
     override fun getLastVersionKey(): String = PreferenceKeys.LAST_VERSION
 
     override fun setStartupSettings() {
         setFpsAndVsync(maxFramerate, vsyncEnabled)
         setFullscreenOrWindowed(fullscreen, fullscreenMonitor, windowedResolution)
-
+        setLocaleOnStartup()
+    }
+    
+    private fun setLocaleOnStartup() {
         val localePicker = SolitaireLocalePicker
         val localeStr = locale.getOrCompute()
         val namedLocale = localePicker.attemptToFindNamedLocale(localeStr)
         if (namedLocale == null) {
-            val fallback = localePicker.namedLocales.first()
+            val fallback = localePicker.getFallbackNamedLocale()
             localePicker.currentLocale.set(fallback)
             Paintbox.LOGGER.warn("No named locale found for \"$localeStr\", defaulting to $fallback")
         } else {
             localePicker.currentLocale.set(namedLocale)
         }
-    }
-    
-    fun resetVolumeSettingsToDefault() {
-        allVolumeSettings.forEach { it.value.set(it.defaultValue) }
     }
 }
