@@ -42,6 +42,7 @@ class CreditsInfo {
                 "garbo",
                 "Huebird",
                 "Chirp",
+                "GrueKun",
             ).toVars(),
             if (locales.size <= 1) null
             else Localization["credits.category.localization"] to locales.drop(1).map { locale ->
@@ -67,7 +68,7 @@ class CreditsInfo {
                 ),
                 specialThanksSubheading(
                     "credits.category.specialThanks.subheading.steamDeckTesting",
-                    abcSorted("spoopster", "NoahAmp", "TheAlternateDoctor")
+                    abcSorted("spoopster", "NoahAmp", "TheAlternateDoctor", "GrueKun")
                 ),
             ),
             Localization["credits.category.resourcesAndTechnologies"] to listOf(
