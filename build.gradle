@@ -7,7 +7,7 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "com.gradleup.shadow:shadow-gradle-plugin:9.2.2"
+        classpath "com.gradleup.shadow:shadow-gradle-plugin:9.3.1"
     }
 }
 
@@ -50,7 +50,7 @@ allprojects {
     kotlin {
         compilerOptions {
             jvmTarget = JvmTarget.JVM_21
-                freeCompilerArgs.add("-Xexplicit-backing-fields") // Remove when "Explicit backing fields" becomes stable
+            freeCompilerArgs.add("-Xexplicit-backing-fields") // Remove when "Explicit backing fields" becomes stable
         }
     }
 }
