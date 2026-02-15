@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.swingnosefrog.solitaire.game.assets.GameAssets
 import com.swingnosefrog.solitaire.game.logic.DeckInitializer
 import com.swingnosefrog.solitaire.inputmanager.ActionSource
 import com.swingnosefrog.solitaire.inputmanager.IDigitalInputAction
@@ -16,9 +17,10 @@ import com.swingnosefrog.solitaire.menu.MenuController
 import com.swingnosefrog.solitaire.menu.MenuInput
 import com.swingnosefrog.solitaire.menu.MenuInputSource
 import com.swingnosefrog.solitaire.menu.MenuInputType
-import com.swingnosefrog.solitaire.screen.main.menu.GameplaySettingsMenu
 import com.swingnosefrog.solitaire.screen.main.menu.HudSettingsMenu
 import com.swingnosefrog.solitaire.screen.main.menu.MainGameMenus
+import com.swingnosefrog.solitaire.soundsystem.beads.BeadsSound
+import net.beadsproject.beads.ugens.SamplePlayer
 import paintbox.Paintbox
 import paintbox.binding.ReadOnlyVar
 import paintbox.binding.Var
@@ -261,11 +263,16 @@ class MainGameUi(val mainGameScreen: MainGameScreen) {
         }
 
         override fun skipDealingAnimation(): Boolean {
-            val gameLogic = mainGameScreen.gameContainer.getOrCompute().gameLogic
+            val gameContainer = mainGameScreen.gameContainer.getOrCompute()
+            val gameLogic = gameContainer.gameLogic
             if (gameLogic.isStillDealing.get()) {
                 val secondsToAdvance = 10f
                 gameLogic.animationContainer.renderUpdate(secondsToAdvance)
                 gameLogic.checkTableauAfterActivity()
+
+                val beadsAudio = GameAssets.get<BeadsSound>("sfx_game_skip_dealing")
+                gameContainer.gameAudio.playSfx(beadsAudio)
+                
                 return true
             }
 

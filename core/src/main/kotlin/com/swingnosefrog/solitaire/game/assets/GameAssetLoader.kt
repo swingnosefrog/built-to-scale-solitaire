@@ -35,6 +35,7 @@ class GameAssetLoader : AssetLoaderBase<GameAssets>(GameAssets) {
         registry.loadAsset<BeadsSound>("sfx_game_whoosh1", "sounds/game/whoosh1.wav")
         registry.loadAsset<BeadsSound>("sfx_game_whoosh2", "sounds/game/whoosh2.wav")
         registry.loadAsset<BeadsSound>("sfx_game_whoosh3", "sounds/game/whoosh3.wav")
+        registry.loadAsset<BeadsSound>("sfx_game_skip_dealing", "sounds/game/skip_dealing.wav")
         registry.loadAsset<BeadsSound>("sfx_game_won", "sounds/game/win.ogg")
 
         registry.loadAsset<BeadsSound>("sfx_game_widget_assemble", "sounds/game/widget_assemble_2.ogg")
