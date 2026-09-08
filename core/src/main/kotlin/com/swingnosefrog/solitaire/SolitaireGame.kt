@@ -18,6 +18,7 @@ import com.swingnosefrog.solitaire.settings.VolumeGain
 import com.swingnosefrog.solitaire.statistics.StatsImpl
 import com.swingnosefrog.solitaire.steamworks.SteamStats
 import com.swingnosefrog.solitaire.steamworks.Steamworks
+import com.swingnosefrog.solitaire.util.TempFileUtils
 import com.swingnosefrog.solitaire.util.WindowSizeUtils
 import paintbox.IPaintboxSettings
 import paintbox.Paintbox
@@ -171,5 +172,11 @@ class SolitaireGame(paintboxSettings: IPaintboxSettings) : PaintboxGame(paintbox
         progress.persist()
         SteamStats.persistStats()
         Steamworks.shutdown()
+        
+        try {
+            TempFileUtils.clearTempFolderOlderThan()
+        } catch (s: SecurityException) {
+            s.printStackTrace()
+        }
     }
 }
